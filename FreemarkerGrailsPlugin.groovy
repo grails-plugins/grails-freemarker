@@ -1,3 +1,5 @@
+import grails.util.BuildSettingsHolder
+
 class FreemarkerGrailsPlugin {
     // the plugin version
     def version = "0.1"
