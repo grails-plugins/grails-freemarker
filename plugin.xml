@@ -1,4 +1,4 @@
-<plugin name='freemarker' version='0.1' grailsVersion='1.1 &gt; *'>
+<plugin name='freemarker' version='0.1.1' grailsVersion='1.1 &gt; *'>
   <author>Jeff Brown</author>
   <authorEmail>jeff.brown@springsource.com</authorEmail>
   <title>FreeMarker Grails Plugin</title>
@@ -6,9 +6,6 @@
 as views.
 </description>
   <documentation>http://grails.org/Freemarker+Plugin</documentation>
-  <resources>
-    <resource>DataSource</resource>
-    <resource>UrlMappings</resource>
-  </resources>
+  <resources />
   <dependencies />
 </plugin>
