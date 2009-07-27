@@ -10,7 +10,13 @@ class FreeMarkerTagLib {
     def render = { attrs ->
         def templateName = attrs.template
         def model = attrs.model ?: [:]
-        def view = freemarkerViewResolver.buildView(templateName)
+        def view
+        if(templateName[0] == '/') {
+            view = freemarkerViewResolver.buildView(templateName)
+        } else {
+            def controllerUri = grailsAttributes.getControllerUri(request)
+            view = freemarkerViewResolver.buildView("${controllerUri}/${templateName}")
+        }
         view.applicationContext = grailsApplication.mainContext
         view.render(model, request, response)
     }
