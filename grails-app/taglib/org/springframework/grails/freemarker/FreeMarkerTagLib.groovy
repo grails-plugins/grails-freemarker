@@ -4,12 +4,14 @@ class FreeMarkerTagLib {
     
     static namespace = 'fm'
 
-    def freemarkerConfig
+    def freemarkerViewResolver
+    def grailsApplication
 
     def render = { attrs ->
         def templateName = attrs.template
-        def template = freemarkerConfig.configuration.getTemplate("${templateName}.ftl")
         def model = attrs.model ?: [:]
-        template.process(model, out)
+        def view = freemarkerViewResolver.buildView(templateName)
+        view.applicationContext = grailsApplication.mainContext
+        view.render(model, request, response)
     }
 }
