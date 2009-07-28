@@ -2,7 +2,7 @@
 <head>
 </head>
 <body>
-    <strong>Name: </strong>${name}<br/>
-    <strong>State: </strong>${state}<br/>
+    Name: ${name}<br/>
+    State: ${state}<br/>
 </body>
 </html>
