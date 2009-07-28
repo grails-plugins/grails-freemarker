@@ -8,6 +8,9 @@ class FreeMarkerTagLib {
     def grailsApplication
 
     def render = { attrs ->
+        if(!attrs.template)
+            throwTagError("Tag [fm:render] is missing required attribute [template]")
+
         def templateName = attrs.template
         def model = attrs.model ?: [:]
         def view
