@@ -7,7 +7,6 @@ as views.
 </description>
   <documentation>http://grails.org/Freemarker+Plugin</documentation>
   <resources>
-    <resource>UrlMappings</resource>
     <resource>DemoController</resource>
     <resource>org.springframework.grails.freemarker.FreeMarkerTagLib</resource>
   </resources>

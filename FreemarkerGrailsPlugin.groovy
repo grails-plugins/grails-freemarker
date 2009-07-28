@@ -11,7 +11,8 @@ class FreemarkerGrailsPlugin {
     def pluginExcludes = [
             "grails-app/views/error.gsp",
             "grails-app/views/demo/*",
-            "grails-app/controllers/*"
+            "grails-app/controllers/*",
+            "grails-app/views/templates/**"
     ]
 
     def author = "Jeff Brown"
