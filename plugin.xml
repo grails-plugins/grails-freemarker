@@ -1,4 +1,4 @@
-<plugin name='freemarker' version='0.2-SNAPSHOT' grailsVersion='1.1 &gt; *'>
+<plugin name='freemarker' version='0.2' grailsVersion='1.1 &gt; *'>
   <author>Jeff Brown</author>
   <authorEmail>jeff.brown@springsource.com</authorEmail>
   <title>FreeMarker Grails Plugin</title>
