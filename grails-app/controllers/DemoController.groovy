@@ -11,4 +11,9 @@ class DemoController {
     def testTaglib = {
         [firstName: 'Zack', middleName: 'Scott']
     }
+    
+    def testFlash = {
+        flash.message = 'this message is in flash'
+        redirect action: index
+    }
 }

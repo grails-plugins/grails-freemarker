@@ -5,6 +5,10 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver
 
 public class GrailsFreeMarkerViewResolver extends FreeMarkerViewResolver {
 
+    public GrailsFreeMarkerViewResolver() { 
+        viewClass = GrailsFreeMarkerView
+    }
+        
     protected View loadView(String viewName, Locale locale) {
         def view = null
         try {

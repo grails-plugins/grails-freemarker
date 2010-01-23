@@ -20,4 +20,12 @@ class DemoControllerFunctionalTests extends functionaltestplugin.FunctionalTestC
         assertContentContains 'The template at /demo/fmtemplate.ftl was rendered with Name: Zack'
         assertContentContains 'The template at /templates/freemarker/snippet.ftl was rendered with Name: Scott'
     }
+    
+    void testFlash() {
+        get '/demo/testFlash'
+        assertStatus 200
+        assertContentContains 'Name: Jake'
+        assertContentContains 'State: Missouri'
+        assertContentContains 'this message is in flash'
+    }
 }
