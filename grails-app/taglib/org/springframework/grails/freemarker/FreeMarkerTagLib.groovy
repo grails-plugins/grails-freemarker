@@ -1,26 +1,23 @@
 package org.springframework.grails.freemarker
 
 class FreeMarkerTagLib {
-    
+
     static namespace = 'fm'
 
-    def freemarkerViewResolver
-    def grailsApplication
+    def freemarkerConfig
 
     def render = { attrs ->
         if(!attrs.template)
-            throwTagError("Tag [fm:render] is missing required attribute [template]")
-
+        throwTagError("Tag [fm:render] is missing required attribute [template]")
         def templateName = attrs.template
-        def model = attrs.model ?: [:]
-        def view
+        def template
         if(templateName[0] == '/') {
-            view = freemarkerViewResolver.buildView(templateName)
+            template = freemarkerConfig.configuration.getTemplate("${templateName}.ftl")
         } else {
             def controllerUri = grailsAttributes.getControllerUri(request)
-            view = freemarkerViewResolver.buildView("${controllerUri}/${templateName}")
+            template = freemarkerConfig.configuration.getTemplate("${controllerUri}/${templateName}.ftl")
         }
-        view.applicationContext = grailsApplication.mainContext
-        view.render(model, request, response)
+        def model = attrs.model ?: [:]
+        template.process(model, out)
     }
 }

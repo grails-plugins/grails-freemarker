@@ -17,8 +17,8 @@ class DemoControllerFunctionalTests extends functionaltestplugin.FunctionalTestC
     void testTaglib() {
         get '/demo/testTaglib'
         assertStatus 200
-        assertContentContains 'The template at /demo/fmtemplate.ftl was rendered with Name: Zack'
-        assertContentContains 'The template at /templates/freemarker/snippet.ftl was rendered with Name: Scott'
+        assertContentContains '#before fmtemplate# The template at /demo/fmtemplate.ftl was rendered with Name: Zack #after fmtemplate#'
+        assertContentContains '#before snippet# The template at /templates/freemarker/snippet.ftl was rendered with Name: Scott #after snippet#'
     }
     
     void testFlash() {

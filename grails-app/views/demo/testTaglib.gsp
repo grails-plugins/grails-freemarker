@@ -1,9 +1,8 @@
 <html>
 <head>
-    <meta name="layout" content="main"/>
 </head>
 <body>
-    <fm:render template="fmtemplate" model="[name: firstName]"/>
-    <fm:render template="/templates/freemarker/snippet" model="[name: middleName]"/>
+    #before fmtemplate# <fm:render template="fmtemplate" model="[name: firstName]"/> #after fmtemplate#
+    #before snippet# <fm:render template="/templates/freemarker/snippet" model="[name: middleName]"/> #after snippet#
 </body>
 </html>
