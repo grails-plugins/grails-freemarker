@@ -7,5 +7,10 @@ grails.project.dependency.resolution = {
         grailsPlugins()
         grailsHome()
         grailsCentral()
+        mavenCentral()
+    }
+    
+    dependencies {
+        runtime 'org.freemarker:freemarker:2.3.16'
     }
 }
