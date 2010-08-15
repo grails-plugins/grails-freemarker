@@ -16,7 +16,7 @@ import grails.util.BuildSettingsHolder
 
 class FreemarkerGrailsPlugin {
     // the plugin version
-    def version = "0.3-SNAPSHOT"
+    def version = "0.3"
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "1.2 > *"
     // the other plugins this plugin depends on
@@ -37,7 +37,7 @@ The Grails FreeMarker plugin provides support for rendering FreeMarker templates
 as views.
 '''
 
-    def documentation = "http://grails.org/Freemarker+Plugin"
+    def documentation = "http://grails.org/plugin/freemarker"
 
     def doWithSpring = {
         boolean developmentMode = !application.warDeployed
