@@ -3,4 +3,7 @@ plugin.xml
 web-app
 grails-freemarker-*.zip
 target
-
+docs
+.DS_Store
+*.log
+*.zip
