@@ -4,20 +4,25 @@ class FreeMarkerTagLib {
 
     static namespace = 'fm'
 
-    def freemarkerConfig
-
+    //def freemarkerConfig
+	def freemarkerViewResolver
+	
     def render = { attrs ->
         if(!attrs.template)
         throwTagError("Tag [fm:render] is missing required attribute [template]")
         def templateName = attrs.template
-        def template
+        //def template
+		def view
         if(templateName[0] == '/') {
-            template = freemarkerConfig.configuration.getTemplate("${templateName}.ftl")
+			view = freemarkerViewResolver.getView( templateName)
+            //template = freemarkerConfig.configuration.getTemplate("${templateName}.ftl")
         } else {
             def controllerUri = grailsAttributes.getControllerUri(request)
-            template = freemarkerConfig.configuration.getTemplate("${controllerUri}/${templateName}.ftl")
+			view = freemarkerViewResolver.getView( "${controllerUri}/${templateName}")
+            //template = freemarkerConfig.configuration.getTemplate("${controllerUri}/${templateName}.ftl")
         }
         def model = attrs.model ?: [:]
-        template.process(model, out)
+        //template.process(model, out)
+		view.renderToWriter(model,out)
     }
 }

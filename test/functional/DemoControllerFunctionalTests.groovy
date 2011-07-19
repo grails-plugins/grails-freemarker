@@ -28,4 +28,19 @@ class DemoControllerFunctionalTests extends functionaltestplugin.FunctionalTestC
         assertContentContains 'State: Missouri'
         assertContentContains 'this message is in flash'
     }
+
+	void testGobaby() {
+        get '/demo/gobaby'
+        assertStatus 200
+        assertContentContains 'fly away'
+		assertContentContains 'This is a ftl from a plugin'
+    }
+
+	void testBluesky() {
+        get '/demo/bluesky'
+        assertStatus 200
+        assertContentContains 'fly away'
+		assertContentContains 'Blue Skies'
+    }
+
 }
