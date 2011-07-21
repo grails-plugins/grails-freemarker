@@ -38,14 +38,14 @@ grails.project.dependency.resolution = {
 		test(":geb:0.6.0") {
 			exported = false
 		}
-		build(':release:1.0.0.M3') {
+		//build(':release:1.0.0.M3') {
 			//nekohtml was conflicting with htmlunit
-			excludes "svn", 'nekohtml'
-		}
+		//	excludes "svn", 'nekohtml'
+		//}
 	}
 }
 grails.project.work.dir = '.grails'
 
-if (appName == "freemarker-plugin") {
+if (appName == "freemarker") {
 	grails.plugin.location.'freemarker-plugin-test' = "plugins/freemarker-plugin-test"
 }
