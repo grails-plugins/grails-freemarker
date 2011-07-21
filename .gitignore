@@ -1,6 +1,8 @@
 stacktrace.log
 plugin.xml
-web-app
+web-app/*
+!web-app/WEB-INF
 grails-freemarker-*.zip
 target
+.grails
 
