@@ -30,13 +30,13 @@ class DemoControllerSpec extends GebSpec {
 			html.contains('State: Illinois')
     }
 
-	def "taglib"() {
+	def "testTaglib"() {
         when:
         	go "demo/testTaglib"
  
         then:
 			def html = driver.pageSource
-			html.contains('#before fmtemplate# The template at /demo/fmtemplate.ftl was rendered with Name: Zack #after fmtemplate#')
+			html.contains('The template at /demo/fmtemplate.ftl was rendered with Name: Zack')
 			html.contains('#before snippet# The template at /templates/freemarker/snippet.ftl was rendered with Name: Scott #after snippet#')
     }
 
