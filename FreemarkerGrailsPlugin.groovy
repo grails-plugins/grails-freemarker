@@ -13,21 +13,30 @@
  * limitations under the License.
  */
 import grails.util.BuildSettingsHolder
+import org.springframework.grails.freemarker.GrailsTemplateLoader
+import org.codehaus.groovy.grails.web.metaclass.RenderDynamicMethod
+import org.codehaus.groovy.grails.web.util.WebUtils
 
 class FreemarkerGrailsPlugin {
     // the plugin version
-    def version = "0.4-SNAPSHOT"
+    def version = "0.5-SNAPSHOT"
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "1.2 > *"
     // the other plugins this plugin depends on
     def dependsOn = [:]
+
+	def observe = ["controllers"]
+	def loadAfter = ['controllers']
+	
     // resources that are excluded from plugin packaging
     def pluginExcludes = [
-            "grails-app/views/error.gsp",
-            "grails-app/views/demo/*",
-            "grails-app/controllers/*",
-            "grails-app/views/templates/**"
-    ]
+		"grails-app/views/**/*",
+		"grails-app/controllers/**/*",
+		"grails-app/services/grails/plugin/freemarker/test/**/*",
+		"src/groovy/grails/plugin/freemarker/test/**/*",
+		"plugins/**/*",
+		"web-app/**/*"
+	]
 
     def author = "Jeff Brown"
     def authorEmail = "jeff.brown@springsource.com"
@@ -40,14 +49,25 @@ as views.
     def documentation = "http://grails.org/plugin/freemarker"
 
     def doWithSpring = {
-        boolean developmentMode = !application.warDeployed
+
+		def freeconfig = application.config.grails.plugin.freemarker
+		
+		freemarkerGrailsTemplateLoader(org.springframework.grails.freemarker.GrailsTemplateLoader){ bean ->
+			bean.autowire = "byName"
+		}
 
         freemarkerConfig(org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer) {
-            if(developmentMode) {
-                templateLoaderPath="file:${BuildSettingsHolder.settings.baseDir.absolutePath}/grails-app/views"
-            } else {
-                templateLoaderPath="/WEB-INF/grails-app/views"
-            }
+			if(freeconfig.preTemplateLoaderBeanName){
+				preTemplateLoaders = [ref("$freeconfig.preTemplateLoaderBeanName")]
+			}
+			if(freeconfig.templateLoaderPaths){
+				templateLoaderPaths = configLoaderPaths
+			}
+			if(freeconfig.postTemplateLoaderBeanName){
+				postTemplateLoaders = [ref('freemarkerGrailsTemplateLoader'),ref("$freeconfig.postTemplateLoaderBeanName")] 
+			}else{
+				postTemplateLoaders = [ref('freemarkerGrailsTemplateLoader')]
+			}
         }
         freemarkerViewResolver(org.springframework.grails.freemarker.GrailsFreeMarkerViewResolver) {
             prefix = ''
@@ -55,4 +75,38 @@ as views.
             order = 10
         }
     }
+
+	def doWithDynamicMethods = { ctx ->
+		
+		for (controller in application.controllerClasses) {
+			modRenderMethod(application, controller)
+        }
+		
+		/** Fremarker configuration mods **/
+		def configLocalizedLookup = application.config.grails.plugin.freemarker.localizedLookup
+		//turn off the localizedLookup by default
+		if(!configLocalizedLookup) {
+			ctx.freemarkerConfig.configuration.localizedLookup = false
+		}
+    }
+
+	def onChange = { event ->
+		if (application.isControllerClass(event.source) ) {
+			modRenderMethod(application, event.source)
+		}
+	}
+	
+	def modRenderMethod(application, clazz){
+		def render = new RenderDynamicMethod()
+		clazz.metaClass.render = {Map args ->
+			//if args has a pluginName then set it in a threadlocal so we can get to it from the freemarkerViewResolver 
+			if(args.plugin){
+				def request = WebUtils.retrieveGrailsWebRequest()?.getCurrentRequest()
+				if(request) {
+					request.setAttribute(GrailsTemplateLoader.PLUGIN_NAME_ATTRIBUTE,args.plugin)
+				}
+			}
+			render.invoke(delegate, "render", [args] as Object[])	
+        }
+	}
 }
