@@ -53,7 +53,7 @@ public class GrailsTemplateLoader implements TemplateLoader , ResourceLoaderAwar
 	@Resource def groovyPageResourceLoader
 	@Resource ResourceLoader resourceLoader
 	
-	String grailsAppPrefix = '/WEB-INF/grails-app/views/' 
+	static final String grailsAppPrefix = '/WEB-INF/grails-app/views/' 
 	static final String FTL_SUFFIX = ".ftl"
 	static final String PLUGIN_NAME_ATTRIBUTE = "pluginNameFromRenderCall"
 	

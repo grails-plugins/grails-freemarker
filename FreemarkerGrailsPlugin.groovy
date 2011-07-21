@@ -49,16 +49,10 @@ as views.
     def documentation = "http://grails.org/plugin/freemarker"
 
     def doWithSpring = {
-        //boolean developmentMode = !application.warDeployed
 
 		freemarkerGrailsTemplateLoader(org.springframework.grails.freemarker.GrailsTemplateLoader)
 
         freemarkerConfig(org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer) {
-            //if(developmentMode) {
-            //    templateLoaderPath="file:${BuildSettingsHolder.settings.baseDir.absolutePath}/grails-app/views"
-            //} else {
-            //    templateLoaderPath="/WEB-INF/grails-app/views"
-            //}
 			templateLoaders = [freemarkerGrailsTemplateLoader]
         }
         freemarkerViewResolver(org.springframework.grails.freemarker.GrailsFreeMarkerViewResolver) {
@@ -88,9 +82,7 @@ as views.
 				def request = WebUtils.retrieveGrailsWebRequest()?.getCurrentRequest()
 				if(request) {
 					request.setAttribute(GrailsTemplateLoader.PLUGIN_NAME_ATTRIBUTE,args.plugin)
-					println "added ${args.plugin}"
 				}
-				//println "added ${args.plugin}"
 			}
 			render.invoke(delegate, "render", [args] as Object[])	
         }
