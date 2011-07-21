@@ -32,7 +32,6 @@ import org.springframework.web.servlet.view.AbstractUrlBasedView
 import org.codehaus.groovy.grails.commons.GrailsApplication;
 import org.codehaus.groovy.grails.plugins.GrailsPluginManager;
 import org.codehaus.groovy.grails.plugins.PluginManagerAware;
-import org.codehaus.groovy.grails.web.pages.GroovyPagesTemplateEngine;
 import org.codehaus.groovy.grails.web.servlet.GrailsApplicationAttributes;
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsWebRequest;
 import org.codehaus.groovy.grails.web.util.WebUtils;
@@ -47,11 +46,12 @@ public class GrailsTemplateLoader implements TemplateLoader , ResourceLoaderAwar
 	protected final Log log = LogFactory.getLog(getClass())
 	
 	//injected when spring sets up bean
-	@Resource def groovyPagesTemplateEngine
 	@Resource def grailsApplication
 	@Resource def pluginManager
-	@Resource def groovyPageResourceLoader
-	@Resource ResourceLoader resourceLoader
+	//@Resource def groovyPageResourceLoader
+	ResourceLoader resourceLoader
+	
+	static ThreadLocal pluginNameForView = new ThreadLocal()
 	
 	static final String grailsAppPrefix = '/WEB-INF/grails-app/views/' 
 	static final String FTL_SUFFIX = ".ftl"
@@ -74,9 +74,8 @@ public class GrailsTemplateLoader implements TemplateLoader , ResourceLoaderAwar
 		def resource = loader.getResource(ftlUrl)
 		
 		if (!resource.exists()) {
-			String pluginName = request ? request.getAttribute(PLUGIN_NAME_ATTRIBUTE) : null
-			log.debug("pluginName is [$pluginName] ");
-			ftlUrl = resolveViewForControllerOrPluginName(controller, viewName,pluginName );
+			String pluginName = checkForPluginName(request)
+			ftlUrl = resolveViewForControllerOrPluginName(controller, viewName, pluginName );
 			resource = loader.getResource(ftlUrl);
 		}
 		if(resource.exists()){
@@ -144,11 +143,24 @@ public class GrailsTemplateLoader implements TemplateLoader , ResourceLoaderAwar
 
 	
 	ResourceLoader establishResourceLoader() {
-		if(groovyPageResourceLoader){
-			return groovyPageResourceLoader
+		//containsBeanDefinition
+		if(grailsApplication.mainContext.containsBeanDefinition('groovyPageResourceLoader')){
+			return grailsApplication.mainContext.groovyPageResourceLoader
 		}
 		//its deployed in a war or does need a special groovyPageResourceLoader so use the one that is injected from the ResourceLoaderAware
         return resourceLoader
+	}
+	
+	/**
+	 * checks to see if this should look for view in a plugin that was either set during a render call 
+	 * or via the service using the pluginNameForView threadLocal
+	 */
+	String checkForPluginName(request) {
+		String pluginName = request ? request.getAttribute(PLUGIN_NAME_ATTRIBUTE) : null
+		//if the thread local pluginNam is set then us that no matter what. provides for an ovverride
+		if(pluginNameForView.get()) pluginName = pluginNameForView.get()
+		log.debug("pluginName is [$pluginName] ");
+        return pluginName
 	}
 
 }

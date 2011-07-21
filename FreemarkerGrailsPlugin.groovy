@@ -50,10 +50,24 @@ as views.
 
     def doWithSpring = {
 
-		freemarkerGrailsTemplateLoader(org.springframework.grails.freemarker.GrailsTemplateLoader)
+		def freeconfig = application.config.grails.plugin.freemarker
+		
+		freemarkerGrailsTemplateLoader(org.springframework.grails.freemarker.GrailsTemplateLoader){ bean ->
+			bean.autowire = "byName"
+		}
 
         freemarkerConfig(org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer) {
-			templateLoaders = [freemarkerGrailsTemplateLoader]
+			if(freeconfig.preTemplateLoaderBeanName){
+				preTemplateLoaders = [ref("$freeconfig.preTemplateLoaderBeanName")]
+			}
+			if(freeconfig.templateLoaderPaths){
+				templateLoaderPaths = configLoaderPaths
+			}
+			if(freeconfig.postTemplateLoaderBeanName){
+				postTemplateLoaders = [ref('freemarkerGrailsTemplateLoader'),ref("$freeconfig.postTemplateLoaderBeanName")] 
+			}else{
+				postTemplateLoaders = [ref('freemarkerGrailsTemplateLoader')]
+			}
         }
         freemarkerViewResolver(org.springframework.grails.freemarker.GrailsFreeMarkerViewResolver) {
             prefix = ''
@@ -63,9 +77,17 @@ as views.
     }
 
 	def doWithDynamicMethods = { ctx ->
+		
 		for (controller in application.controllerClasses) {
 			modRenderMethod(application, controller)
         }
+		
+		/** Fremarker configuration mods **/
+		def configLocalizedLookup = application.config.grails.plugin.freemarker.localizedLookup
+		//turn off the localizedLookup by default
+		if(!configLocalizedLookup) {
+			ctx.freemarkerConfig.configuration.localizedLookup = false
+		}
     }
 
 	def onChange = { event ->

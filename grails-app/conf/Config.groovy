@@ -21,8 +21,8 @@ log4j = {
 
     warn   'org.mortbay.log'
 
-	debug  'org.springframework.grails.freemarker',
-	'org.codehaus.groovy.grails.web.pages.GroovyPageResourceLoader' 
+	debug  'org.springframework.grails.freemarker'//,
+	//'org.codehaus.groovy.grails.web.pages.GroovyPageResourceLoader' 
 	//	'org.codehaus.groovy.grails.web.pages.GroovyPageResourceLoader'//,
 		//'org.springframework.ui.freemarker',
 		//'org.springframework.web.servlet.view.freemarker',
