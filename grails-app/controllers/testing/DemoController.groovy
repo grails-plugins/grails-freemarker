@@ -6,6 +6,10 @@ class DemoController {
         [name: 'Jake', state: 'Missouri']
     }
 
+	def include = {
+        render view: 'fmtemplate', model:[name: 'Jake']
+    }
+
 	def wtf = {
 		render "wtf"
 	}
