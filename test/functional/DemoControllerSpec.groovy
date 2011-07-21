@@ -49,4 +49,34 @@ class DemoControllerSpec extends GebSpec {
 			html.contains('this message is in flash')
     }
 
+	def "plugin gobaby"() {
+        when:
+        	go "demo/gobaby"
+ 
+        then:
+			def html = driver.pageSource
+			html.contains('fly away')
+			html.contains('This is a ftl from a plugin')
+    }
+
+	def "plugin bluesky"() {
+        when:
+        	go "demo/bluesky"
+ 
+        then:
+			def html = driver.pageSource
+			html.contains('fly away')
+			html.contains('Blue Skies, from a plugin')
+    }
+
+	def "sanity check gsp in plugin"() {
+        when:
+        	go "demo/testGspPlugin"
+ 
+        then:
+			def html = driver.pageSource
+			html.contains('Hello from the a GSP in the plugin')
+    }
+
+
 }
