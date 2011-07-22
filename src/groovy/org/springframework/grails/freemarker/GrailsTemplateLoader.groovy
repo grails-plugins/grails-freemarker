@@ -17,7 +17,6 @@
 package org.springframework.grails.freemarker
 
 import javax.servlet.http.HttpServletRequest;
-import javax.annotation.Resource
 
 import freemarker.cache.TemplateLoader;
 import org.apache.commons.logging.Log;
@@ -32,22 +31,23 @@ import org.springframework.web.servlet.view.AbstractUrlBasedView
 import org.codehaus.groovy.grails.commons.GrailsApplication;
 import org.codehaus.groovy.grails.plugins.GrailsPluginManager;
 import org.codehaus.groovy.grails.plugins.PluginManagerAware;
+import org.codehaus.groovy.grails.plugins.support.aware.GrailsApplicationAware;
 import org.codehaus.groovy.grails.web.servlet.GrailsApplicationAttributes;
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsWebRequest;
 import org.codehaus.groovy.grails.web.util.WebUtils;
 
 
-/* Plugin template loader
+/**
 *
 * @author Joshua Burnett
 * 
 */
-public class GrailsTemplateLoader implements TemplateLoader , ResourceLoaderAware{
+public class GrailsTemplateLoader implements TemplateLoader, ResourceLoaderAware, GrailsApplicationAware, PluginManagerAware {
 	protected final Log log = LogFactory.getLog(getClass())
 	
 	//injected when spring sets up bean
-	@Resource def grailsApplication
-	@Resource def pluginManager
+	GrailsApplication grailsApplication
+	GrailsPluginManager pluginManager
 	//@Resource def groovyPageResourceLoader
 	ResourceLoader resourceLoader
 	

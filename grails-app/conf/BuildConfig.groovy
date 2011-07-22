@@ -44,7 +44,7 @@ grails.project.dependency.resolution = {
 		//}
 	}
 }
-grails.project.work.dir = '.grails'
+//grails.project.work.dir = '.grails'
 
 if (appName == "freemarker") {
 	grails.plugin.location.'freemarker-plugin-test' = "plugins/freemarker-plugin-test"
