@@ -26,7 +26,6 @@ import org.springframework.ui.freemarker.SpringTemplateLoader
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.web.servlet.view.AbstractUrlBasedView
 
 import org.codehaus.groovy.grails.commons.GrailsApplication;
 import org.codehaus.groovy.grails.plugins.GrailsPluginManager;
@@ -51,17 +50,17 @@ public class GrailsTemplateLoader implements TemplateLoader, ResourceLoaderAware
 	//@Resource def groovyPageResourceLoader
 	ResourceLoader resourceLoader
 	
-	static ThreadLocal pluginNameForView = new ThreadLocal()
+	static final ThreadLocal pluginNameForTemplate = new ThreadLocal()
 	
-	static final String grailsAppPrefix = '/WEB-INF/grails-app/views/' 
-	static final String FTL_SUFFIX = ".ftl"
-	static final String PLUGIN_NAME_ATTRIBUTE = "pluginNameFromRenderCall"
+	private static final String grailsAppPrefix = '/WEB-INF/grails-app/views/' 
+	//static final String FTL_SUFFIX = ".ftl"
+	private static final String PLUGIN_NAME_ATTRIBUTE = "pluginNameFromRenderCall"
 	
 	public GrailsTemplateLoader() {
 	}
 	
-	public Object findTemplateSource(String viewName) throws IOException {
-		log.debug("Looking for FreeMarker template with name [$viewName]")
+	public Object findTemplateSource(String templateName) throws IOException {
+		log.debug("Looking for FreeMarker template with name [$templateName]")
 
 		def ctx = grailsApplication.mainContext
 
@@ -70,12 +69,12 @@ public class GrailsTemplateLoader implements TemplateLoader, ResourceLoaderAware
 		def controller = webRequest?.getAttributes()?.getController(request)
 		
 		ResourceLoader loader = establishResourceLoader()
-		String ftlUrl = grailsAppPrefix + viewName //+ ".ftl"
+		String ftlUrl = grailsAppPrefix + templateName //+ ".ftl"
 		def resource = loader.getResource(ftlUrl)
 		
 		if (!resource.exists()) {
 			String pluginName = checkForPluginName(request)
-			ftlUrl = resolveViewForControllerOrPluginName(controller, viewName, pluginName );
+			ftlUrl = resolveViewForControllerOrPluginName(controller, templateName, pluginName );
 			resource = loader.getResource(ftlUrl);
 		}
 		if(resource.exists()){
@@ -111,29 +110,29 @@ public class GrailsTemplateLoader implements TemplateLoader, ResourceLoaderAware
 	public void closeTemplateSource(Object templateSource) throws IOException {}
 
 	/**
-     * Attempts to resolve a view relative to a controller. Finds the right url if its in a plugin
+     * Attempts to resolve a template relative to a controller. Finds the right url if its in a plugin
      *
-     * @param controller The controller to resolve the view relative to
-     * @param viewName The views name
+     * @param controller The controller to resolve the template relative to
+     * @param templateName The templates name
      * @param loader The ResourceLoader to use
-     * @return The URI of the view
+     * @return The URI of the template
      */
-    String resolveViewForControllerOrPluginName( controller, String viewName, String pluginName = null) {
+    String resolveViewForControllerOrPluginName( controller, String templateName, String pluginName = null) {
 	
 		
-        String ftlUrl = "${grailsAppPrefix}${viewName}" // try to resolve the view relative to the controller first, this allows us to support views provided by plugins
+        String ftlUrl = "${grailsAppPrefix}${templateName}" // try to resolve the template relative to the controller first, this allows us to support templates provided by plugins
 
 		if(pluginName){
 			String contextPath = pluginManager.getPluginPath(pluginName)
 			if (contextPath ) {
-				ftlUrl = "/WEB-INF$contextPath/grails-app/views/$viewName"
+				ftlUrl = "/WEB-INF$contextPath/grails-app/views/$templateName"
 			}
-			log.debug("pluginName set for ftl view, ended up with url [$ftlUrl] and contextpath [$contextPath]");
+			log.debug("pluginName set for ftl template, ended up with url [$ftlUrl] and contextpath [$contextPath]");
 		}
 		else if (controller) {
 			String pathToView = pluginManager ? pluginManager.getPluginViewsPathForInstance(controller) : null
 			if (pathToView ) {
-				ftlUrl = "/WEB-INF${pathToView}/${viewName}" //+ FTL_SUFFIX;
+				ftlUrl = "/WEB-INF${pathToView}/${templateName}" //+ FTL_SUFFIX;
 			}
 			log.debug("Controller was not null, pluginame not set so built url [$ftlUrl] ");
 		}
@@ -152,13 +151,13 @@ public class GrailsTemplateLoader implements TemplateLoader, ResourceLoaderAware
 	}
 	
 	/**
-	 * checks to see if this should look for view in a plugin that was either set during a render call 
+	 * checks to see if this should look for template in a plugin that was either set during a render call 
 	 * or via the service using the pluginNameForView threadLocal
 	 */
 	String checkForPluginName(request) {
 		String pluginName = request ? request.getAttribute(PLUGIN_NAME_ATTRIBUTE) : null
 		//if the thread local pluginNam is set then us that no matter what. provides for an ovverride
-		if(pluginNameForView.get()) pluginName = pluginNameForView.get()
+		if(pluginNameForTemplate.get()) pluginName = pluginNameForTemplate.get()
 		log.debug("pluginName is [$pluginName] ");
         return pluginName
 	}
