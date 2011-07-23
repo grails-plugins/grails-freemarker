@@ -2,10 +2,16 @@ package grails.plugin.freemarker
 
 import grails.test.*
 
+
+/**
+ *
+ * @author Joshua Burnett
+ *
+ */
 class FreemarkerServiceTests extends GroovyTestCase {
     FreemarkerService freemarkerService
     private String suffix = ".ftl"
-    
+
     protected void setUp() {
         super.setUp()
     }
