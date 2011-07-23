@@ -26,7 +26,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerView;
  * @author Jeff Brown
  *
  */
-class GrailsFreeMarkerView extends FreeMarkerView {
+public class GrailsFreeMarkerView extends FreeMarkerView {
 
     @Override
     protected void exposeHelpers(Map<String, Object> model, HttpServletRequest request) throws Exception {
