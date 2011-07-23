@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 import grails.util.BuildSettingsHolder
-import org.springframework.grails.freemarker.GrailsTemplateLoader
+import grails.plugin.freemarker.GrailsTemplateLoader
 import org.codehaus.groovy.grails.web.metaclass.RenderDynamicMethod
 import org.codehaus.groovy.grails.web.util.WebUtils
 
@@ -52,7 +52,7 @@ as views.
 
 		def freeconfig = application.config.grails.plugin.freemarker
 		
-		freemarkerGrailsTemplateLoader(org.springframework.grails.freemarker.GrailsTemplateLoader){ bean ->
+		freemarkerGrailsTemplateLoader(grails.plugin.freemarker.GrailsTemplateLoader){ bean ->
 			bean.autowire = "byName"
 		}
 
@@ -69,7 +69,7 @@ as views.
 				postTemplateLoaders = [ref('freemarkerGrailsTemplateLoader')]
 			}
         }
-        freemarkerViewResolver(org.springframework.grails.freemarker.GrailsFreeMarkerViewResolver) {
+        freemarkerViewResolver(grails.plugin.freemarker.GrailsFreeMarkerViewResolver) {
             prefix = ''
             suffix = '.ftl'
             order = 10

@@ -15,8 +15,6 @@
  */
 package grails.plugin.freemarker
 
-import org.springframework.grails.freemarker.GrailsTemplateLoader
-
 import freemarker.template.Configuration
 import freemarker.template.Template
 

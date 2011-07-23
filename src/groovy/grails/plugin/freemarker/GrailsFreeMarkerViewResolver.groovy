@@ -13,7 +13,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package org.springframework.grails.freemarker
+package grails.plugin.freemarker
 
 import org.springframework.web.servlet.View
 import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver
