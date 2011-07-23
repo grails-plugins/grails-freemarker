@@ -13,11 +13,13 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package grails.plugin.freemarker
+package grails.plugin.freemarker;
 
-import javax.servlet.http.HttpServletRequest
-import org.codehaus.groovy.grails.web.util.WebUtils
-import org.springframework.web.servlet.view.freemarker.FreeMarkerView
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import org.codehaus.groovy.grails.web.util.WebUtils;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerView;
 
 /**
  * 
@@ -27,8 +29,8 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerView
 class GrailsFreeMarkerView extends FreeMarkerView {
 
     @Override
-    protected void exposeHelpers(Map<String, Object> model, HttpServletRequest request) {
-        model.flash = WebUtils.retrieveGrailsWebRequest().attributes.getFlashScope(request)
-        super.exposeHelpers(model, request)
+    protected void exposeHelpers(Map<String, Object> model, HttpServletRequest request) throws Exception {
+        model.put("flash", WebUtils.retrieveGrailsWebRequest().getAttributes().getFlashScope(request));
+        super.exposeHelpers(model, request);
     }
 }
