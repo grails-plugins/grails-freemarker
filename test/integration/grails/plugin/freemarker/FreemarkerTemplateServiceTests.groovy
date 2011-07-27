@@ -8,8 +8,8 @@ import grails.test.*
  * @author Joshua Burnett
  *
  */
-class FreemarkerServiceTests extends GroovyTestCase {
-    FreemarkerService freemarkerService
+class FreemarkerTemplateServiceTests extends GroovyTestCase {
+    FreemarkerTemplateService freemarkerTemplateService
     private String suffix = ".ftl"
 
     protected void setUp() {
@@ -21,38 +21,38 @@ class FreemarkerServiceTests extends GroovyTestCase {
     }
 
     void testGetView() {
-        def view = freemarkerService.getTemplate("demo/index${suffix}")
+        def view = freemarkerTemplateService.getTemplate("demo/index${suffix}")
         assertNotNull view //.getTemplate(Locale.US)
 
     }
 
     void testGetViewPlugin() {
-        def view = freemarkerService.getTemplate("pluginTest/itWorks${suffix}","freemarker-plugin-test")
+        def view = freemarkerTemplateService.getTemplate("pluginTest/itWorks${suffix}","freemarker-plugin-test")
         assertNotNull view //.getTemplate(Locale.US)
     }
 
     void testRenderName(){
         def writer = new StringWriter()
-        freemarkerService.render("demo/index${suffix}" , [name:"basejump",state:"IL"], writer)
+        freemarkerTemplateService.render("demo/index${suffix}" , [name:"basejump",state:"IL"], writer)
         println writer.toString()
         assertTrue writer.toString().contains("Name: basejump")
     }
 
     void testRenderNamePlugin(){
         def writer = new StringWriter()
-        freemarkerService.render("gobaby${suffix}" , [testvar:"basejump"], writer, "freemarker-plugin-test")
+        freemarkerTemplateService.render("gobaby${suffix}" , [testvar:"basejump"], writer, "freemarker-plugin-test")
         println writer.toString()
         assertTrue writer.toString().contains("<p>basejump</p>")
     }
 
     void testRenderStringPlugin(){
-        def res = freemarkerService.renderString("gobaby${suffix}" , [testvar:"basejump"], "freemarker-plugin-test")
+        def res = freemarkerTemplateService.renderString("gobaby${suffix}" , [testvar:"basejump"], "freemarker-plugin-test")
         println res
         assertTrue res.contains("<p>basejump</p>")
     }
 
     void testRenderString(){
-        def res = freemarkerService.renderString("demo/index${suffix}" , [name:"basejump",state:"IL"])
+        def res = freemarkerTemplateService.renderString("demo/index${suffix}" , [name:"basejump",state:"IL"])
         println res
         assertTrue res.contains("Name: basejump")
     }

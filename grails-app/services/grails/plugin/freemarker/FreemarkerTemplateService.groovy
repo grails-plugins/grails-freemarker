@@ -24,7 +24,7 @@ import freemarker.template.Template
  * @author Joshua Burnett
  *
  */
-class FreemarkerService {
+class FreemarkerTemplateService {
 
     static transactional = false
 
