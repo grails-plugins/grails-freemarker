@@ -1,0 +1,18 @@
+.gsp
+
+{code: xml}
+<span id="title" class="label ${hasErrors(bean:book,field:'title','errors')}">Title</span>
+{code}
+
+
+.ftl
+
+{code: xml}
+<span id="title" class="label ${g.hasErrors({'bean':book,'field':'title'},'errors')}">Title</span>
+{code}
+
+
+{note}
+The plugin will define functions using the same namespace of the corresponding directives.
+All functions will receive two parameters, at most: a hash and an evaluated string. 
+{note}

@@ -1,0 +1,22 @@
+.gsp
+
+{code: xml}
+<g:includeJs script="myscript" />
+{code}
+
+
+.ftl
+
+{code: xml}
+<@g.includeJs script="myscript" />
+{code}
+
+or 
+
+{code: xml}
+\[@g.includeJs script="myscript" /]
+{code}
+
+
+Parameter values are (arbitrary complex) expressions that are not quoted. So assuming you want to pass an integer to foo, <\@foo bar=1 /> is good, but <\@foo bar="1" /> is wrong as it passes in the value as a string (because "1" is a string literal, just like in Groovy). For the same reason, <\@foo bar=x+1 /> is good, but <\@foo bar="${x+1}" /> does something else.
+

@@ -1,0 +1,8 @@
+{code}
+grails.plugins.freemarkertags = [
+  viewResolver: [
+     legacyHideExceptions: false     /* To enable or to disable the "feature" of hiding exceptions thrown by FreeMarkerViewResolver. It will also affect how those exceptions will be logged. */
+  ]
+]
+{code}
+

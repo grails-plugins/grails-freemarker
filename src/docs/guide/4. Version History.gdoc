@@ -1,0 +1,31 @@
+* 0.5.8
+** Fixed GroovyPageOutputStack usage
+** Functions names are no longer prefixed by "_"
+** Added EXPERIMENTAL support to expose functions and directives as shared variables
+
+* 0.5.9
+** Required version of Grails was reduced from 1.3.3 to 1.2.5
+** Exceptions thrown during the execution of FreeMarkerViewResolver.loadView() are no longer hidden
+
+* 0.6.0
+** Added specialized subclass of FreeMarkerConfigurer, increasing the range of use cases for the plugin
+
+* 0.6.1
+** Modified atts subclass (LinkedHashMap changed to GroovyPageAttributes)
+** Fixed calls to closures with an additional parameter (body)
+
+* 0.7.0
+** Major redesign to improve the performance (breaking changes)
+** Directives and functions will always be exposed as shared variables
+** GroovyPageOutputStack is no longer used
+** autoImport, defineLegacyFunctions and asSharedVariables options are no longer supported
+** Tags that are independent of specific Servlet objects or scopes can now be used without a thread-bound request
+** Classes deprecated
+
+* 0.7.1
+** Preparing the plugin to be compatible with Grails 2.0.0
+
+* 0.7.2
+** Deprecated classes removed
+** Preparing the plugin to be compatible with FreeMarker plugin 0.4
+** Packages renamed to meet the standard

@@ -1,0 +1,131 @@
+Create your Grails application
+
+{code}
+grails create-app test-freemaker-prj
+cd test-freemaker-prj
+{code}
+
+
+Install the plugin
+
+{code}
+grails install-plugin freemarker-tags
+{code}
+
+
+Create a domain class
+
+{code}
+grails create-domain-class MyUser
+{code}
+
+
+Add some fields and validations to your grails-app/domain/test/freemaker/prj/MyUser.groovy
+
+{code}
+  static constraints = {
+    username(unique: true, blank: false)
+    password(blank: false)
+  }
+
+  String username
+  String password
+{code}
+
+
+Generate a controller
+
+{code}
+grails generate-controller test.freemaker.prj.MyUser
+{code}
+
+
+Add new actions to your grails-app/controllers/test/freemaker/prj/MyUserController.groovy
+
+{code}
+    def login = {
+      def myUserInstance = new MyUser()
+      render(view: "login", model: [myUserInstance: myUserInstance])
+    }
+
+    def doLogin = {
+      def myUserInstance = new MyUser(params)
+      
+      boolean ok = myUserInstance.validate(['password']) 
+      if (ok) {
+	if (!myUserInstance.username || !myUserInstance.password || !myUserInstance.password.equals("pass")) {
+	  flash.message = "${message(code: 'Invalid password or username', args: [])}"
+	  ok = false
+	}
+      }
+      
+      if (ok) {
+	redirect(action: "index")
+      } else {
+	myUserInstance.password = null
+	render(view: "login", model: [myUserInstance: myUserInstance])
+      }
+    }
+{code}
+
+
+Create your grails-app/views/myUser/login.ftl
+
+{code: xml}
+<#ftl />
+
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="layout" content="main" />
+  </head>
+  <body>
+    <div class="body">
+      <#if flash.message?exists><div class="message">${flash.message}</div></#if>
+      <@g.hasErrors bean=myUserInstance>
+        <div class="errors">
+          <@g.renderErrors bean=myUserInstance _as="list" />
+        </div>
+      </@g.hasErrors> 
+      <@g.form action="doLogin" method="post">
+	<div class="dialog">
+	  <table>
+            <tr class="prop">
+              <td valign="top" class="name">
+		<label for="username"><@g.message code="myUser.username.label" default="Username" /></label>
+              </td>
+              <td valign="top" class="value ${g.hasErrors({'bean': myUserInstance, 'field': 'username'}, 'errors')}">
+		<@g.textField name="username" value=myUserInstance.username />
+            </td>
+            </tr>	  
+            <tr class="prop">
+              <td valign="top" class="name">
+		<label for="password"><@g.message code="myUser.password.label" default="Password" /></label>
+              </td>
+              <td valign="top" class="value ${g.hasErrors({'bean': myUserInstance, 'field': 'password'}, 'errors')}">
+		<@g.passwordField name="password" value=myUserInstance.password />
+              </td>
+            </tr>
+	  </table>
+	</div>
+        <div class="buttons">
+          <span class="button"><@g.submitButton name="submit" value="${g.message({'code': 'default.button.login.label', 'default': 'Login'})}" /></span>
+        </div>
+      </@g.form>
+    </div>
+  </body>
+</html>
+{code}
+
+
+Use your browser to navigate to http://localhost:8080/test-freemaker-prj/myUser/login
+
+Done!
+
+{note}
+In FreeMarker templates, you can use < > or \[ ]. For more information, please consult "Freemarker FAQ":http://freemarker.sourceforge.net/docs/app_faq.html#faq_alternative_syntax about alternative syntax.
+{note}
+
+{warning}
+Be aware that FreeMarker syntax differs from GSP syntax (they are different beasts).
+{warning}

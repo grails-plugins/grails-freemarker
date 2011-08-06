@@ -1,0 +1,13 @@
+.gsp
+
+{code: xml}
+\[key1: 'abc', key2: 2]
+{code}
+
+
+.ftl
+
+{code: xml}
+{'key1': 'abc', 'key2': 2}
+{code}
+

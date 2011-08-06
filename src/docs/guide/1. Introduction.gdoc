@@ -1,0 +1,2 @@
+With this plugin you can use the "Grails Tag Libraries":http://grails.org/doc/latest/guide/single.html#6.3%20Tag%20Libraries in "FreeMarker":http://freemarker.sourceforge.net/ templates. No JSP tag libraries are involved at all, the plugin connects FreeMarker to Grails TagLibs system as directly as possible.
+
