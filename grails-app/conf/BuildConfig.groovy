@@ -29,6 +29,7 @@ grails.project.dependency.resolution = {
 	}
 	
 	plugins {
+        compile ':plugin-config:latest.integration'
 		compile(":tomcat:$grailsVersion", ":hibernate:$grailsVersion") {
 			exported = false
 		}
@@ -47,5 +48,5 @@ grails.project.dependency.resolution = {
 //grails.project.work.dir = '.grails'
 
 if (appName == "freemarker") {
-	grails.plugin.location.'freemarker-plugin-test' = "plugins/freemarker-plugin-test"
+	grails.plugin.location.'freemarker-plugin-test' = "test-plugins/freemarker-plugin-test"
 }

@@ -19,11 +19,11 @@ import org.codehaus.groovy.grails.web.util.WebUtils
 
 class FreemarkerGrailsPlugin {
     // the plugin version
-    def version = "0.4-SNAPSHOT"
+    def version = "1.0-SNAPSHOT"
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "1.2 > *"
     // the other plugins this plugin depends on
-    def dependsOn = [:]
+    def dependsOn = [pluginConfig: '0.1.3 > *']
 
 	def observe = ["controllers"]
 	def loadAfter = ['controllers']
@@ -34,7 +34,7 @@ class FreemarkerGrailsPlugin {
 		"grails-app/controllers/**/*",
 		"grails-app/services/grails/plugin/freemarker/test/**/*",
 		"src/groovy/grails/plugin/freemarker/test/**/*",
-		"plugins/**/*",
+		"test-plugins/**/*",
 		"web-app/**/*"
 	]
 
@@ -50,7 +50,7 @@ as views.
 
     def doWithSpring = {
 
-		def freeconfig = application.config.grails.plugin.freemarker
+		def freeconfig = application.mergedConfig.asMap(true).grails.plugin.freemarker
 		
 		freemarkerGrailsTemplateLoader(grails.plugin.freemarker.GrailsTemplateLoader){ bean ->
 			bean.autowire = "byName"
@@ -61,7 +61,7 @@ as views.
 				preTemplateLoaders = [ref("$freeconfig.preTemplateLoaderBeanName")]
 			}
 			if(freeconfig.templateLoaderPaths){
-				templateLoaderPaths = configLoaderPaths
+				templateLoaderPaths = freeconfig.templateLoaderPaths
 			}
 			if(freeconfig.postTemplateLoaderBeanName){
 				postTemplateLoaders = [ref('freemarkerGrailsTemplateLoader'),ref("$freeconfig.postTemplateLoaderBeanName")] 
