@@ -29,3 +29,11 @@ log4j = {
 		//'org.springframework.core.io.DefaultResourceLoader',
 		//'org.springframework.web.context.support.ServletContextResourceLoader'
 }
+
+grails.doc.authors='Daniel Henrique Alves Lima (text revised by Gislaine Fonseca Ribeiro and others)'
+grails.doc.license='Apache License 2.0'
+
+
+grails.doc.alias = [
+  configuration: "3.1. Configuration"
+]

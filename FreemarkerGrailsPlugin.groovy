@@ -12,11 +12,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import grails.util.BuildSettingsHolder
+import grails.plugin.freemarker.AbstractTagLibAwareConfigurer
 import grails.plugin.freemarker.GrailsTemplateLoader
+import grails.plugin.freemarker.TagLibAwareConfigurer
+import grails.plugin.freemarker.TagLibPostProcessor
+
+import org.codehaus.groovy.grails.commons.GrailsClass
+import org.codehaus.groovy.grails.commons.TagLibArtefactHandler
 import org.codehaus.groovy.grails.web.metaclass.RenderDynamicMethod
 import org.codehaus.groovy.grails.web.util.WebUtils
+import org.springframework.context.ApplicationContext
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer
 
+/**
+ * @author Jeff Brown
+ * @author Daniel Henrique Alves Lima
+ * @author Joshua Burnett
+ */
 class FreemarkerGrailsPlugin {
     // the plugin version
     def version = "1.0-SNAPSHOT"
@@ -25,8 +37,8 @@ class FreemarkerGrailsPlugin {
     // the other plugins this plugin depends on
     def dependsOn = [pluginConfig: '0.1.3 > *']
 
-	def observe = ["controllers"]
-	def loadAfter = ['controllers']
+	def observe = ["controllers", 'groovyPages']
+	def loadAfter = ['controllers', 'groovyPages']
 	
     // resources that are excluded from plugin packaging
     def pluginExcludes = [
@@ -34,6 +46,9 @@ class FreemarkerGrailsPlugin {
 		"grails-app/controllers/**/*",
 		"grails-app/services/grails/plugin/freemarker/test/**/*",
 		"src/groovy/grails/plugin/freemarker/test/**/*",
+        "grails-app/i18n/*",
+        'grails-app/taglib/**/test/**/*',
+        'scripts/**/Eclipse.groovy',
 		"test-plugins/**/*",
 		"web-app/**/*"
 	]
@@ -51,12 +66,14 @@ as views.
     def doWithSpring = {
 
 		def freeconfig = application.mergedConfig.asMap(true).grails.plugin.freemarker
+        String ftlSuffix = '.ftl'
 		
 		freemarkerGrailsTemplateLoader(grails.plugin.freemarker.GrailsTemplateLoader){ bean ->
 			bean.autowire = "byName"
 		}
 
-        freemarkerConfig(org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer) {
+        Class configClass = freeconfig.tags.enabled == true? TagLibAwareConfigurer : FreeMarkerConfigurer
+        freemarkerConfig(configClass) {
 			if(freeconfig.preTemplateLoaderBeanName){
 				preTemplateLoaders = [ref("$freeconfig.preTemplateLoaderBeanName")]
 			}
@@ -65,14 +82,34 @@ as views.
 			}
 			if(freeconfig.postTemplateLoaderBeanName){
 				postTemplateLoaders = [ref('freemarkerGrailsTemplateLoader'),ref("$freeconfig.postTemplateLoaderBeanName")] 
-			}else{
+			} else{
 				postTemplateLoaders = [ref('freemarkerGrailsTemplateLoader')]
 			}
+            
+            if (freeconfig.tags.enabled == true) {
+                suffix = ftlSuffix
+            }
         }
         freemarkerViewResolver(grails.plugin.freemarker.GrailsFreeMarkerViewResolver) {
             prefix = ''
-            suffix = '.ftl'
+            suffix = ftlSuffix
             order = 10
+        }
+  
+        if (freeconfig.tags.enabled == true) {  
+            // Now go through tag libraries and configure them in spring too. With AOP proxies and so on
+            for (taglib in application.tagLibClasses) {
+                "${taglib.fullName}_fm"(taglib.clazz) { bean ->
+                    bean.autowire = true
+                    bean.lazyInit = true
+                    // Taglib scoping support could be easily added here. Scope could be based on a static field in the taglib class.
+                    //bean.scope = 'request'
+                }
+            }
+        
+            "${TagLibPostProcessor.class.name}"(TagLibPostProcessor) {
+                grailsApplication = ref('grailsApplication')
+            }
         }
     }
 
@@ -91,9 +128,37 @@ as views.
     }
 
 	def onChange = { event ->
+        def freeconfig = application.mergedConfig.asMap(true).grails.plugin.freemarker
 		if (application.isControllerClass(event.source) ) {
 			modRenderMethod(application, event.source)
 		}
+        
+        if (freeconfig.tags.enabled == true && application.isArtefactOfType(TagLibArtefactHandler.TYPE, event.source)) {
+            GrailsClass taglibClass = application.addArtefact(TagLibArtefactHandler.TYPE, event.source)
+            if (taglibClass) {
+                // replace tag library bean
+                def beanName = taglibClass.fullName
+                def beans = beans {
+                    "${beanName}_fm"(taglibClass.clazz) { bean ->
+                        bean.autowire = true
+                        //bean.scope = 'request'
+                    }
+                    
+                    "${TagLibPostProcessor.class.name}"(TagLibPostProcessor) {
+                        grailsApplication = ref('grailsApplication')
+                    }
+                }
+                beans.registerBeans(event.ctx)
+                
+                //event.manager?.getGrailsPlugin('groovyPages')?.doWithDynamicMethods(event.ctx)
+
+                def ApplicationContext springContext = application.mainContext
+                for (configurerBeanName in springContext.getBeanNamesForType(AbstractTagLibAwareConfigurer.class)) {
+                    def configurer = springContext.getBean(configurerBeanName)
+                    configurer.reconfigure()
+                }
+            }
+        }
 	}
 	
 	def modRenderMethod(application, clazz){

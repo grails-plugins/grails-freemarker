@@ -15,24 +15,31 @@
 */
 package grails.plugin.freemarker;
 
+import groovy.util.Eval;
+
 import java.util.Locale;
 
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.groovy.grails.commons.GrailsApplication;
+import org.codehaus.groovy.grails.plugins.support.aware.GrailsApplicationAware;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
 
 
 /**
  * 
  * @author Jeff Brown
+ * @author Daniel Henrique Alves Lima
  *
  */
-public class GrailsFreeMarkerViewResolver extends FreeMarkerViewResolver {
+public class GrailsFreeMarkerViewResolver extends FreeMarkerViewResolver implements GrailsApplicationAware {
 
     private final Log exceptionLog = LogFactory.getLog(getClass().getName() + ".EXCEPTION");
 	private final Log log = LogFactory.getLog(getClass().getName());
+	private GrailsApplication grailsApplication;
+	private boolean hideException = false;
 	
     public GrailsFreeMarkerViewResolver() { 
         setViewClass(GrailsFreeMarkerView.class);
@@ -43,13 +50,18 @@ public class GrailsFreeMarkerViewResolver extends FreeMarkerViewResolver {
         View view = null;
         try {
             if (log.isDebugEnabled()) {
-                log.debug("loadview for " + viewName);
+                log.debug("loadview for " + viewName + ", locale " + locale);
             }
             view = super.loadView(viewName, locale);
         } catch(Exception e) {
             // return null if an exception occurs so the rest of the view
             // resolver chain gets an opportunity to  generate a View
-            exceptionLog.warn("loadView", e);
+            if (hideException) {
+                exceptionLog.debug("loadView", e);
+            } else {
+                exceptionLog.error("loadView", e);
+                throw new RuntimeException(e);
+            }
         }
         return view;
     }
@@ -66,5 +78,13 @@ public class GrailsFreeMarkerViewResolver extends FreeMarkerViewResolver {
         }
 		return view;
 	}
+
+    @Override
+    public void setGrailsApplication(GrailsApplication grailsApplication) {
+        this.grailsApplication = grailsApplication;
+        if (this.grailsApplication != null) {
+            this.hideException = (Boolean) Eval.x(this.grailsApplication, "x.mergedConfig.asMap(true).grails.plugin.freemarker.viewResolver.hideException");
+        }
+    }
 }
 
