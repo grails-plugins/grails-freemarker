@@ -7,7 +7,9 @@ grails.project.dependency.resolution = {
 	repositories {        
 		grailsPlugins()
 		grailsHome()
-		grailsCentral()
+        if ("$grailsVersion" > "1.2.5") {
+            grailsCentral()
+        }
 		mavenCentral()
 	}
 
@@ -28,22 +30,29 @@ grails.project.dependency.resolution = {
 		//test("org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion")
 	}
 	
-	plugins {
-        compile ':plugin-config:latest.integration'
-		compile(":tomcat:$grailsVersion", ":hibernate:$grailsVersion") {
-			exported = false
-		}
-		test(":spock:0.5-groovy-1.7") {
-			exported = false
-		}
-		test(":geb:0.6.0") {
-			exported = false
-		}
+    //println "ABC: $grailsVersion"
+    //println "ABC: " + ("$grailsVersion" >= "1.3.7")
+    
+    if ("$grailsVersion" > "1.2.5") {
+        plugins {
+            if ("$grailsVersion" > "1.3.7") {
+                compile ":plugin-config:[0.1.3,)"
+            }
+            compile(":tomcat:$grailsVersion", ":hibernate:$grailsVersion") {
+                exported = false
+            }
+            test(":spock:0.5-groovy-1.7") {
+                exported = false
+            }
+            test(":geb:0.6.0") {
+                exported = false
+            }
 		//build(':release:1.0.0.M3') {
 			//nekohtml was conflicting with htmlunit
 		//	excludes "svn", 'nekohtml'
 		//}
 	}
+    }
 }
 //grails.project.work.dir = '.grails'
 
