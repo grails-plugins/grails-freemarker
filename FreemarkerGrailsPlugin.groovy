@@ -72,16 +72,28 @@ as views.
 			bean.autowire = "byName"
 		}
 
+        def resolveLoaders = {List loaders ->
+            List resolvedLoaders = []
+            for (loader in loaders) {
+                if (loader != null && loader instanceof CharSequence) {
+                    loader = ref(loader.toString())
+                }
+                resolvedLoaders << loader
+            }
+            return resolvedLoaders
+        }
+        
         Class configClass = freeconfig.tags.enabled == true? TagLibAwareConfigurer : FreeMarkerConfigurer
         freemarkerConfig(configClass) {
-			if(freeconfig.preTemplateLoaderBeanName){
-				preTemplateLoaders = [ref("$freeconfig.preTemplateLoaderBeanName")]
+			if(freeconfig.preTemplateLoaders){
+				preTemplateLoaders = resolveLoaders(freeconfig.preTemplateLoaders)
 			}
 			if(freeconfig.templateLoaderPaths){
 				templateLoaderPaths = freeconfig.templateLoaderPaths
 			}
-			if(freeconfig.postTemplateLoaderBeanName){
-				postTemplateLoaders = [ref('freemarkerGrailsTemplateLoader'),ref("$freeconfig.postTemplateLoaderBeanName")] 
+			if(freeconfig.postTemplateLoaders){
+				postTemplateLoaders = resolveLoaders(freeconfig.postTemplateLoaders) 
+                postTemplateLoaders.add(0, ref('freemarkerGrailsTemplateLoader'))
 			} else{
 				postTemplateLoaders = [ref('freemarkerGrailsTemplateLoader')]
 			}
