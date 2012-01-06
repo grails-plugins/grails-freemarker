@@ -16,6 +16,7 @@
 package grails.plugin.freemarker;
 
 import java.util.Map;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import org.codehaus.groovy.grails.web.util.WebUtils;
@@ -33,4 +34,12 @@ public class GrailsFreeMarkerView extends FreeMarkerView {
         model.put("flash", WebUtils.retrieveGrailsWebRequest().getAttributes().getFlashScope(request));
         super.exposeHelpers(model, request);
     }
+
+	/**
+	 * Ovverides the super so it does not check to see if the resource exists first
+	 */
+	@Override
+	public boolean checkResource(Locale locale) throws Exception {
+		return true;
+	}
 }

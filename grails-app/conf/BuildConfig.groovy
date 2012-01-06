@@ -37,11 +37,16 @@ grails.project.dependency.resolution = {
         plugins {
             if ("$grailsVersion" > "1.3.7") {
                 compile ":plugin-config:[0.1.3,)"
-            }
+				test(":spock:0.6-SNAPSHOT") {
+	                exported = false
+	            }
+            }else{
+				compile(":plugin-config:0.1.3"){exported = false}
+				test(":spock:0.5-groovy-1.7") {
+	                exported = false
+	            }
+			}
             compile(":tomcat:$grailsVersion", ":hibernate:$grailsVersion") {
-                exported = false
-            }
-            test(":spock:0.5-groovy-1.7") {
                 exported = false
             }
             test(":geb:0.6.0") {

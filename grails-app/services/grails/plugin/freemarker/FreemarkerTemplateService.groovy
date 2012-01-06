@@ -53,7 +53,6 @@ class FreemarkerTemplateService {
      */
     Writer render(Template template , Map model, Writer writer){
         // Consolidate static and dynamic model attributes.
-
         template.process(model, writer)
         return writer
     }
