@@ -1,6 +1,7 @@
 import geb.spock.GebSpec
  
 class DemoControllerSpec extends GebSpec {
+	
     def "sanity check"() {
         when:
         	go "demo/wtf"
@@ -10,6 +11,7 @@ class DemoControllerSpec extends GebSpec {
         	driver.pageSource.contains("wtf")	
     }
 
+	//@spock.lang.IgnoreRest
 	def "default view"() {
         when:
         	go "demo"
@@ -37,7 +39,7 @@ class DemoControllerSpec extends GebSpec {
         then:
 			def html = driver.pageSource
 			html.contains('The template at /demo/fmtemplate.ftl was rendered with Name: Zack')
-			html.contains('#before snippet# The template at /templates/freemarker/snippet.ftl was rendered with Name: Scott #after snippet#')
+			html.contains('The template at /templates/freemarker/snippet.ftl was rendered with Name: Scott')
     }
 
 	def "flash object"() {

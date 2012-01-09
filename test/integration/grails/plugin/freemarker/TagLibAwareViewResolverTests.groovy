@@ -34,6 +34,6 @@ class TagLibAwareViewResolverTests extends GroovyTestCase {
     }
 
     void testFreemarkerTagsConfig() {
-        assertEquals false, freemarkerViewResolver.@hideException        
+        assertEquals true, freemarkerViewResolver.@hideException        
     }
 }
