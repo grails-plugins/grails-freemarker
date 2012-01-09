@@ -38,8 +38,8 @@ public class GrailsFreeMarkerView extends FreeMarkerView {
 	/**
 	 * Ovverides the super so it does not check to see if the resource exists first
 	 */
-	@Override
-	public boolean checkResource(Locale locale) throws Exception {
-		return true;
-	}
+	// @Override
+	// public boolean checkResource(Locale locale) throws Exception {
+	// 	return true;
+	// }
 }

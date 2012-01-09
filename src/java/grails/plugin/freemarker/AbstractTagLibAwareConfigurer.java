@@ -45,7 +45,7 @@ public abstract class AbstractTagLibAwareConfigurer extends
     public static final String CONFIGURED_ATTRIBUTE_NAME = "_"
             + AbstractTagLibAwareConfigurer.class.getName() + ".configured";
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Log log = LogFactory.getLog(AbstractTagLibAwareConfigurer.class);
 
     @SuppressWarnings("unused")
     private String suffix = null;
@@ -146,7 +146,7 @@ public abstract class AbstractTagLibAwareConfigurer extends
                                      * Workaround for properties exposed as tags
                                      * and dependent of RequestAttributes
                                      */
-                                    log.debug("reconfigure()", e);
+                                    //log.debug("reconfigure()", e);
                                 }
                                 if (tagInstanceObject != null
                                         && tagInstanceObject instanceof Closure) {
@@ -160,20 +160,14 @@ public abstract class AbstractTagLibAwareConfigurer extends
 
                         }
 
-                        for (Map.Entry<String, Map<String, TemplateModel>> entry : sharedVars
-                                .entrySet()) {
-                            if (log.isDebugEnabled()) {
-                                log.debug("reconfigure(): @" + entry.getKey()
-                                        + ". = " + entry.getValue());
-                            }
-                            configuration.setSharedVariable(entry.getKey(),
-                                    entry.getValue());
+                        for (Map.Entry<String, Map<String, TemplateModel>> entry : sharedVars.entrySet()) {
+                            // if (log.isDebugEnabled()) {
+                            //                                 log.debug("reconfigure(): @" + entry.getKey()+ ". = " + entry.getValue());
+                            //                             }
+                            configuration.setSharedVariable(entry.getKey(),entry.getValue());
                         }
 
-                        configuration
-                                .setCustomAttribute(
-                                        AbstractTagLibAwareConfigurer.CONFIGURED_ATTRIBUTE_NAME,
-                                        Boolean.TRUE);
+                        configuration.setCustomAttribute(AbstractTagLibAwareConfigurer.CONFIGURED_ATTRIBUTE_NAME,Boolean.TRUE);
                     } catch (TemplateModelException e) {
                         throw new RuntimeException(e);
                     }

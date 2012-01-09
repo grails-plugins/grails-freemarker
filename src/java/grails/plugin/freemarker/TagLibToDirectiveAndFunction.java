@@ -89,7 +89,7 @@ public class TagLibToDirectiveAndFunction implements TemplateDirectiveModel,
     public Object exec(@SuppressWarnings("rawtypes") List arguments)
             throws TemplateModelException {
         if (log.isDebugEnabled()) {
-            log.debug("exec(): @" + namespace + "." + tagName);
+            //log.debug("exec(): @" + namespace + "." + tagName);
         }
         try {
             CharArrayWriter writer = new CharArrayWriter();
@@ -111,8 +111,8 @@ public class TagLibToDirectiveAndFunction implements TemplateDirectiveModel,
                     Boolean.TRUE) : unwrapParams(Collections.EMPTY_MAP,
                     Boolean.TRUE);
             if (log.isDebugEnabled()) {
-                log.debug("exec(): args " + args);
-                log.debug("exec(): body " + body);
+                //log.debug("exec(): args " + args);
+                //log.debug("exec(): body " + body);
             }
 
             if (tagInstance.getMaximumNumberOfParameters() == 1) {
@@ -155,15 +155,15 @@ public class TagLibToDirectiveAndFunction implements TemplateDirectiveModel,
             final TemplateDirectiveBody body) throws TemplateException,
             IOException {
         if (log.isDebugEnabled()) {
-            log.debug("execute(): @" + namespace + "." + tagName);
+            //log.debug("execute(): @" + namespace + "." + tagName);
         }
         try {
             tagInstance.invokeMethod("pushOut", env.getOut());
 
             params = unwrapParams(params, Boolean.TRUE);
             if (log.isDebugEnabled()) {
-                log.debug("execute(): params " + params);
-                log.debug("exec(): body " + body);
+                //log.debug("execute(): params " + params);
+                //log.debug("exec(): body " + body);
             }
             Object result = null;
             if (tagInstance.getMaximumNumberOfParameters() == 1) {
@@ -184,7 +184,7 @@ public class TagLibToDirectiveAndFunction implements TemplateDirectiveModel,
                             TemplateModel oldIt = null;
 
                             if (log.isDebugEnabled()) {
-                                log.debug("it " + it);
+                                //log.debug("it " + it);
                             }
 
                             boolean itIsAMap = false;
@@ -244,8 +244,8 @@ public class TagLibToDirectiveAndFunction implements TemplateDirectiveModel,
             }
 
             if (log.isDebugEnabled()) {
-                log.debug("hasReturnValue " + hasReturnValue);
-                log.debug("result " + result);
+                //log.debug("hasReturnValue " + hasReturnValue);
+                //log.debug("result " + result);
             }
             if (result != null && hasReturnValue) {
                 env.getOut().append(result.toString());
