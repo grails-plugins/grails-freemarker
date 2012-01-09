@@ -18,6 +18,8 @@ package grails.plugin.freemarker;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.File;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,7 +27,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.groovy.grails.commons.GrailsApplication;
 import org.codehaus.groovy.grails.plugins.GrailsPluginManager;
+import org.codehaus.groovy.grails.plugins.GrailsPlugin;
 import org.codehaus.groovy.grails.plugins.PluginManagerAware;
+import org.codehaus.groovy.grails.commons.GrailsResourceUtils;
 import org.codehaus.groovy.grails.plugins.support.aware.GrailsApplicationAware;
 import org.codehaus.groovy.grails.web.servlet.GrailsApplicationAttributes;
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsWebRequest;
@@ -33,6 +37,9 @@ import org.codehaus.groovy.grails.web.util.WebUtils;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.core.io.FileSystemResource;
+import grails.util.GrailsUtil;
+//import grails.util.PluginBuildSettings;
 
 import freemarker.cache.TemplateLoader;
 
@@ -50,12 +57,16 @@ public class GrailsTemplateLoader implements TemplateLoader, ResourceLoaderAware
 
     private GrailsPluginManager pluginManager;
 	private ResourceLoader resourceLoader;
+	//this will be empty for GRails 2 and set to "/WEB-INF" for 1.3.7
+	private String webInfPrefix = "/WEB-INF";
 	
 	private static final ThreadLocal<String> pluginNameForTemplate = new ThreadLocal<String>();
 	
     private static final String grailsAppPrefix = "/WEB-INF/grails-app/views/"; 
-	//static final String FTL_SUFFIX = ".ftl"
+	private static final String PATH_TO_WEB_INF_VIEWS = GrailsApplicationAttributes.PATH_TO_VIEWS;
 	private static final String PLUGIN_NAME_ATTRIBUTE = "pluginNameFromRenderCall";
+	private static final String PLUGINS_PATH = "/plugins/";
+
 	
 	public GrailsTemplateLoader() {
 	}
@@ -71,9 +82,9 @@ public class GrailsTemplateLoader implements TemplateLoader, ResourceLoaderAware
 		
 		Object controller = gAttributes != null? gAttributes.getController(request) : null;
 		
-		ResourceLoader loader = establishResourceLoader();
-		String ftlUrl = grailsAppPrefix + templateName; //+ ".ftl"
-		Resource resource = loader.getResource(ftlUrl);
+		ResourceLoader loader = establishResourceLoader();		
+		String ftlUrl = grailsAppPrefix + templateName; 
+		Resource resource = loader.getResource(fixPathForGrailsVersion(ftlUrl));
 		
 		if (!resource.exists()) {
 			String pluginName = checkForPluginName(request);
@@ -125,23 +136,25 @@ public class GrailsTemplateLoader implements TemplateLoader, ResourceLoaderAware
      * @return The URI of the template
      */
     String resolveViewForControllerOrPluginName(Object controller, String templateName, String pluginName) {
-        String ftlUrl = grailsAppPrefix + templateName; // try to resolve the template relative to the controller first, this allows us to support templates provided by plugins
-
+        String ftlUrl = grailsAppPrefix + templateName; 
+		
 		if(pluginName != null){
 			String contextPath = pluginManager.getPluginPath(pluginName);
+			//GrailsUtil.grailsVersion
 			if (contextPath != null) {
-				ftlUrl = "/WEB-INF" + contextPath + "/grails-app/views/" + templateName;
+				//GrailsUtil.getGrailsVersion()
+				ftlUrl = webInfPrefix + contextPath + "/grails-app/views/" + templateName;
 			}
 			if (log.isDebugEnabled()){log.debug("pluginName set for ftl template, ended up with url ["+ ftlUrl + "] and contextpath ["+ contextPath + "]");}
 		}
 		else if (controller != null) {
 			String pathToView = pluginManager != null? pluginManager.getPluginViewsPathForInstance(controller) : null;
 			if (pathToView != null) {
-				ftlUrl = "/WEB-INF" +  pathToView + "/" + templateName; //+ FTL_SUFFIX;
+				ftlUrl = webInfPrefix +  pathToView + "/" + templateName; 
 			}
-			if (log.isDebugEnabled()) {log.debug("Controller was not null, pluginame not set so built url [" + ftlUrl + "]");}
+			if (log.isDebugEnabled()) {log.debug("Controller set, pluginame not set so built url [" + ftlUrl + "]");}
 		}
-		
+		ftlUrl = fixPathForGrailsVersion( ftlUrl);
 		return ftlUrl;
     }
 
@@ -153,6 +166,16 @@ public class GrailsTemplateLoader implements TemplateLoader, ResourceLoaderAware
 		}
 		//its deployed in a war or does need a special groovyPageResourceLoader so use the one that is injected from the ResourceLoaderAware
         return resourceLoader;
+	}
+	
+	String fixPathForGrailsVersion(String ftlUrl){
+		//grails 2 changed the way the groovyPageResourceLoader works, it used to take care of lopping off the web-inf for us
+		//during dev time but it no longer does
+		if(GrailsUtil.getGrailsVersion().compareTo("2.0.0") >= 0 && ftlUrl.startsWith(GrailsResourceUtils.WEB_INF) 
+			&& !grailsApplication.isWarDeployed()){
+			return ftlUrl.substring(GrailsResourceUtils.WEB_INF.length()); //FIXME this works for 1.3.7 + 1);
+		}
+		return ftlUrl;	
 	}
 	
 	/**
@@ -195,6 +218,7 @@ public class GrailsTemplateLoader implements TemplateLoader, ResourceLoaderAware
     public static ThreadLocal<String> getPluginNameForTemplate() {
         return pluginNameForTemplate;
     }
+
 
 }
 
