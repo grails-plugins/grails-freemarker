@@ -1,6 +1,11 @@
 grails.project.dependency.resolution = {
-	def versions = [geb:"0.6.0", selenium:"2.0rc3", spock:"0.5-groovy-1.7"]
-	
+	def versions
+	if ("$grailsVersion" > "1.3.7") {
+		versions = [geb:"0.6.2", selenium:"2.15.0", spock:"0.6-SNAPSHOT",pluginConfig:"[0.1.5,)"]		
+    }else{
+		versions = [geb:"0.6.0", selenium:"2.0rc3", spock:"0.5-groovy-1.7",pluginConfig:"0.1.5"]
+	}
+
 	inherits('global') {
 	}
 
@@ -17,12 +22,12 @@ grails.project.dependency.resolution = {
 		runtime "org.freemarker:freemarker:2.3.18"
 		
 
-		test("org.codehaus.geb:geb-spock:0.6.0"){
+		test("org.codehaus.geb:geb-spock:${versions.geb}"){
 			exported = false
 		}
 		//test "org.codehaus.geb:geb-junit4:$gebVersion" uncomment if you want to use the junit geb
 		//the version should match what is used on the geb release being used
-		test("org.seleniumhq.selenium:selenium-htmlunit-driver:2.0rc3") {
+		test("org.seleniumhq.selenium:selenium-htmlunit-driver:${versions.selenium}") {
 			exported = false
 			exclude "xml-apis"
 		}
@@ -33,25 +38,40 @@ grails.project.dependency.resolution = {
     //println "ABC: $grailsVersion"
     //println "ABC: " + ("$grailsVersion" >= "1.3.7")
     
+
     if ("$grailsVersion" > "1.2.5") {
         plugins {
-            if ("$grailsVersion" > "1.3.7") {
-                compile ":plugin-config:[0.1.3,)"
-				test(":spock:0.6-SNAPSHOT") {
-	                exported = false
-	            }
-            }else{
-				compile(":plugin-config:0.1.3"){exported = false}
-				test(":spock:0.5-groovy-1.7") {
-	                exported = false
-	            }
+			compile(":plugin-config:${versions.pluginConfig}"){
 			}
+			test(":spock:${versions.spock}") {
+                exported = false
+            }
+			test(":geb:${versions.geb}") {
+                exported = false
+            }
+			//             if ("$grailsVersion" > "1.3.7") {
+			//                 compile ":plugin-config:[0.1.3,)"
+			// 	test(":spock:0.6-SNAPSHOT") {
+			// 	                exported = false
+			// 	            }
+			// 	test(":geb:0.6.2") {
+			// 	                exported = false
+			// 	            }
+			// 	
+			//             }else{
+			// 	compile(":plugin-config:0.1.3"){
+			// 	}
+			// 	test(":spock:0.5-groovy-1.7") {
+			// 	                exported = false
+			// 	            }
+			// 	test(":geb:0.6.0") {
+			// 	                exported = false
+			// 	            }
+			// }
             compile(":tomcat:$grailsVersion", ":hibernate:$grailsVersion") {
                 exported = false
             }
-            test(":geb:0.6.0") {
-                exported = false
-            }
+            
 		//build(':release:1.0.0.M3') {
 			//nekohtml was conflicting with htmlunit
 		//	excludes "svn", 'nekohtml'
