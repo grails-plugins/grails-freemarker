@@ -28,8 +28,9 @@ class FreeMarkerTagLib {
 
     def render = { attrs ->
         if(!attrs.template)
-        throwTagError("Tag [fm:render] is missing required attribute [template]")
-        def templateName = attrs.template
+        	throwTagError("Tag [fm:render] is missing required attribute [template]")
+        
+		def templateName = attrs.template
         def template
         if(templateName[0] == '/') {
             template = freemarkerConfig.configuration.getTemplate("${templateName}.ftl")

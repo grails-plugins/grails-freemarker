@@ -2,12 +2,23 @@ package testing
 
 class DemoController {
     
+	//passes through to index, sitemesh should be set here
     def index = {
         [name: 'Jake', state: 'Missouri']
     }
 
-	def include = {
-        render view: 'fmtemplate', model:[name: 'Jake']
+	//a simple normal gsp
+    def normal = {
+        [name: 'Jake', state: 'Missouri']
+    }
+	
+	//passes through to the template
+	def fmtemplate = {
+        [name: 'Jake']
+    }
+
+	def specifyView = {
+        render view: '/demo/fmtemplate', model: [name: 'Abe', state: 'Illinois']
     }
 
 	def wtf = {
