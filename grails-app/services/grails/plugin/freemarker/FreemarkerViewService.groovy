@@ -24,15 +24,18 @@ class FreemarkerViewService {
      * get the view for a plugin.
      * sets a threadlocal and then passes call to getTemplate(viewname, locale)
      */
-    View getView(String viewName, String pluginName = null) {
-        GrailsWebRequest webRequest = WebUtils.retrieveGrailsWebRequest()
-		Locale locale = webRequest?.locale?:Locale.default
-		log.debug("getView called with viewname : $viewName and pluginName : $pluginName")
-		return freemarkerViewResolver.resolveViewName( viewName, locale)
+    View getView(String viewName, String pluginName = null, boolean removePluginName = true) {
+		try{
+            if(pluginName) GrailsTemplateLoader.pluginNameForTemplate.set(pluginName)
+			log.debug("getView called with viewname : $viewName and pluginName : $pluginName")
+			return freemarkerViewResolver.resolveViewName( viewName, getLocale())
+        }finally{
+            if(pluginName && removePluginName)  GrailsTemplateLoader.pluginNameForTemplate.remove()
+        }
     }
     
     Writer render(String viewName , Map model, Writer writer, String pluginName = null){
-        render( getView(viewName, pluginName) ,  model,  writer, pluginName)
+        render( getView(viewName, pluginName,false) ,  model,  writer, pluginName)
     }
     
     /**
@@ -41,8 +44,6 @@ class FreemarkerViewService {
      */
     Writer render(View view , Map model, Writer writer,String pluginName = null){
 		try{
-            GrailsWebRequest webRequest = WebUtils.retrieveGrailsWebRequest()
-            Locale locale = webRequest?.locale?:Locale.default
             if(pluginName) GrailsTemplateLoader.pluginNameForTemplate.set(pluginName)
 			log.debug("primary render called with view : $view ")
 	        // Consolidate static and dynamic model attributes.
@@ -50,7 +51,7 @@ class FreemarkerViewService {
 	        mergedModel.putAll(view.attributesMap)
 	        if (model)  mergedModel.putAll(model)
 
-	        def template = view.getTemplate(locale)
+	        def template = view.getTemplate(getLocale())
 	        template.process(new SimpleHash(mergedModel), writer)
 	        return writer
         }finally{
@@ -64,7 +65,7 @@ class FreemarkerViewService {
      *
      */
     String renderString(String viewName , Map model, String pluginName = null){
-        return renderString(getView(viewName, pluginName),  model,pluginName)
+        return renderString(getView(viewName, pluginName,false),  model,pluginName)
     }
     
     /**
@@ -75,6 +76,11 @@ class FreemarkerViewService {
         def charWriter = new CharArrayWriter()
         return render( view ,  model,  charWriter, pluginName).toString()
     }
+
+	def getLocale(){
+		GrailsWebRequest webRequest = WebUtils.retrieveGrailsWebRequest()
+        return webRequest?.locale?:Locale.default
+	}
     
 
     
