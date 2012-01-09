@@ -2,9 +2,11 @@
 log4j = {
     // Example of changing the log pattern for the default console
     // appender:
+    root { info() }
     
-    appenders {
-      console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
+	appenders {
+        console name:'stdout', layout:pattern(conversionPattern: '%d{HH:mm:ss,SSS} %-5p %c{3} %x - %m%n')
+		//console name:'stdout', layout:pattern(conversionPattern: '%d{HH:mm:ss,SSS} [%t] %-5p %c %x - %m%n')
     }
 
     error  'org.codehaus.groovy.grails.web.servlet',  //  controllers
@@ -21,10 +23,14 @@ log4j = {
 
     warn   'org.mortbay.log'
 
-	debug  'org.springframework.grails.freemarker'//,
-	//'org.codehaus.groovy.grails.web.pages.GroovyPageResourceLoader' 
-	//	'org.codehaus.groovy.grails.web.pages.GroovyPageResourceLoader'//,
-		//'org.springframework.ui.freemarker',
+	trace  'org.springframework.web.servlet.view',
+			'org.springframework.context.support'
+
+	debug  'grails.plugin.freemarker.GrailsTemplateLoader',
+			'grails.plugin.freemarker.GrailsFreeMarkerViewResolver',
+			'grails.app.service.grails.plugin.freemarker.FreemarkerViewService',
+			'org.codehaus.groovy.grails.web.pages.GroovyPageResourceLoader'
+			//'org.springframework.ui.freemarker',
 		//'org.springframework.web.servlet.view.freemarker',
 		//'org.springframework.core.io.DefaultResourceLoader',
 		//'org.springframework.web.context.support.ServletContextResourceLoader'

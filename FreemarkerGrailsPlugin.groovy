@@ -16,6 +16,7 @@ import grails.plugin.freemarker.AbstractTagLibAwareConfigurer
 import grails.plugin.freemarker.GrailsTemplateLoader
 import grails.plugin.freemarker.TagLibAwareConfigurer
 import grails.plugin.freemarker.TagLibPostProcessor
+import grails.util.*;
 
 import org.codehaus.groovy.grails.commons.GrailsClass
 import org.codehaus.groovy.grails.commons.TagLibArtefactHandler
@@ -35,7 +36,7 @@ class FreemarkerGrailsPlugin {
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "1.2 > *"
     // the other plugins this plugin depends on
-    def dependsOn = [pluginConfig: '0.1.3 > *']
+    //def dependsOn = [pluginConfig: '0.1.3 > *']
 
 	def observe = ["controllers", 'groovyPages']
 	def loadAfter = ['controllers', 'groovyPages']
@@ -64,6 +65,7 @@ as views.
     def documentation = "http://grails.org/plugin/freemarker"
 
     def doWithSpring = {
+
 
 		def freeconfig = application.mergedConfig.asMap(true).grails.plugin.freemarker
         String ftlSuffix = '.ftl'
@@ -98,13 +100,15 @@ as views.
 				postTemplateLoaders = [ref('freemarkerGrailsTemplateLoader')]
 			}
             
-            if (freeconfig.tags.enabled == true) {
-                suffix = ftlSuffix
-            }
+            // if (freeconfig.tags.enabled == true) {
+            //     suffix = ftlSuffix
+            // }
         }
         freemarkerViewResolver(grails.plugin.freemarker.GrailsFreeMarkerViewResolver) {
             prefix = ''
-            suffix = ftlSuffix
+            suffix = freeconfig.requireViewSuffix ? '' : ftlSuffix
+			requireViewSuffix = freeconfig.requireViewSuffix 
+			hideException = freeconfig.viewResolver.hideException 
             order = 10
         }
   
@@ -123,6 +127,12 @@ as views.
                 grailsApplication = ref('grailsApplication')
             }
         }
+    }
+
+	static String transformToValidLocation(String location) {
+        if (location == '.') return location
+        if (!location.endsWith(File.separator)) return "${location}${File.separator}"
+        return location
     }
 
 	def doWithDynamicMethods = { ctx ->

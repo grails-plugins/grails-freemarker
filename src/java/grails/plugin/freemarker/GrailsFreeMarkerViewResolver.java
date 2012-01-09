@@ -34,12 +34,14 @@ import org.springframework.web.servlet.view.AbstractUrlBasedView;
  * @author Daniel Henrique Alves Lima
  *
  */
-public class GrailsFreeMarkerViewResolver extends FreeMarkerViewResolver implements GrailsApplicationAware {
+public class GrailsFreeMarkerViewResolver extends FreeMarkerViewResolver{//} implements GrailsApplicationAware {
 
     private final Log exceptionLog = LogFactory.getLog(getClass().getName() + ".EXCEPTION");
-	private final Log log = LogFactory.getLog(getClass().getName());
-	private GrailsApplication grailsApplication;
-	private boolean hideException = false;
+	private final Log log = LogFactory.getLog(GrailsFreeMarkerViewResolver.class);
+	GrailsApplication grailsApplication;
+ 	private boolean hideException = true;
+	private boolean requireViewSuffix = false;
+	static final String FTL_SUFFIX = ".ftl";
 	
     public GrailsFreeMarkerViewResolver() { 
         setViewClass(GrailsFreeMarkerView.class);
@@ -48,6 +50,9 @@ public class GrailsFreeMarkerViewResolver extends FreeMarkerViewResolver impleme
 	@Override
     protected View loadView(String viewName, Locale locale) {
         View view = null;
+		if(requireViewSuffix && !viewName.endsWith(FTL_SUFFIX)) {
+			return null;
+		}
         try {
             if (log.isDebugEnabled()) {
                 log.debug("loadview for " + viewName + ", locale " + locale);
@@ -79,12 +84,20 @@ public class GrailsFreeMarkerViewResolver extends FreeMarkerViewResolver impleme
 		return view;
 	}
 
-    @Override
-    public void setGrailsApplication(GrailsApplication grailsApplication) {
-        this.grailsApplication = grailsApplication;
-        if (this.grailsApplication != null) {
-            this.hideException = (Boolean) Eval.x(this.grailsApplication, "x.mergedConfig.asMap(true).grails.plugin.freemarker.viewResolver.hideException");
-        }
+    // @Override
+    // public void setGrailsApplication(GrailsApplication grailsApplication) {
+    //     this.grailsApplication = grailsApplication;
+    //     if (this.grailsApplication != null) {
+    //         this.hideException = (Boolean) Eval.x(this.grailsApplication, "x.mergedConfig.asMap(true).grails.plugin.freemarker.viewResolver.hideException");
+    //     }
+    // }
+
+    public void setHideException(boolean hideException) {
+		this.hideException = hideException;
+    }
+
+	public void setRequireViewSuffix(boolean requireViewSuffix) {
+		this.requireViewSuffix = requireViewSuffix;
     }
 }
 
