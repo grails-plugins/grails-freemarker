@@ -26,7 +26,8 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.groovy.grails.commons.GrailsApplication;
 import org.codehaus.groovy.grails.plugins.support.aware.GrailsApplicationAware;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
-
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
 /**
  * 
@@ -35,17 +36,27 @@ import org.springframework.web.servlet.view.AbstractUrlBasedView;
  *
  */
 public class GrailsFreeMarkerViewResolver extends FreeMarkerViewResolver{//} implements GrailsApplicationAware {
-
-    private final Log exceptionLog = LogFactory.getLog(getClass().getName() + ".EXCEPTION");
+    private final Log exceptionLog = LogFactory.getLog("GrailsFreeMarkerViewResolver.EXCEPTION");
 	private final Log log = LogFactory.getLog(GrailsFreeMarkerViewResolver.class);
-	GrailsApplication grailsApplication;
+	
+	//injected autowired
+	//GrailsApplication grailsApplication
+	private FreeMarkerConfig freemarkerConfig;
  	private boolean hideException = true;
 	private boolean requireViewSuffix = false;
+	
+	//end inject
+	
 	static final String FTL_SUFFIX = ".ftl";
 	
-    public GrailsFreeMarkerViewResolver() { 
-        setViewClass(GrailsFreeMarkerView.class);
-    }
+    // public GrailsFreeMarkerViewResolver() { 
+    //     setViewClass(GrailsFreeMarkerView.class);
+    // }
+
+	@Override
+	protected Class requiredViewClass() {
+		return GrailsFreeMarkerView.class;
+	}
 
 	@Override
     protected View loadView(String viewName, Locale locale) {
@@ -53,13 +64,19 @@ public class GrailsFreeMarkerViewResolver extends FreeMarkerViewResolver{//} imp
 		if(requireViewSuffix && !viewName.endsWith(FTL_SUFFIX)) {
 			return null;
 		}
+		else if (viewName.endsWith(FTL_SUFFIX)){
+			//remove the .ftl suffix in case it was added
+			viewName = viewName.substring(0,viewName.length() - FTL_SUFFIX.length());
+		}
         try {
-            if (log.isDebugEnabled()) {
-                log.debug("loadview for " + viewName + ", locale " + locale);
-            }
-            view = super.loadView(viewName, locale);
-        } catch(Exception e) {
-            // return null if an exception occurs so the rest of the view
+            if (log.isDebugEnabled()) log.debug("loadview for " + viewName + ", locale " + locale);
+            GrailsFreeMarkerView gview = (GrailsFreeMarkerView) buildView(viewName);
+            gview.freemarkerConfig = freemarkerConfig;
+    		View result = (View) getApplicationContext().getAutowireCapableBeanFactory().initializeBean(gview, viewName);
+    		view =  (gview.checkResource(locale) ? result : null);
+
+		} catch(Exception e) {
+            // by default return null if an exception occurs so the rest of the view
             // resolver chain gets an opportunity to  generate a View
             if (hideException) {
                 exceptionLog.debug("loadView", e);
@@ -71,27 +88,19 @@ public class GrailsFreeMarkerViewResolver extends FreeMarkerViewResolver{//} imp
         return view;
     }
 	
-	//just so we have good logging
+	//Override just so we have some logging
 	@Override
 	protected AbstractUrlBasedView buildView(String viewName) throws Exception {
-        if (log.isDebugEnabled()) {
-            log.debug("buildView for " + viewName);
-        }
+        if (log.isDebugEnabled()) log.debug("starting buildView with " + viewName);
 		AbstractUrlBasedView view = super.buildView(viewName);
-        if (log.isDebugEnabled()) {
-            log.debug("view url is " + view);
-        }
+        if (log.isDebugEnabled())  log.debug("buildView view url is " + view);
 		return view;
 	}
 
-    // @Override
-    // public void setGrailsApplication(GrailsApplication grailsApplication) {
-    //     this.grailsApplication = grailsApplication;
-    //     if (this.grailsApplication != null) {
-    //         this.hideException = (Boolean) Eval.x(this.grailsApplication, "x.mergedConfig.asMap(true).grails.plugin.freemarker.viewResolver.hideException");
-    //     }
-    // }
-
+    public void setFreemarkerConfig(FreeMarkerConfig freemarkerConfig) {
+		this.freemarkerConfig = freemarkerConfig;
+    }
+    
     public void setHideException(boolean hideException) {
 		this.hideException = hideException;
     }

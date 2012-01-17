@@ -24,18 +24,20 @@ class FreemarkerViewService {
      * get the view for a plugin.
      * sets a threadlocal and then passes call to getTemplate(viewname, locale)
      */
-    View getView(String viewName, String pluginName = null, boolean removePluginName = true) {
+    View getView(String viewName, String pluginName = null, boolean removePluginNameFromThread = true) {
 		try{
             if(pluginName) GrailsTemplateLoader.pluginNameForTemplate.set(pluginName)
 			log.debug("getView called with viewname : $viewName and pluginName : $pluginName")
 			return freemarkerViewResolver.resolveViewName( viewName, getLocale())
         }finally{
-            if(pluginName && removePluginName)  GrailsTemplateLoader.pluginNameForTemplate.remove()
+            if(pluginName && removePluginNameFromThread)  GrailsTemplateLoader.pluginNameForTemplate.remove()
         }
     }
     
     Writer render(String viewName , Map model, Writer writer, String pluginName = null){
-        render( getView(viewName, pluginName,false) ,  model,  writer, pluginName)
+		View view = getView(viewName, pluginName,false)
+		if(!view) throw new IllegalArgumentException("The ftl view [${viewName}] could not be found" + ( pluginName ? " with plugin [${pluginName}]" : "" ))
+        render( view,  model,  writer, pluginName)
     }
     
     /**
@@ -44,6 +46,7 @@ class FreemarkerViewService {
      */
     Writer render(View view , Map model, Writer writer,String pluginName = null){
 		try{
+			if(!view) throw new IllegalArgumentException("The 'view' argument cannot be null")
             if(pluginName) GrailsTemplateLoader.pluginNameForTemplate.set(pluginName)
 			log.debug("primary render called with view : $view ")
 	        // Consolidate static and dynamic model attributes.

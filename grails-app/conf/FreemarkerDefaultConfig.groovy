@@ -18,11 +18,9 @@ grails {
 			requireViewSuffix = false
             
             viewResolver { 
-                hideException = true 
+                hideException = false 
             }
 
-			
-            
             tags {
                 enabled = true
             }

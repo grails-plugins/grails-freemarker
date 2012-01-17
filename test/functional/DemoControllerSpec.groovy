@@ -7,29 +7,60 @@ class DemoControllerSpec extends GebSpec {
         	go "demo/wtf"
  
         then:
-			println driver.pageSource
-        	driver.pageSource.contains("wtf")	
+		println driver.pageSource
+        driver.pageSource.contains("wtf")	
     }
 
 	//@spock.lang.IgnoreRest
-	def "default view"() {
+	def "default index"() {
         when:
         	go "demo"
  
         then:
-			def html = driver.pageSource
-			html.contains('Name: Jake')
-			html.contains('State: Missouri')
+		def html = driver.pageSource
+		html.contains('Name: Jake')
+		html.contains('State: Missouri')
+    }
+    
+    def "normal gsp"() {
+        when:
+        	go "demo/normal"
+ 
+        then:
+		def html = driver.pageSource
+		html.contains('Name: Jake')
+		html.contains('State: Missouri')
     }
 	
-	def "Explicit Render From Controller"() {
+	def "use view based on action name"() {
         when:
-        	go "demo/testExplicitRenderFromController"
+        	go "demo/fmtemplate"
+ 
+        then:
+        def html = driver.pageSource
+		html.contains('Name: Jake')
+		println html
+		//fmtemplate also has a number of freemarker includes so lets make sure those are working
+		//html.
+    }
+    
+	def "Controller add prefix"() {
+        when:
+        	go "demo/justTheView"
  
         then:
 			def html = driver.pageSource
 			html.contains('Name: Abe')
 			html.contains('State: Illinois')
+    }
+    
+    def "define full path"() {
+        when:
+        	go "demo/fullPathToView"
+ 
+        then:
+			def html = driver.pageSource
+			html.contains('Name: Abe')
     }
 
 	def "testTaglib"() {
@@ -42,7 +73,7 @@ class DemoControllerSpec extends GebSpec {
 			html.contains('The template at /templates/freemarker/snippet.ftl was rendered with Name: Scott')
     }
 
-	def "flash object"() {
+	def "flash is passed through"() {
         when:
         	go "demo/testFlash"
  
@@ -80,5 +111,16 @@ class DemoControllerSpec extends GebSpec {
 			html.contains('Hello from the a GSP in the plugin')
     }
 
+	def "service"() {
+        when:
+        	go "demo/service"
+ 
+        then:
+		def html = driver.pageSource
+		html.contains('Name: Abe')
+		html.contains('State: Illinois')
+    }
+
+    def verfiy
 
 }

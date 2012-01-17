@@ -37,4 +37,13 @@ class PluginTestControllerSpec extends GebSpec {
 			html.contains('you know it')
     }
 
+	def "service in plugin"() {
+        when:
+        	go "pluginTest/service"
+ 
+        then:
+			def html = driver.pageSource
+			html.contains('you know it')
+    }
+
 }

@@ -89,7 +89,7 @@ public class TagLibToDirectiveAndFunction implements TemplateDirectiveModel,
     public Object exec(@SuppressWarnings("rawtypes") List arguments)
             throws TemplateModelException {
         if (log.isDebugEnabled()) {
-            //log.debug("exec(): @" + namespace + "." + tagName);
+            log.debug("exec(): @" + namespace + "." + tagName);
         }
         try {
             CharArrayWriter writer = new CharArrayWriter();
@@ -123,13 +123,10 @@ public class TagLibToDirectiveAndFunction implements TemplateDirectiveModel,
                 if (body != null || hasReturnValue) {
                     final Object fBody = body;
                     bodyClosure = new Closure(this) {
-
                         @SuppressWarnings("unused")
-                        public Object doCall(Object it) throws IOException,
-                                TemplateException {
+                        public Object doCall(Object it) throws IOException,TemplateException {
                             return fBody;
                         }
-
                     };
                 }
 
@@ -150,20 +147,22 @@ public class TagLibToDirectiveAndFunction implements TemplateDirectiveModel,
 
     @SuppressWarnings("serial")
     @Override
-    public void execute(final Environment env,
-            @SuppressWarnings("rawtypes") Map params, TemplateModel[] loopVars,
-            final TemplateDirectiveBody body) throws TemplateException,
-            IOException {
+    public void execute(final Environment env,@SuppressWarnings("rawtypes") Map params, TemplateModel[] loopVars,
+            final TemplateDirectiveBody body) throws TemplateException,IOException {
         if (log.isDebugEnabled()) {
-            //log.debug("execute(): @" + namespace + "." + tagName);
+            log.debug("execute(): @" + namespace + "." + tagName);
         }
         try {
+            log.debug("env.out is "+ env.getOut().getClass());
+            //FIXME env.getOut was not working. changed to use a CharArrayWriter and then at end of this method it appends the writer
             tagInstance.invokeMethod("pushOut", env.getOut());
+            //CharArrayWriter writer = new CharArrayWriter();
+            //tagInstance.invokeMethod("pushOut", writer);
 
             params = unwrapParams(params, Boolean.TRUE);
             if (log.isDebugEnabled()) {
-                //log.debug("execute(): params " + params);
-                //log.debug("exec(): body " + body);
+                log.debug("execute(): params " + params);
+                log.debug("exec(): body " + body);
             }
             Object result = null;
             if (tagInstance.getMaximumNumberOfParameters() == 1) {
@@ -175,16 +174,13 @@ public class TagLibToDirectiveAndFunction implements TemplateDirectiveModel,
                     bodyClosure = new Closure(this) {
 
                         @SuppressWarnings({ "unused", "rawtypes", "unchecked" })
-                        public Object doCall(Object it) throws IOException,
-                                TemplateException {
-
-                            ObjectWrapper objectWrapper = env
-                                    .getObjectWrapper();
+                        public Object doCall(Object it) throws IOException,TemplateException {
+                            ObjectWrapper objectWrapper = env.getObjectWrapper();
                             Map<String, TemplateModel> oldVariables = null;
                             TemplateModel oldIt = null;
 
                             if (log.isDebugEnabled()) {
-                                //log.debug("it " + it);
+                                log.debug("doCall it " + it);
                             }
 
                             boolean itIsAMap = false;
@@ -193,12 +189,8 @@ public class TagLibToDirectiveAndFunction implements TemplateDirectiveModel,
                                     itIsAMap = true;
                                     oldVariables = new LinkedHashMap<String, TemplateModel>();
                                     Map<String, Object> itMap = (Map) it;
-                                    for (Map.Entry<String, Object> entry : itMap
-                                            .entrySet()) {
-                                        oldVariables
-                                                .put(entry.getKey(), env
-                                                        .getVariable(entry
-                                                                .getKey()));
+                                    for (Map.Entry<String, Object> entry : itMap.entrySet()) {
+                                        oldVariables.put(entry.getKey(), env.getVariable(entry.getKey()));
                                     }
                                 } else {
                                     oldIt = env.getVariable("it");
@@ -209,25 +201,18 @@ public class TagLibToDirectiveAndFunction implements TemplateDirectiveModel,
                                 if (it != null) {
                                     if (itIsAMap) {
                                         Map<String, Object> itMap = (Map) it;
-                                        for (Map.Entry<String, Object> entry : itMap
-                                                .entrySet()) {
-                                            env.setVariable(entry.getKey(),
-                                                    objectWrapper.wrap(entry
-                                                            .getValue()));
+                                        for (Map.Entry<String, Object> entry : itMap.entrySet()) {
+                                            env.setVariable(entry.getKey(),objectWrapper.wrap(entry.getValue()));
                                         }
                                     } else {
-                                        env.setVariable("it",
-                                                objectWrapper.wrap(it));
+                                        env.setVariable("it",objectWrapper.wrap(it));
                                     }
                                 }
-                                body.render((Writer) tagInstance
-                                        .getProperty("out"));
+                                body.render((Writer) tagInstance.getProperty("out"));
                             } finally {
                                 if (oldVariables != null) {
-                                    for (Map.Entry<String, TemplateModel> entry : oldVariables
-                                            .entrySet()) {
-                                        env.setVariable(entry.getKey(),
-                                                entry.getValue());
+                                    for (Map.Entry<String, TemplateModel> entry : oldVariables.entrySet()) {
+                                        env.setVariable(entry.getKey(),entry.getValue());
                                     }
                                 } else if (oldIt != null) {
                                     env.setVariable("it", oldIt);
@@ -244,13 +229,16 @@ public class TagLibToDirectiveAndFunction implements TemplateDirectiveModel,
             }
 
             if (log.isDebugEnabled()) {
-                //log.debug("hasReturnValue " + hasReturnValue);
-                //log.debug("result " + result);
+                log.debug("hasReturnValue " + hasReturnValue);
+                log.debug("result " + result);
             }
+            //FIXME this used to check for hasReturnValue but since I can't get out passed in right then I always append the result
             if (result != null && hasReturnValue) {
+            //if (result != null) {
                 env.getOut().append(result.toString());
             }
         } catch (RuntimeException e) {
+            log.error(e.getMessage(),e);
             throw new TemplateException(e, env);
         } finally {
             tagInstance.invokeMethod("popOut", null);

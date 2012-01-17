@@ -43,7 +43,7 @@ class ConcurrencyTests extends GroovyTestCase {
 
     void testConcurrency() {
         def text = new StringBuilder('[#ftl/]')
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 100; i++) {
             text.append(i)
             text.append(': [@g.thread name=name /]\n')
         }
@@ -53,13 +53,13 @@ class ConcurrencyTests extends GroovyTestCase {
 
         Thread mainThread = Thread.currentThread()
         List threads = []
-        for (int counter = 0; counter < 30; counter++) {
+        for (int counter = 0; counter < 20; counter++) {
             Thread t = runInParallel {
                 final int myCounter = counter
                 StringWriter result = new StringWriter()
                 template.process([name: myCounter + 1], result)
                 List lines = new StringReader(result.toString()).readLines(); result = null
-                assertEquals "thread ${myCounter} ${lines.size()}", 1000, lines.size()
+                assertEquals "thread ${myCounter} ${lines.size()}", 100, lines.size()
                 lines.eachWithIndex { line, index ->
                     if (Math.random() <= 0.1) {
                         //assertTrue "random ${index} ${myCounter+1}", false

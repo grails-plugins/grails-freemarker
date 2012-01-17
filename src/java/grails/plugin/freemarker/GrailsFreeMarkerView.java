@@ -18,17 +18,26 @@ package grails.plugin.freemarker;
 import java.util.Map;
 import java.util.Locale;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+
 import org.codehaus.groovy.grails.web.util.WebUtils;
+
 import org.springframework.web.servlet.view.freemarker.FreeMarkerView;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
+import org.springframework.beans.BeansException;
 
 /**
  * 
  * @author Jeff Brown
+ * @author Joshua Burnett
  *
  */
 public class GrailsFreeMarkerView extends FreeMarkerView {
 
+    public FreeMarkerConfig freemarkerConfig;
+
+    
     @Override
     protected void exposeHelpers(Map<String, Object> model, HttpServletRequest request) throws Exception {
         model.put("flash", WebUtils.retrieveGrailsWebRequest().getAttributes().getFlashScope(request));
@@ -36,10 +45,18 @@ public class GrailsFreeMarkerView extends FreeMarkerView {
     }
 
 	/**
-	 * Ovverides the super so it does not check to see if the resource exists first
+	 * called on instantiation, 
+	 * overrides the super default so that it uses the FreeMarkerConfigurer that is
+	 * injected into this without doing a new TaglibFactory each time. We have grails taglibs and dont need jsp taglibs
+	 * the freemarker config already has one setup
+	 * also, the old way only allowed 1 FreeMarkerConfig bean. This lets you have multiple FreeMarkerConfigs if need be.
+	 * we don't need the 
 	 */
-	// @Override
-	// public boolean checkResource(Locale locale) throws Exception {
-	// 	return true;
-	// }
+	@Override
+	protected void initServletContext(ServletContext servletContext) throws BeansException {
+		setConfiguration(freemarkerConfig.getConfiguration());
+	}
+	
+
+
 }

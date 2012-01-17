@@ -32,7 +32,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer
  */
 class FreemarkerGrailsPlugin {
     // the plugin version
-    def version = "1.0"
+    def version = "1.0.0"
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "1.2 > *"
     // the other plugins this plugin depends on
@@ -65,8 +65,6 @@ as views.
     def documentation = "http://grails.org/plugin/freemarker"
 
     def doWithSpring = {
-
-
 		def freeconfig = application.mergedConfig.asMap(true).grails.plugin.freemarker
         String ftlSuffix = '.ftl'
 		
@@ -75,14 +73,7 @@ as views.
 		}
 
         def resolveLoaders = {List loaders ->
-            List resolvedLoaders = []
-            for (loader in loaders) {
-                if (loader != null && loader instanceof CharSequence) {
-                    loader = ref(loader.toString())
-                }
-                resolvedLoaders << loader
-            }
-            return resolvedLoaders
+			return loaders.collect{ (it instanceof CharSequence) ? ref(it.toString()) : it }
         }
         
         Class configClass = freeconfig.tags.enabled == true? TagLibAwareConfigurer : FreeMarkerConfigurer
@@ -99,14 +90,12 @@ as views.
 			} else{
 				postTemplateLoaders = [ref('freemarkerGrailsTemplateLoader')]
 			}
-            
-            // if (freeconfig.tags.enabled == true) {
-            //     suffix = ftlSuffix
-            // }
         }
+
         freemarkerViewResolver(grails.plugin.freemarker.GrailsFreeMarkerViewResolver) {
+            freemarkerConfig = ref('freemarkerConfig')
             prefix = ''
-            suffix = freeconfig.requireViewSuffix ? '' : ftlSuffix
+            suffix = ftlSuffix
 			requireViewSuffix = freeconfig.requireViewSuffix 
 			hideException = freeconfig.viewResolver.hideException 
             order = 10
@@ -129,11 +118,10 @@ as views.
         }
     }
 
-	static String transformToValidLocation(String location) {
-        if (location == '.') return location
-        if (!location.endsWith(File.separator)) return "${location}${File.separator}"
-        return location
-    }
+	def doWithApplicationContext = { appCtx ->
+		
+	}
+
 
 	def doWithDynamicMethods = { ctx ->
 		
@@ -183,17 +171,19 @@ as views.
         }
 	}
 	
-	def modRenderMethod(application, clazz){
-		def render = new RenderDynamicMethod()
-		clazz.metaClass.render = {Map args ->
-			//if args has a pluginName then set it in a threadlocal so we can get to it from the freemarkerViewResolver 
-			if(args.plugin){
-				def request = WebUtils.retrieveGrailsWebRequest()?.getCurrentRequest()
-				if(request) {
-					request.setAttribute(GrailsTemplateLoader.PLUGIN_NAME_ATTRIBUTE,args.plugin)
-				}
-			}
-			render.invoke(delegate, "render", [args] as Object[])	
-        }
+	def modRenderMethod(application, controller){        
+        def original = controller.metaClass.getMetaMethod("render", [Map] as Class[])
+        
+        controller.metaClass.render = {Map args ->
+            //if args has a pluginName then set it in a threadlocal so we can get to it from the freemarkerViewResolver 
+            def request = WebUtils.retrieveGrailsWebRequest()?.getCurrentRequest()
+            if(args.plugin && request){
+                request.setAttribute(GrailsTemplateLoader.PLUGIN_NAME_ATTRIBUTE,args.plugin)
+            }
+            if(args.loaderAttribute && request){
+                request.setAttribute("loaderAttribute",args.loaderAttribute)
+            }
+            original.invoke(delegate, [args] as Object[])  
+         }
 	}
 }

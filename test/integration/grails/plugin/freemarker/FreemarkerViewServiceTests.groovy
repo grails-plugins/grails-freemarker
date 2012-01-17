@@ -20,7 +20,7 @@ class FreemarkerViewServiceTests extends GroovyTestCase {
     }
     
     void testGetViewPlugin() {
-        def view = freemarkerViewService.getView("pluginTest/itWorks","freemarker-plugin-test")
+        def view = freemarkerViewService.getView("pluginTest/itWorks.ftl","freemarker-plugin-test")
         assertNotNull view //.getTemplate(Locale.US)
     }
 
