@@ -1,4 +1,4 @@
-grails.project.dependency.resolution = {}
+grails.project.dependency.resolution = {
 
 	inherits('global') {
 	}
