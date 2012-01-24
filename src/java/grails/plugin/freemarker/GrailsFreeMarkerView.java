@@ -27,19 +27,26 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerView;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 import org.springframework.beans.BeansException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * 
  * @author Jeff Brown
  * @author Joshua Burnett
  *
  */
+//request.setAttribute(GrailsLayoutDecoratorMapper.RENDERING_VIEW, Boolean.TRUE);
 public class GrailsFreeMarkerView extends FreeMarkerView {
-
+	private final Log log = LogFactory.getLog(GrailsFreeMarkerView.class);
+	
     public FreeMarkerConfig freemarkerConfig;
 
     
     @Override
     protected void exposeHelpers(Map<String, Object> model, HttpServletRequest request) throws Exception {
+		//for Grails 2 we need to set this so sitemesh works
+		request.setAttribute("org.grails.rendering.view", Boolean.TRUE);
         model.put("flash", WebUtils.retrieveGrailsWebRequest().getAttributes().getFlashScope(request));
         super.exposeHelpers(model, request);
     }
