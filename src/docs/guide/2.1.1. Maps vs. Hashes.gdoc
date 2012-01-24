@@ -6,7 +6,7 @@
 
 
 .ftl
-
+note that you must enclose the keys names with quotes
 {code: xml}
 {'key1': 'abc', 'key2': 2}
 {code}

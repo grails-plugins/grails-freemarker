@@ -7,6 +7,8 @@
 
 .ftl
 
+note that the arguments are passed in as a hash (map) enclosed in {}, also remeber to enclose your key names in quotes
+
 {code: xml}
 <span id="title" class="label ${g.hasErrors({'bean':book,'field':'title'},'errors')}">Title</span>
 {code}
