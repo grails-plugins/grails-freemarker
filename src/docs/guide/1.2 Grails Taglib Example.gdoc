@@ -1,71 +1,45 @@
 Create your Grails application
 
-{code}
-grails create-app test-freemaker-prj
-cd test-freemaker-prj
-{code}
-
-
-Install the plugin
+Assuming you have a domain class as follows:
 
 {code}
-grails install-plugin freemarker-tags
-{code}
+class MyUser{
+  String username
+  String password
 
-
-Create a domain class
-
-{code}
-grails create-domain-class MyUser
-{code}
-
-
-Add some fields and validations to your grails-app/domain/test/freemaker/prj/MyUser.groovy
-
-{code}
   static constraints = {
     username(unique: true, blank: false)
     password(blank: false)
   }
-
-  String username
-  String password
+}
 {code}
 
-
-Generate a controller
-
-{code}
-grails generate-controller test.freemaker.prj.MyUser
-{code}
-
-
-Add new actions to your grails-app/controllers/test/freemaker/prj/MyUserController.groovy
+Create a controller MyUserController.groovy
 
 {code}
-    def login = {
-      def myUserInstance = new MyUser()
-      render(view: "login", model: [myUserInstance: myUserInstance])
+def login = {
+  def myUserInstance = new MyUser()
+  render(view: "login", model: [myUserInstance: myUserInstance])
+}
+
+def doLogin = {
+  def myUserInstance = new MyUser(params)
+ 
+  boolean ok = myUserInstance.validate(['password']) 
+  if (ok) {
+    if (!myUserInstance.username || !myUserInstance.password || !myUserInstance.password.equals("pass")) {
+      flash.message = "${message(code: 'Invalid password or username', args: [])}"
+      ok = false
     }
+  }
 
-    def doLogin = {
-      def myUserInstance = new MyUser(params)
-      
-      boolean ok = myUserInstance.validate(['password']) 
-      if (ok) {
-	if (!myUserInstance.username || !myUserInstance.password || !myUserInstance.password.equals("pass")) {
-	  flash.message = "${message(code: 'Invalid password or username', args: [])}"
-	  ok = false
-	}
-      }
-      
-      if (ok) {
-	redirect(action: "index")
-      } else {
-	myUserInstance.password = null
-	render(view: "login", model: [myUserInstance: myUserInstance])
-      }
-    }
+  if (ok) {
+    redirect(action: "index")
+  } else {
+    myUserInstance.password = null
+    render(view: "login", model: [myUserInstance: myUserInstance])
+  }
+}
 {code}
 
 

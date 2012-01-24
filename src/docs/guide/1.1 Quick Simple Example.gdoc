@@ -1,0 +1,44 @@
+Create your Grails application
+
+Install the plugin
+
+{code}
+grails install-plugin freemarker
+{code}
+
+Assuming you have a controller called FreemakerCon
+
+Add new actions to your grails-app/controllers/test/freemaker/prj/MyUserController.groovy
+
+{code}
+class DemoController {
+  def index = {
+    render view: 'index.ftl', model: [name: 'Jeff Beck', instrument: 'Guitar']
+  }
+}
+{code}
+
+Then you could define a FreeMarker template in grails-app/views/demo/index.ftl that looks like this:
+
+{code: xml}
+<#ftl />
+<html>
+<body>
+  Name: ${name} <br/>
+  Instrument: ${instrument}<br/>
+</body>
+</html>
+{code}
+
+
+Use your browser to navigate to http://localhost:8080/test-freemaker-prj/myUser/login
+
+Done!
+
+{note}
+In FreeMarker templates, you can use < > or \[ ]. For more information, please consult "Freemarker FAQ":http://freemarker.sourceforge.net/docs/app_faq.html#faq_alternative_syntax about alternative syntax.
+{note}
+
+{warning}
+Be aware that FreeMarker syntax differs from GSP syntax (they are different beasts).
+{warning}

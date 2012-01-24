@@ -1,0 +1,16 @@
+There are 2 services that you can inject to help render templates. The FreemarkerViewService and FreemarkerTemplateService
+
+FreemarkerViewService
+
+Methods
+
+/* this is the one you will primarily use*/
+- Writer render(String viewName , Map model, Writer writer = new CharArrayWriter(), String pluginName = null)
+
+- Writer render(View view , Map model, Writer writer = new CharArrayWriter() , String pluginName = null)
+
+- View getView(String viewName, String pluginName = null, boolean removePluginNameFromThread = true) 
+
+the methods are safe to use in a thread or quartz job. It checks to see that a Request is bound to the thread and if not is goes through the process of binding one so that the taglibs work properly for items like g.message and g.resource
+
+

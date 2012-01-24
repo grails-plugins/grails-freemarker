@@ -1,0 +1,25 @@
+This plugin adds a few new valid arguments to the controllers render method
+
+plugin - allows you to specify a plugin for resolution
+
+example (assume this is called from FooController):
+{code: xml}
+render view:'gotView.ftl', plugin:'free-bird'
+{code}
+
+plugin resolution precedence for 'foo/gotView.ftl'. Will return the first one it finds
+1. if any preTemplateLoaders are set in config then look there for 'foo/gotView.ftl'
+2. look in the application's view dir for 'foo/gotView.ftl'
+3. look in the free-bird plugin for foo/gotView.ftl
+4. if any postTemplateLoaders are specified then call those as well
+
+loaderAttribute - assign an attribute that can be retrieved from the request later on in the Loader
+
+{code: xml}
+render view:'gotView.ftl', plugin:'free-bird', loaderAttribute:'gorm'
+{code}
+
+If your custom preTemplateLoader is expensive or only for "special" views then you can check for the presence of 'gorm' and only continue if its present.
+This allows better performance, for example, if you are resolving view from a database and only want to try if its specified. otherwise every resolution might attempt the expensive resolution operation. A good examples exists in the test/projects/gorm-loader
+
+
