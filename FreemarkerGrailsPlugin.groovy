@@ -90,6 +90,7 @@ as views.
 			} else{
 				postTemplateLoaders = [ref('freemarkerGrailsTemplateLoader')]
 			}
+			freemarkerSettings = application.mergedConfig.grails.plugin.freemarker.configSettings?.toProperties()
         }
 
         freemarkerViewResolver(grails.plugin.freemarker.GrailsFreeMarkerViewResolver) {
@@ -116,6 +117,7 @@ as views.
                 grailsApplication = ref('grailsApplication')
             }
         }
+
     }
 
 	def doWithApplicationContext = { appCtx ->

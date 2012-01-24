@@ -23,19 +23,35 @@ log4j = {
 
     warn   'org.mortbay.log'
 
-		 //     trace  'org.springframework.web.servlet.view',
-		 //          'org.springframework.context.support'
-		 // 
-		 //     debug  'grails.plugin.freemarker.GrailsTemplateLoader',
-		 //          'grails.plugin.freemarker.GrailsFreeMarkerViewResolver',
-		 //          'grails.app.service.grails.plugin.freemarker.FreemarkerViewService',
-		 //          'org.codehaus.groovy.grails.web.pages.GroovyPageResourceLoader',
-		 //          'grails.plugin.freemarker.AbstractTagLibAwareConfigurer',
-		 //          'grails.plugin.freemarker.TagLibToDirectiveAndFunction' ,
+		     trace  'org.springframework.web.servlet.view',
+		          'org.springframework.context.support'
+		 
+		     debug  'grails.plugin.freemarker.GrailsFreeMarkerView',
+		            'grails.app.services.grails.plugin.freemarker.FreemarkerViewService',
+					'grails.plugin.freemarker.TagLibToDirectiveAndFunction' 
+				//'grails.plugin.freemarker.GrailsTemplateLoader',
+		        //'grails.plugin.freemarker.GrailsFreeMarkerViewResolver',
+				
+				//,
+		        //  'org.codehaus.groovy.grails.web.pages.GroovyPageResourceLoader',
+		        //  'grails.plugin.freemarker.AbstractTagLibAwareConfigurer',
+		        //  'grails.plugin.freemarker.TagLibToDirectiveAndFunction' 
 		 // 'org.springframework.ui.freemarker'
 		//'org.springframework.web.servlet.view.freemarker',
 		//'org.springframework.core.io.DefaultResourceLoader',
 		//'org.springframework.web.context.support.ServletContextResourceLoader'
+}
+
+environments {
+	production {
+		grails.serverURL = "http://www.changeme.com"
+	}
+	development {
+		grails.serverURL = "http://localhost:8080/${appName}"
+	}
+	test {
+		grails.serverURL = "http://localhost:8080/${appName}"
+    }
 }
 
 grails.doc.authors='Daniel Henrique Alves Lima (text revised by Gislaine Fonseca Ribeiro and others)'
