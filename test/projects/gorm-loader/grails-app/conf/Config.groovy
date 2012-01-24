@@ -1,14 +1,15 @@
 grails {
     plugin {
         freemarker {
-            
             /* A list of template loaders or strings - Strings will be used as beanNames. */
             preTemplateLoaders = ['gormLoaderService']
-			
 			//when referencing a freemarker view name then require the .ftl suffix
 			requireViewSuffix = true
-            
-
+			configSettings{
+				//for example this will set it to be even more secure.
+				new_builtin_class_resolver = 'allows_nothing'
+				object_wrapper = 'simple'
+			}
         }
     }
 }

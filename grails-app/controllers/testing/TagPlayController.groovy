@@ -5,30 +5,45 @@ class TagPlayController {
 	def freemarkerViewService
 	def grailsApplication
 
+
     def sanity = {
         render "wtf"
     }
     
     def index = {
+		def context = grails.util.Holders.getServletContext()
+		log.info "*** scontext  is ${context.getContextPath()} "
         [name: 'Jake', state: 'Missouri']
     }
     //let grails add the controller name prefix 
     def justTheView = {
+		
         render view: 'basic.ftl', model: [name: 'Abe', state: 'Illinois']
     }
-    
-	//passes through to index, sitemesh should be set here too
-    def basic = {
-		render view:'basic.ftl'
+
+	def service = {
+		def wout = freemarkerViewService.render('/tagPlay/index.ftl', [name: 'Abe', state: 'Illinois'])
+		println "what the hell  $wout"
+		render wout
     }
-    
-    def test2 = {
-		render view:'/demo/fmtempalte.ftl'
-    }
-    
-    //a simple normal gsp for a sanity check
-    def normal = {
-        [name: 'Jake', state: 'Missouri']
-    }
+
+	def async = {
+		log.debug "calling freemarkerViewService.render"
+		def wout
+		runAsync{
+			try{
+				log.debug "calling freemarkerViewService.render"
+				wout = freemarkerViewService.render('/tagPlay/index.ftl', [name: 'Abe', state: 'Illinois'])
+				log.debug  "what the hell  $wout"
+				//log.info "html " + wout
+			}catch(e){
+				println "what the hell - $e"
+				log.error e
+			}
+			
+		}
+		sleep 1500
+		render wout.toString()
+	}
 
 }

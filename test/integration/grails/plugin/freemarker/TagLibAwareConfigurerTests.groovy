@@ -26,12 +26,15 @@ import grails.test.*
 class TagLibAwareConfigurerTests extends GroovyTestCase {
 
     def freemarkerConfig
+	def grailsApplication
     private StringWriter sWriter = new StringWriter()
     private Exception threadException
     private ThreadGroup myThreadGroup = new ThreadGroup('x') {public void uncaughtException(Thread t,Throwable e) {super.uncaughtException(t, e); threadException = e}}
     
     protected void setUp() {
-        super.setUp(); threadException = null
+        super.setUp(); 
+		
+		threadException = null
     }
 
     protected void tearDown() {
@@ -70,7 +73,6 @@ class TagLibAwareConfigurerTests extends GroovyTestCase {
     }
     
     
-    
     void testParseFmTagsTemplateWithoutRequestContext() {
         runInParallel {
             String result = parseFtlTemplate('[#ftl/][@g.textField name="abc"/]');
@@ -86,7 +88,7 @@ class TagLibAwareConfigurerTests extends GroovyTestCase {
         } 
     }
     
-    private parseFtlTemplate = {String templateSourceCode, Map binding = [:] ->
+    private parseFtlTemplate = { String templateSourceCode, Map binding = [:] ->
         if (sWriter.buffer.length() > 0) {sWriter.buffer.delete 0, sWriter.buffer.length()}
         Configuration cfg = freemarkerConfig.configuration
         Template template = new Template('template', new StringReader(templateSourceCode), cfg)
@@ -99,6 +101,7 @@ class TagLibAwareConfigurerTests extends GroovyTestCase {
         def thread = null; boolean executed = false 
         Closure c1 = {
             try {
+				
                 c()
             } finally {
                 executed = true

@@ -5,7 +5,7 @@
 		<g:layoutHead/>
 	</head>
 	<body>
-		<p>from sitemesh layout</p>
+		<p id='fromSiteMesh'>from sitemesh layout</p>
 		<g:layoutBody/>
 	</body>
 </html>
