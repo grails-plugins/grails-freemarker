@@ -65,7 +65,7 @@ public class GrailsFreeMarkerViewResolver extends FreeMarkerViewResolver{//} imp
 			return null;
 		}
 		else if (viewName.endsWith(FTL_SUFFIX)){
-			//remove the .ftl suffix in case it was added
+			//remove the .ftl suffix if it was added so the normal process can add it later
 			viewName = viewName.substring(0,viewName.length() - FTL_SUFFIX.length());
 		}
         try {

@@ -47,6 +47,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationContext;
 import org.springframework.beans.BeansException;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import grails.util.GrailsUtil;
 import grails.util.GrailsNameUtils;
@@ -104,7 +105,7 @@ public class GrailsTemplateLoader implements TemplateLoader, ApplicationContextA
 	public Object findTemplateSource(String templateName) throws IOException {
 	    if (log.isDebugEnabled()){log.debug("Looking for FreeMarker template with name ["+ templateName + "]");}
 
-		GrailsWebRequest webRequest = WebUtils.retrieveGrailsWebRequest();
+		GrailsWebRequest webRequest = (GrailsWebRequest) RequestContextHolder.currentRequestAttributes();
 		HttpServletRequest request = webRequest != null? webRequest.getCurrentRequest() : null;
 		GrailsApplicationAttributes gAttributes = webRequest != null? webRequest.getAttributes() : null;
 		

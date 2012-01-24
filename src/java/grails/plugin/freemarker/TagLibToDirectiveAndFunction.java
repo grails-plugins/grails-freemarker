@@ -41,6 +41,7 @@ import freemarker.template.TemplateModelIterator;
 import freemarker.template.utility.DeepUnwrap;
 import groovy.lang.Closure;
 import groovy.lang.GroovyObject;
+import org.codehaus.groovy.grails.web.sitemesh.GrailsRoutablePrintWriter;
 
 /**
  * @author Daniel Henrique Alves Lima
@@ -149,20 +150,22 @@ public class TagLibToDirectiveAndFunction implements TemplateDirectiveModel,
     @Override
     public void execute(final Environment env,@SuppressWarnings("rawtypes") Map params, TemplateModel[] loopVars,
             final TemplateDirectiveBody body) throws TemplateException,IOException {
-        if (log.isDebugEnabled()) {
-            log.debug("execute(): @" + namespace + "." + tagName);
-        }
         try {
-            log.debug("env.out is "+ env.getOut().getClass());
-            //FIXME env.getOut was not working. changed to use a CharArrayWriter and then at end of this method it appends the writer
-            tagInstance.invokeMethod("pushOut", env.getOut());
-            //CharArrayWriter writer = new CharArrayWriter();
-            //tagInstance.invokeMethod("pushOut", writer);
+            
+			Writer wout = env.getOut();
+			if(wout instanceof GrailsRoutablePrintWriter){
+				wout = ((GrailsRoutablePrintWriter)wout).getOut();
+			}
+
+            tagInstance.invokeMethod("pushOut", wout);
 
             params = unwrapParams(params, Boolean.TRUE);
             if (log.isDebugEnabled()) {
+				log.debug("wout is "+ wout.getClass());
+				log.debug("execute(): @" + namespace + "." + tagName);
                 log.debug("execute(): params " + params);
-                log.debug("exec(): body " + body);
+                log.debug("execute(): body " + body);
+				log.debug("hasReturnValue " + hasReturnValue);
             }
             Object result = null;
             if (tagInstance.getMaximumNumberOfParameters() == 1) {
