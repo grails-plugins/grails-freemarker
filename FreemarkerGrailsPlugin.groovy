@@ -81,15 +81,18 @@ as views.
 			if(freeconfig.preTemplateLoaders){
 				preTemplateLoaders = resolveLoaders(freeconfig.preTemplateLoaders)
 			}
-			if(freeconfig.templateLoaderPaths){
-				templateLoaderPaths = freeconfig.templateLoaderPaths
-			}
+
+			def confLoaderPaths = freeconfig.templateLoaderPaths?:[]
+			confLoaderPaths.add("classpath:freemarker/")
+			templateLoaderPaths = confLoaderPaths as String[]
+			
 			if(freeconfig.postTemplateLoaders){
 				postTemplateLoaders = resolveLoaders(freeconfig.postTemplateLoaders) 
                 postTemplateLoaders.add(0, ref('freemarkerGrailsTemplateLoader'))
 			} else{
 				postTemplateLoaders = [ref('freemarkerGrailsTemplateLoader')]
 			}
+			
 			freemarkerSettings = application.mergedConfig.grails.plugin.freemarker.configSettings?.toProperties()
         }
 
