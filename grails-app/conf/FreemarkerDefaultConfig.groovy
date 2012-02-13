@@ -20,7 +20,7 @@ grails {
             
             viewResolver { 
 				/*blow exception in resolver or swallow it and move on */
-                hideException = false 
+                hideException = true 
             }
 
             tags {
