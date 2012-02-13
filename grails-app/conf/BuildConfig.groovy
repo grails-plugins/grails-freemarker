@@ -19,7 +19,8 @@ grails.project.dependency.resolution = {
     }
 
     dependencies {
-        runtime "org.freemarker:freemarker:2.3.18"
+        compile "org.freemarker:freemarker:2.3.18"
+        compile 'commons-io:commons-io:2.1'
 
         test "org.codehaus.geb:geb-spock:${versions.geb}"
             
@@ -42,9 +43,10 @@ grails.project.dependency.resolution = {
         compile(":tomcat:$grailsVersion", ":hibernate:$grailsVersion") {
             export = false
         }
-        
-        provided(":executor:0.3"){
-            export = false
+        if ("$grailsVersion" > "1.3.7") {
+            provided(":executor:0.3"){
+                export = false
+            }
         }
 
         test ":geb:${versions.geb}",":spock:${versions.spock}"
