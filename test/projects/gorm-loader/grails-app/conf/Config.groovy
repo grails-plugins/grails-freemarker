@@ -9,6 +9,7 @@ grails {
 				//for example this will set it to be even more secure.
 				new_builtin_class_resolver = 'allows_nothing'
 				object_wrapper = 'simple'
+				//auto_import = '/freemarker/testMacro.ftl as ar'
 			}
         }
     }
@@ -94,10 +95,11 @@ log4j = {
            'org.hibernate',
            'net.sf.ehcache.hibernate'
 
-	debug   'grails.app.services.gorm.loader', 'freemarker',
-		'grails.plugin.freemarker.GrailsFreeMarkerView',
+	debug   'grails.app.services.gorm.loader', 'freemarker', //'grails.plugin.freemarker.GrailsFreeMarkerView',
 		            'grails.app.services.grails.plugin.freemarker.FreemarkerViewService',
 					'grails.plugin.freemarker.TagLibToDirectiveAndFunction', 
+					'grails.plugin.freemarker.GrailsTemplateLoader', //'grails.plugin.freemarker.GrailsFreeMarkerView',
+        		            'org.springframework.ui.freemarker.SpringTemplateLoader',
 				//'grails.plugin.freemarker.GrailsTemplateLoader',
 		  'grails.plugin.freemarker.GrailsFreeMarkerViewResolver'
 }

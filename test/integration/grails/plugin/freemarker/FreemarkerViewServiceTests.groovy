@@ -38,6 +38,13 @@ class FreemarkerViewServiceTests extends GroovyTestCase {
         assertTrue writer.toString().contains("<p>basejump</p>")
     }
     
+    void testRenderInThisPugin(){
+        def writer = new StringWriter()
+        freemarkerViewService.render("/demo/index" , [name:"basejump",state:"IL"],  writer, "freemarker")
+        println writer.toString()
+        assertTrue writer.toString().contains("Name: basejump")
+    }
+    
     
 
 

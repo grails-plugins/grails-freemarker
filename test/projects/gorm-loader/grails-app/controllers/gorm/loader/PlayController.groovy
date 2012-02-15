@@ -15,4 +15,12 @@ class PlayController {
 	def noprefix() { 
 		render view:'sanity'
 	}
+	
+	def goodStuff() { 
+		render view:'goodStuff.ftl'
+	}
+	
+	def wlayout() { 
+		
+	}
 }
