@@ -1,42 +1,46 @@
+Here is an example config with explanations
+
 {code}
 grails {
     plugin {
         freemarker {
             
-            /* A list of template loaders or strings - Strings will be used as beanNames. */
-            preTemplateLoaders = null
+            /* A list of template loaderinstances or strings - Strings will be used as beanNames. */
+            preTemplateLoaders = ['myCustomPreLoaderService']
 
-			/* a list of any additional paths to search in */
-            templateLoaderPaths = null
+			/* a list of any additional paths to search in. this can be any valid resource that spring accepts */
+            templateLoaderPaths = ['some/path/to/views','classpath:com/corp/freemarker']
             
             /* A list of template loaders or strings - Strings will be used as beanNames. */
-            postTemplateLoaders = null
+            postTemplateLoaders = ['myCustomPostLoaderService']
 
 			//tries to find templates by appending the local to the name.
-			//an odd feature in freemarker that is on by default
+			//an odd feature in freemarker that is true by default
 			localizedLookup = false
 			
 			//when referencing a freemarker view name then require the .ftl suffix
-			requireViewSuffix = false
+			requireViewSuffix = true
             
             viewResolver { 
 				/*blow exception in resolver or swallow it and move on */
-                hideException = false 
+                hideException = false //default
             }
 
             tags {
 				/* whether to enable the grails taglibs in the templates */
-                enabled = true
+                enabled = true //default
             }
-            //extra settings to pass through to the Freemarker Configuration
+            //extra settings to pass straight through to the Freemarker Configuration
 			//see http://freemarker.sourceforge.net/docs/api/freemarker/template/Configuration.html#setSetting(java.lang.String, java.lang.String)
 			//http://freemarker.sourceforge.net/docs/api/freemarker/core/Configurable.html#setSetting(java.lang.String, java.lang.String)
 			
 			configSettings{
-				//for example this will set it to be even more secure.
+				//for example this will set it to be more secure and allows no user class resolution.
 				new_builtin_class_resolver = 'allows_nothing'
-				//this means that only recognized objects in model can be accessed 
+				//simple is the most secure and means that only recognized objects in model can be accessed 
 				//(String,Date,Number,Boolean,Collection,Map,Iterator,isArray, or TemplateModel)
+				//simple will only allow field access and never method calls. 
+				//Best to pass in a Map of Maps for the hash model for the highest level of security
 				object_wrapper = 'simple'
 			}
 

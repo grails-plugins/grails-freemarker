@@ -12,8 +12,10 @@ import freemarker.template.SimpleHash
 import freemarker.template.Template
 
 import org.apache.commons.io.output.StringBuilderWriter
+
 /**
- *
+ * A service to retireive and process views for freemarker tempalates.
+ * 
  * @author Joshua Burnett
  *
  */
@@ -25,8 +27,12 @@ class FreemarkerViewService {
 	def localeResolver
 
     /**
-     * get the view for a plugin.
+     * get the view for, a plugin if sepcieified.
      * sets a threadlocal and then passes call to getTemplate(viewname, locale)
+     * @param viewName      the name of the view, usually will be realtive to the view path
+     * @param pluginName    (optional) the name of the plugin it should try for the location on the view
+     * @param removePluginNameFromThread (optional) in the finally of this method remove the pluginNameForTemplate threadlocal (defaults to true )
+     *                                                     
      */
     View getView(String viewName, String pluginName = null, boolean removePluginNameFromThread = true) {
 		try{
@@ -38,6 +44,9 @@ class FreemarkerViewService {
         }
     }
     
+    /**
+     * Calls getView to grab the freemarker tempalte and and then passes to render(view,model...) 
+     */
     Writer render(String viewName , Map model, Writer writer = new CharArrayWriter(), String pluginName = null){
 		RenderEnvironment.bindRequestIfNull(grailsApplication.mainContext, writer) 
 		View view = getView(viewName, pluginName,false)
@@ -46,8 +55,14 @@ class FreemarkerViewService {
     }
     
     /**
-     * skips the dependency on the response and request. Renders straight to a passed in writer. Expects a model as well
-     * @return the writer that was passed in or if nothing passed in then a StringBuilderWriter with the content
+     * processes the freemarker template in the View. 
+     * sets the plugin thread local if passed in and bind a request if none exists before processing.
+     * 
+     * @param view  the GrailsFreeMarkerView that holds the template
+     * @param model the hash model the should be passed into the freemarker tempalate
+     * @param writer (optional) a writer if you have one. a CharArrayWriter will be created by default. 
+     * @param pluginName (optional) the plugin to look in for the view
+     * @return the writer that was passed in.
      */
     Writer render(View view , Map model, Writer writer = new CharArrayWriter() , String pluginName = null){
 		try{
@@ -68,6 +83,9 @@ class FreemarkerViewService {
 		
     }
 
+    /**
+     * returns the local by using the localResolver and the webrequest from RequestContextHolder.getRequestAttributes()
+     */
 	def getLocale(){
 		def webRequest = RequestContextHolder.getRequestAttributes()
 		return localeResolver.resolveLocale(webRequest.request)

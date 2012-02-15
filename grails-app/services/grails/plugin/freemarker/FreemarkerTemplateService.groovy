@@ -18,9 +18,11 @@ package grails.plugin.freemarker
 import freemarker.template.Configuration
 import freemarker.template.Template
 
+import org.apache.commons.io.output.StringBuilderWriter
 
 /**
- *
+ * A service to work directly with the freemarker templates and config.
+ * 
  * @author Joshua Burnett
  *
  */
@@ -57,21 +59,38 @@ class FreemarkerTemplateService {
         return writer
     }
 
+	
     /**
-     * processes and returns the string of the processed view name
-     *
+     * creates a new template from the string and parses/processes it with the passed in model.
+     * This can be fairly inefficient as once the tempkate is built its not cached 
+     * This creates/parses a new template from scratch on each call to this method
+     * 
+     * @param templateContent the string with the template code
+     * @param model the hash of data to be used in the template
+     * @param writer (optional) a writer if you have one. a StringBuilderWriter will be created by default. 
+     * @return the resulting processed content as a writer (a StringBuilderWriter). Use writer.toString to get the string content
      */
-    String renderString(String templateName , Map model, String pluginName = null){
-        return renderString(getTemplate(templateName, pluginName), model)
+    Writer processString(String templateContent , Map model, Writer writer = new StringBuilderWriter()){
+        Template templateInst = new Template("One-off-template-from-string",new StringReader(templateContent),freemarkerConfig.configuration)
+        templateInst.process(model, writer)
+        return writer
     }
-
+    
     /**
-     * processes and returns the string of the processed view
-     *
+     * creates a new template from the passed in file. It converts the file to a string and 
+     * This can be fairly inefficient as once the template is built its not cached 
+     * This creates/parses a new template from scratch on each call to this method
+     * 
+     * @param templateFileName the template file name
+     * @param model the hash model of data to be used in the template
+     * @param writer (optional) a writer if you have one. a StringBuilderWriter will be created by default. 
+     * @return the resulting processed content as a writer (a StringBuilderWriter). Use writer.toString to get the string content
      */
-    String renderString(Template view , Map model, String pluginName = null){
-        def xhtmlWriter = new CharArrayWriter()
-        return render(view , model, xhtmlWriter).toString()
+    Writer processFileName(String templateFileName , Map model, Writer writer = new StringBuilderWriter()){
+        Template templateInst = new Template("One-off-template-from-fileName",new FileReader(templateFileName),freemarkerConfig.configuration)
+        templateInst.process(model, writer)
+        return writer
     }
+    
 }
 

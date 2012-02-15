@@ -26,7 +26,8 @@ log4j = {
 		     trace  'org.springframework.web.servlet.view',
 		          'org.springframework.context.support'
 		 
-		     debug  'grails.plugin.freemarker.GrailsFreeMarkerView',
+		     debug  'grails.plugin.freemarker.GrailsTemplateLoader', //'grails.plugin.freemarker.GrailsFreeMarkerView',
+		            'org.springframework.ui.freemarker.SpringTemplateLoader',
 		            'grails.app.services.grails.plugin.freemarker.FreemarkerViewService',
 					'grails.plugin.freemarker.TagLibToDirectiveAndFunction' 
 				//'grails.plugin.freemarker.GrailsTemplateLoader',

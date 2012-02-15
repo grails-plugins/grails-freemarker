@@ -86,16 +86,17 @@ public class GrailsTemplateLoader implements TemplateLoader, ApplicationContextA
 
 	@PostConstruct
     public void init() {
-		//if in dev or reloadable then this is the one we want
+		//if we are in development or config is set to reloadable GSPs then this is the one we want
 		if(applicationContext.containsBeanDefinition("groovyPageResourceLoader")){
 			log.debug("must be runnning in dev so using the groovyPageResourceLoader");
 			resourceLoader = (ResourceLoader)applicationContext.getBean("groovyPageResourceLoader");
 		}else{
+		    //in a production deployment, so just use the applicationContext
 			resourceLoader = applicationContext;
 		}
 		
-		//grails 2 changed the way the groovyPageResourceLoader works, it used to take care of lopping off the web-inf for us
-		//during dev time but it no longer does
+		//grails 2 changed the way the groovyPageResourceLoader works, in 1.3.7 it used to take care of lopping off the web-inf for us
+		//during development time but it no longer does
 		if(GrailsUtil.getGrailsVersion().compareTo("2.0.0") >= 0 && !grailsApplication.isWarDeployed()){
 			if (log.isDebugEnabled()) log.debug("nulling webInfPrefix for GRails 2");
 			webInfPrefix ="";
@@ -103,7 +104,7 @@ public class GrailsTemplateLoader implements TemplateLoader, ApplicationContextA
 	}
 	
 	public Object findTemplateSource(String templateName) throws IOException {
-	    if (log.isDebugEnabled()){log.debug("Looking for FreeMarker template with name ["+ templateName + "]");}
+	    if (log.isDebugEnabled()){log.debug("GrailsTemplateLoader Looking for template with name ["+ templateName + "]");}
 
 		GrailsWebRequest webRequest = (GrailsWebRequest) RequestContextHolder.currentRequestAttributes();
 		HttpServletRequest request = webRequest != null? webRequest.getCurrentRequest() : null;
