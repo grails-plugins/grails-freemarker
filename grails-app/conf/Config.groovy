@@ -23,24 +23,14 @@ log4j = {
 
     warn   'org.mortbay.log'
 
-		     trace  'org.springframework.web.servlet.view',
+/*		     trace  'org.springframework.web.servlet.view',
 		          'org.springframework.context.support'
 		 
 		     debug  'grails.plugin.freemarker.GrailsTemplateLoader', //'grails.plugin.freemarker.GrailsFreeMarkerView',
 		            'org.springframework.ui.freemarker.SpringTemplateLoader',
 		            'grails.app.services.grails.plugin.freemarker.FreemarkerViewService',
 					'grails.plugin.freemarker.TagLibToDirectiveAndFunction' 
-				//'grails.plugin.freemarker.GrailsTemplateLoader',
-		        //'grails.plugin.freemarker.GrailsFreeMarkerViewResolver',
-				
-				//,
-		        //  'org.codehaus.groovy.grails.web.pages.GroovyPageResourceLoader',
-		        //  'grails.plugin.freemarker.AbstractTagLibAwareConfigurer',
-		        //  'grails.plugin.freemarker.TagLibToDirectiveAndFunction' 
-		 // 'org.springframework.ui.freemarker'
-		//'org.springframework.web.servlet.view.freemarker',
-		//'org.springframework.core.io.DefaultResourceLoader',
-		//'org.springframework.web.context.support.ServletContextResourceLoader'
+*/
 }
 
 environments {

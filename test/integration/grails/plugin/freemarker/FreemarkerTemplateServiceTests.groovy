@@ -45,16 +45,5 @@ class FreemarkerTemplateServiceTests extends GroovyTestCase {
         assertTrue writer.toString().contains("<p>basejump</p>")
     }
 
-    void testRenderStringPlugin(){
-        def res = freemarkerTemplateService.renderString("gobaby${suffix}" , [testvar:"basejump"], "freemarker-plugin-test")
-        println res
-        assertTrue res.contains("<p>basejump</p>")
-    }
-
-    void testRenderString(){
-        def res = freemarkerTemplateService.renderString("demo/index${suffix}" , [name:"basejump",state:"IL"])
-        println res
-        assertTrue res.contains("Name: basejump")
-    }
 }
 

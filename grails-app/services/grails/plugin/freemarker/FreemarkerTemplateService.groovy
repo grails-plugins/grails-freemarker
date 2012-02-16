@@ -62,12 +62,12 @@ class FreemarkerTemplateService {
 	
     /**
      * creates a new template from the string and parses/processes it with the passed in model.
-     * This can be fairly inefficient as once the tempkate is built its not cached 
+     * This can be fairly inefficient as once the template is built/compiled its not cached 
      * This creates/parses a new template from scratch on each call to this method
      * 
-     * @param templateContent the string with the template code
+     * @param templateContent a string with the template code
      * @param model the hash of data to be used in the template
-     * @param writer (optional) a writer if you have one. a StringBuilderWriter will be created by default. 
+     * @param writer (optional) a writer if you have one. a org.apache.commons.io.output.StringBuilderWriter will be created by default. 
      * @return the resulting processed content as a writer (a StringBuilderWriter). Use writer.toString to get the string content
      */
     Writer processString(String templateContent , Map model, Writer writer = new StringBuilderWriter()){
@@ -77,13 +77,14 @@ class FreemarkerTemplateService {
     }
     
     /**
-     * creates a new template from the passed in file. It converts the file to a string and 
-     * This can be fairly inefficient as once the template is built its not cached 
+     * creates a new template from the passed in file name. 
+     * Whats different about this is that its not confined by the template loaders and so it can be a pointer to any file on the file system
+     * This can be fairly inefficient as once the template is built/compiled its not cached 
      * This creates/parses a new template from scratch on each call to this method
      * 
      * @param templateFileName the template file name
      * @param model the hash model of data to be used in the template
-     * @param writer (optional) a writer if you have one. a StringBuilderWriter will be created by default. 
+     * @param writer (optional) a writer if you have one. a org.apache.commons.io.output.StringBuilderWriter will be created by default. 
      * @return the resulting processed content as a writer (a StringBuilderWriter). Use writer.toString to get the string content
      */
     Writer processFileName(String templateFileName , Map model, Writer writer = new StringBuilderWriter()){
