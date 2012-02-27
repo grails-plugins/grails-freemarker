@@ -1,0 +1,101 @@
+buildscript {
+	repositories {
+		mavenRepo (name: "Alkemist's GitHub", url: "http://cloud.github.com/downloads/alkemist") {
+			pattern = "[organisation]/[module]-[revision].[ext]"
+		}
+		mavenRepo name: "scala-tools", url: "http://scala-tools.org/repo-releases"
+		mavenCentral()
+	}
+	dependencies {
+		classpath "markdown2book:markdown2book:1.0-SNAPSHOT"
+	}
+}
+
+archivesBaseName = "geb-manual"
+output = file("build/manual")
+
+modifyPom = { pom ->
+	pom.project {
+		name "Geb Manual - The Book of Geb"
+		description "Geb (pronounced \"jeb\") manual, user guide and API reference."
+	}
+}
+
+task compileApi(dependsOn: publishedGroovyModules.collect { project(it).groovydoc }) {
+	publishedGroovyModules.collect { project(it) }.each { groovyProject ->
+		inputs.dir groovyProject.groovydoc.destinationDir
+	
+		doLast {
+			project.copy {
+				from groovyProject.groovydoc.destinationDir
+				into "$buildDir/manual/api/$groovyProject.name"
+			}
+		}
+	}
+
+	outputs.dir "build/manual/api"
+}
+
+task compileManual {
+	substitutionProperties = [
+		"geb-version": project.version,
+		"spock-version": "0.5-groovy-1.7",
+		"selenium-version": seleniumVersion,
+		"groovy-version": groovyVersion,
+		"created-at": new java.text.SimpleDateFormat("MMMM, yyyy").format(new Date()),
+		"home-page": "www.gebish.org"
+	]
+	
+	inputs.properties substitutionProperties
+	inputs.dir "src"
+	outputs.dir "$buildDir/manual"
+
+	doLast {
+		def tmpSpace = file("$buildDir/tmp/manual")
+		assert !tmpSpace.exists() || tmpSpace.deleteDir()
+		
+		copy {
+			from "src"
+			into tmpSpace
+			
+			// There's an issue with encoding being messed up by filter(), so do it manually for now
+			//filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: substitutionProperties)
+		}
+		
+		tmpSpace.eachFileRecurse { filterFile ->
+			if (["md", "html"].any { filterFile.name.endsWith(it) }) {
+				def text = filterFile.getText("UTF-8")
+				substitutionProperties.each { k, v ->
+					text = text.replace("@$k@", v)
+				}
+				
+				filterFile.setText(text, "UTF-8")
+			}
+		}
+		
+		new markdown2book.Generator(file("$buildDir/tmp/manual"), file("$buildDir/manual"), "UTF-8").generate()
+	}
+}
+
+task compile(type: Copy, dependsOn: [compileManual, compileApi])
+
+task zip(type: Zip, dependsOn: compile) {
+	inputs.dir output
+	outputs.file archivePath
+	from output
+}
+
+artifacts {
+	archives zip
+}
+
+// Maven plugin only adds install to java projects
+task install(type: Upload, dependsOn: configurations.archives.allArtifacts.buildDependencies) {
+	configuration = configurations.archives
+	description = "Does a maven install of the archives artifacts into the local .m2 cache."
+	repositories {
+		mavenInstaller name: "mavenInstaller"
+	}
+}
+
+task build(dependsOn: zip)

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN"
+	"http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<!-- Processed by MultiMarkdown -->
+		<meta name="Affiliation" content="9ci, Inc." />
+		<meta name="Author" content="Ken E Roberts" />
+		<link type="text/css" rel="stylesheet" href="../css/ref.css" />
+		<meta name="Copyright" content="2012 Ken E Roberts.  
+This work is licensed under a Creative Commons License.  
+http://creativecommons.org/licenses/by-sa/2.5/" />
+		<meta name="Date" content="February 27, 2012" />
+		<meta name="Format" content="complete" />
+		<meta name="Keywords" content="" />
+		<meta name="Subtitle" content="Subtitle" />
+		<title>Title</title>
+	</head>
+<body>
+
+<h1 id="usage">Usage</h1>
+
+<p>The plugin will try to expose all the TagLib artefacts, registered at grailsApplication.tagLibsClasses, as
+user-defined directives and functions (for implementation details, please refer to
+<a href="http://freemarker.sourceforge.net/docs/app_faq.html#faq_implement_function_or_macro_in_java">FreeMarker FAQ</a> ).
+These directives and functions will be defined at runtime and exposed as shared variables, using the same namespace
+of the source taglibs, in any FreeMarker template created further.</p>
+
+<p class="warning">
+Be aware that some templates can mistakenly/inadvertently &#8220;shadow&#8221; shared variables definitions.
+</p>
+
+<h2 id="syntaxtipsgspvs.ftl">Syntax tips (GSP vs. FTL)</h2>
+
+<p>The following items contain useful information about some of the differences between Grails Server Pages (.gsp) and
+FreeMarker Templates (.ftl). Please note this is not intended to be a complete list, it&#8217;s just a starting point for
+begginers.</p>
+
+<h3 id="mapsvs.hashes">Maps vs. Hashes</h3>
+
+<p>.gsp  </p>
+
+<p class="code">[key1: &#8216;abc&#8217;, key2: 2]</p>
+
+<p>.ftl  &#8211; <em>note that you must enclose the keys names with quotes.</em>  </p>
+
+<p class="code">{&#8216;key1&#8217;: &#8216;abc&#8217;, &#8216;key2&#8217;: 2}</p>
+
+<h3 id="tagsvs.tags">Tags vs. Tags</h3>
+
+<p>.gsp <br />
+    &lt;g:includeJs script=&#8221;myscript&#8221; /></p>
+
+<p>.ftl <br />
+    &lt;@g.includeJs script=&#8221;myscript&#8221; /></p>
+
+<p>or <br />
+    [@g.includeJs script=&#8221;myscript&#8221; /]</p>
+
+<p>Parameter values are (arbitrary complex) expressions that are not quoted. So assuming you want to pass an integer to
+foo, &lt;\@foo bar=1 /> is good, but &lt;\@foo bar=&#8221;1&#8221; /> is wrong as it passes in the value as a string (because &#8220;1&#8221; is a
+string literal, just like in Groovy). For the same reason, &lt;\@foo bar=x+1 /> is good, but &lt;\@foo bar=&#8221;${x+1}&#8221; />
+does something else.</p>
+
+<h3 id="tagsasmethodcallsvs.methodcalls">Tags as method calls vs. Method calls</h3>
+
+<p>.gsp <br />
+    &lt;span id=&#8221;title&#8221; class=&#8221;label ${hasErrors(bean:book,field:&#8217;title&#8217;,&#8217;errors&#8217;)}&#8221;>Title</span></p>
+
+<p>.ftl &#8211; <em>note that the arguments are passed in as a hash (map) enclosed in {}, also remember to enclose your key names in quotes</em> <br />
+    &lt;span id=&#8221;title&#8221; class=&#8221;label ${g.hasErrors({&#8216;bean&#8217;:book,&#8217;field&#8217;:&#8217;title&#8217;},&#8217;errors&#8217;)}&#8221;>Title</span></p>
+
+<p class="note">
+The plugin will define functions using the same namespace of the corresponding directives.
+All functions will receive two parameters, at most: a hash and an evaluated string. 
+</p>
+
+<h2 id="render">Render</h2>
+
+<p>This plugin adds a few new valid arguments to the controller&#8217;s render method</p>
+
+<p>plugin - allows you to specify a plugin for resolution</p>
+
+<p>example (assume this is called from FooController): <br />
+    render view:&#8217;gotView.ftl&#8217;, plugin:&#8217;free-bird&#8217;</p>
+
+<p>plugin resolution precedence for &#8216;foo/gotView.ftl&#8217;. Will return the first one it finds</p>
+
+<ol>
+<li>if any preTemplateLoaders are set in config then look there for &#8216;foo/gotView.ftl&#8217;</li>
+<li>look in the application&#8217;s view dir for &#8216;foo/gotView.ftl&#8217;</li>
+<li>look in the free-bird plugin for foo/gotView.ftl</li>
+<li>if any postTemplateLoaders are specified then call those as well</li>
+</ol>
+
+<p>loaderAttribute - assign an attribute that can be retrieved from the request later on in the Loader <br />
+    render view:&#8217;gotView.ftl&#8217;, plugin:&#8217;free-bird&#8217;, loaderAttribute:&#8217;gorm&#8217;</p>
+
+<p>If your custom preTemplateLoader is expensive or only for &#8220;special&#8221; views then you can check for the presence of &#8216;gorm&#8217; and only continue if its present.
+This allows better performance, for example, if you are resolving view from a database and only want to try if its specified. otherwise every resolution might attempt the expensive resolution operation. A good examples exists in the test/projects/gorm-loader</p>
+
+<h2 id="services">Services</h2>
+
+<p>There are 2 services that you can inject to help render templates. The FreemarkerViewService and FreemarkerTemplateService</p>
+
+<p>FreemarkerViewService</p>
+
+<p>Methods</p>
+
+<p>/* this is the one you will primarily use*/</p>
+
+<pre><code>Writer render(String viewName , Map model, Writer writer = new CharArrayWriter(), String pluginName = null)
+Writer render(View view , Map model, Writer writer = new CharArrayWriter() , String pluginName = null)
+View getView(String viewName, String pluginName = null, boolean removePluginNameFromThread = true) </code></pre>
+
+<p>The methods are safe to use in a thread or quartz job. It checks to see that a Request is bound to the thread and if not is goes through the process of binding one so that the taglibs work properly for items like g.message and g.resource</p>
+</body>
+</html>
