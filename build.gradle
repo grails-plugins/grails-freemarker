@@ -14,7 +14,7 @@ buildscript {
 //apply plugin: 'idea'
 apply plugin: "groovy"
 
-archivesBaseName = "geb-manual"
+archivesBaseName = "freemarker-manual"
 output = file("build/manual")
 
 modifyPom = { pom ->
