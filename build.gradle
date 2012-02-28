@@ -1,312 +1,68 @@
 buildscript {
 	repositories {
-		mavenCentral()
-		mavenRepo (name: "Geb's GitHub", url: "http://cloud.github.com/downloads/geb") {
+		mavenRepo (name: "Alkemist's GitHub", url: "http://cloud.github.com/downloads/alkemist") {
 			pattern = "[organisation]/[module]-[revision].[ext]"
 		}
-		mavenRepo (name: "Alkemists's GitHub", url: "http://cloud.github.com/downloads/alkemist") {
-			pattern = "[organisation]/[module]-[revision].[ext]"
-		}
-		mavenRepo name: "Gradle", url: "http://repo.gradle.org/gradle/plugins-snapshots/"
-	}
-}
-
-apply plugin: 'idea'
-
-allprojects { project ->
-	version = '0.7.0-SNAPSHOT'
-	group = 'org.codehaus.geb'
-	isSnapshot = version.endsWith("-SNAPSHOT")
-    
-	grailsVersion = "1.3.7"
-	seleniumVersion = "2.15.0"
-	groovyVersion = "1.7.10"
-	spockVersion = "0.6-groovy-1.7-SNAPSHOT"
-	
-	spockDependency = "org.spockframework:spock-core:$spockVersion"
-
-	seleniumDependency = "org.seleniumhq.selenium:selenium-api:$seleniumVersion"
-	seleniumSupportDependency = "org.seleniumhq.selenium:selenium-support:$seleniumVersion"
-	firefoxDriverDependency = "org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion"
-	htmlUnitDriverDependency = "org.seleniumhq.selenium:selenium-htmlunit-driver:$seleniumVersion"
-
-	jettyDependency = "org.mortbay.jetty:jetty:6.1.21"
-
-	groovyDependency = "org.codehaus.groovy:groovy-all:$groovyVersion"
-	
-	repositories {
+		mavenRepo name: "scala-tools", url: "http://scala-tools.org/repo-releases"
 		mavenCentral()
-		mavenRepo name: "spock-snapshots", url: "http://m2repo.spockframework.org/snapshots"
-		mavenRepo name: "java.net", url: "http://download.java.net/maven/2"
 	}
-	
-	groovyModules = [
+	dependencies {
+		classpath "markdown2book:markdown2book:1.0-SNAPSHOT"
+	}
+}
+
+//apply plugin: 'idea'
+apply plugin: "groovy"
+
+archivesBaseName = "geb-manual"
+output = file("build/manual")
+
+modifyPom = { pom ->
+	pom.project {
+		name "Geb Manual - The Book of Geb"
+		description "Geb (pronounced \"jeb\") manual, user guide and API reference."
+	}
+}
+
+task compileManual {
+	substitutionProperties = [
+		"geb-version": project.version,
+		"spock-version": "0.5-groovy-1.7",
+		"selenium-version": '2.15.0',
+		"groovy-version": '1.7.10',
+		"created-at": new java.text.SimpleDateFormat("MMMM, yyyy").format(new Date()),
+		"home-page": "www.gebish.org"
 	]
-
-	publishedModules = [
-		":doc:manual"
-	]
-
-	publishedGroovyModules = groovyModules.findAll { it in publishedModules }
 	
-	grailsPluginModule = ""
-}
+	inputs.properties substitutionProperties
+	inputs.dir "doc/manual/src"
+	outputs.dir "$buildDir/manual"
 
-subprojects {
-	configurations {
-		meta
-		all {
-			resolutionStrategy { 
-				cacheDynamicVersionsFor 24, 'hours'
-				cacheChangingModulesFor 24, 'hours'
+	doLast {
+		def tmpSpace = file("$buildDir/tmp/manual")
+		assert !tmpSpace.exists() || tmpSpace.deleteDir()
+		
+		copy {
+			from "doc/manual/src"
+			into tmpSpace
+			
+			// There's an issue with encoding being messed up by filter(), so do it manually for now
+			//filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: substitutionProperties)
+		}
+		
+		tmpSpace.eachFileRecurse { filterFile ->
+			if (["md", "html"].any { filterFile.name.endsWith(it) }) {
+				def text = filterFile.getText("UTF-8")
+				substitutionProperties.each { k, v ->
+					text = text.replace("@$k@", v)
+				}
+				
+				filterFile.setText(text, "UTF-8")
 			}
 		}
-	}
-
-	if (project.path in groovyModules) {
-		apply plugin: "groovy"
-		apply plugin: 'idea'
 		
-		if (project.path != ":test-utils") {
-			apply from: "file:${rootDir}/clover.gradle"
-		}
-		
-		configurations {
-			compile.transitive = true
-			testCompile.transitive = true
-		}
-		
-		dependencies {
-			groovy groovyDependency
-		}
-		
-		compileGroovy.options.fork = false
-		compileTestGroovy.options.fork = false
-		
-		if (project.hasProperty('t')) {
-			test.doFirst {
-				test.include "**/${t}*.class"
-			}
-		}
-
-		sourceCompatibility = 1.5
-		targetCompatibility = 1.5
-		
-		driver = project.hasProperty("driver") ? project.driver : "htmlunit"
-		test {
-			systemProperties['geb.driver'] = project.driver
-		}
-		
-		task listCompile(dependsOn: configurations.compile) << {
-			println "compile classpath = ${configurations.compile.resolve().collect {File file -> file.name}.sort()}"
-		}
-
-		task listRuntime(dependsOn: configurations.runtime) << {
-			println "runtime classpath = ${configurations.runtime.resolve().collect {File file -> file.name}.sort()}"
-		}
-	}
-	
-	if (project.path in publishedGroovyModules) {
-		groovydoc {
-			exclude "**/internal/**"
-
-			link "http://download.oracle.com/javase/6/docs/api/",
-				"java.net",
-				"java.util",
-				"java.lang",
-				"java.io"
-
-			link "http://selenium.googlecode.com/svn/trunk/docs/api/java/",
-				"org.openqa.selenium"
-
-			link "http://groovy.codehaus.org/api/",
-				"groovy.lang"
-
-			link "http://www.gebish.org/manual/$project.version/api/geb-core",
-				"geb"
-
-			docTitle = "Groovy API Documentation for $project.name $project.version"
-			footer = "<p style='text-align: center'>Groovy API Documentation for $project.name $project.version - Licensed under the Apache License, Version 2.0 - <a href='http://www.gebish.org'>http://www.gebish.org</a></p>"
-			windowTitle = "Groovy API for $project.name $project.version"
-		}
-		
-		task sourcesJar(type: Jar, dependsOn: classes) { 
-			classifier = 'sources' 
-			from sourceSets.main.allSource
-		} 
-
-		task javadocJar(type: Jar, dependsOn: javadoc) { 
-			classifier = 'javadoc' 
-			from javadoc.destinationDir 
-		} 
-
-		task groovydocJar(type: Jar, dependsOn: groovydoc) { 
-			classifier = 'groovydoc'
-			from groovydoc.destinationDir 
-		} 
-
-		artifacts {
-			meta groovydocJar, javadocJar, sourcesJar
-		}
-	}
-		
-	
-	if (project.path in publishedModules) {
-		if (!plugins.hasPlugin("base")) {
-			apply plugin: "base"
-		}
-		apply plugin: "maven"
-		apply plugin: "signing"
-		
-		configurations {
-			published.extendsFrom archives, meta, signatures
-		}
-		
-		task release(dependsOn: uploadPublished)
-		
-		project.afterEvaluate { project, state ->
-			state.rethrowFailure()
-			if (project.path in publishedModules) {
-				signing {
-					sign configurations.archives, configurations.meta
-				}
-
-				configurations {
-					deployerJars
-				}
-
-				dependencies {
-					deployerJars "org.apache.maven.wagon:wagon-http-lightweight:1.0-beta-6"
-				}
-
-				project.poms = [project.install.repositories.mavenInstaller.pom]
-
-				if (project.hasProperty('codehausUsername') && project.hasProperty('codehausPassword')) {
-					uploadPublished {
-						project.deployer = repositories.mavenDeployer {
-							beforeDeployment { MavenDeployment deployment ->
-								if (signing.signatory) {
-									signPom(deployment)
-								}
-							}
-							uniqueVersion = false
-							configuration = configurations.deployerJars
-							repository(url: "https://nexus.codehaus.org/service/local/staging/deploy/maven2/") {
-								authentication(userName: codehausUsername, password: codehausPassword)
-							}
-							snapshotRepository(url: "https://nexus.codehaus.org/content/repositories/snapshots/") {
-								authentication(userName: codehausUsername, password: codehausPassword)
-							}
-							pom.project {
-								url "http://www.gebish.org"
-								inceptionYear "2010"
-								licenses {
-									license {
-										name 'The Apache Software License, Version 2.0'
-										url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-										distribution 'repo'
-									}
-								}
-								scm {
-									url "https://github.com/geb/geb/"
-								}
-								developers {
-									developer {
-										id "ldaley"
-										name "Luke Daley"
-										roles {
-											role "Lead"
-											role "Founder"
-										}
-									}
-									developer {
-										id "robfletcher"
-										name "Rob Fletcher"
-										roles {
-											role "Founder"
-										}
-									}
-								}
-
-							}
-						}
-						project.poms << project.deployer.pom 
-					}
-				}
-
-				if (project.hasProperty('modifyPom')) {
-					project.poms*.whenConfigured(project.modifyPom) 
-				}
-
-				// Remove test deps from all poms
-				project.poms*.whenConfigured { pom ->
-					pom.dependencies.removeAll(pom.dependencies.findAll { it.scope == "test" })
-				}
-			}
-		}
+		new markdown2book.Generator(file("$buildDir/tmp/manual"), file("$buildDir/manual"), "UTF-8").generate()
 	}
 }
 
-configurations {
-	build
-}
-
-dependencies {
-	build "com.cenqua.clover:clover:3.0.2"
-	build "org.apache.ant:ant-junit:1.8.1@jar"
-	build "org.apache.ant:ant-nodeps:1.8.1@jar"
-}
-
-task test(dependsOn: getTasksByName("test", true)) << {
-	def reportsDir = "${buildDir}/reports"
-	
-	// Aggregate the test results
-	ant.taskdef(
-		name: 'junitreport2', 
-		classname: "org.apache.tools.ant.taskdefs.optional.junit.XMLResultAggregator",
-		classpath: configurations.build.asPath
-	)
-	
-	def testReportsDir = new File("${reportsDir}/tests")
-	if (testReportsDir.exists()) {
-		testReportsDir.deleteDir()
-	}
-	testReportsDir.mkdirs()
-	
-	ant.junitreport2(todir: testReportsDir) {
-		subprojects.each {
-			def testResultsDir = "${it.buildDir}/test-results"
-			if (new File(testResultsDir).exists()) {
-				fileset(dir: testResultsDir) {
-					include(name: "TEST-*.xml")
-				}
-			}
-		}
-		report(todir: testReportsDir)
-	}
-	
-	// Aggregate the coverage results
-	if (project.hasProperty("withClover")) {
-		def db = "clover/clover.db"
-		def mergedDb = "${buildDir}/${db}"
-		def cloverReportsDir = "${reportsDir}/clover"
-		ant.taskdef(resource: "cloverlib.xml", classpath: configurations.build.asPath)
-		ant."clover-merge"(initstring: mergedDb) {
-			subprojects.each {
-				def projectCloverDb = "${it.buildDir}/${db}"
-				if (new File(projectCloverDb).exists()) {
-					cloverdb(initstring: projectCloverDb)
-				}
-			}
-		}
-		ant."clover-report"(initstring: mergedDb) {
-			current(outfile:"${cloverReportsDir}/clover.xml")
-		}
-		ant."clover-html-report"(initstring: mergedDb, outdir:"${cloverReportsDir}/html")
-	}
-}
-
-task wrapper(type: Wrapper) {
-	gradleVersion = '1.0-milestone-7'
-}
-
+task compile(type: Copy, dependsOn: [compileManual])
