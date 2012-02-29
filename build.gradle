@@ -1,0 +1,68 @@
+buildscript {
+	repositories {
+		mavenRepo (name: "Alkemist's GitHub", url: "http://cloud.github.com/downloads/alkemist") {
+			pattern = "[organisation]/[module]-[revision].[ext]"
+		}
+		mavenRepo name: "scala-tools", url: "http://scala-tools.org/repo-releases"
+		mavenCentral()
+	}
+	dependencies {
+		classpath "markdown2book:markdown2book:1.0-SNAPSHOT"
+	}
+}
+
+//apply plugin: 'idea'
+apply plugin: "groovy"
+
+archivesBaseName = "freemarker-manual"
+output = file("build/manual")
+
+modifyPom = { pom ->
+	pom.project {
+		name "Grails Freemarker Manual - Grails Freemarker"
+		description "Freemarker plugin user guide and API reference."
+	}
+}
+
+task compileManual {
+	substitutionProperties = [
+		"geb-version": project.version,
+		"spock-version": "0.5-groovy-1.7",
+		"selenium-version": '2.15.0',
+		"groovy-version": '1.7.10',
+		"created-at": new java.text.SimpleDateFormat("MMMM, yyyy").format(new Date()),
+		"home-page": "http://grails.org/plugin/freemarker"
+	]
+	
+	inputs.properties substitutionProperties
+	inputs.dir "doc/manual/src"
+	outputs.dir "$buildDir/manual"
+
+	doLast {
+		def tmpSpace = file("$buildDir/tmp/manual")
+		assert !tmpSpace.exists() || tmpSpace.deleteDir()
+		
+		copy {
+			from "doc/manual/src"
+			into tmpSpace
+			
+			// There's an issue with encoding being messed up by filter(), so do it manually for now
+			//filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: substitutionProperties)
+		}
+		
+		tmpSpace.eachFileRecurse { filterFile ->
+			if (["md", "html"].any { filterFile.name.endsWith(it) }) {
+				def text = filterFile.getText("UTF-8")
+				substitutionProperties.each { k, v ->
+					text = text.replace("@$k@", v)
+				}
+				
+				filterFile.setText(text, "UTF-8")
+			}
+		}
+		
+		new markdown2book.Generator(file("$buildDir/tmp/manual"), file("$buildDir/manual"), "UTF-8").generate()
+	}
+}
+
+task compile(type: Copy, dependsOn: [compileManual])
