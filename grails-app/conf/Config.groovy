@@ -33,18 +33,6 @@ log4j = {
 */
 }
 
-environments {
-	production {
-		grails.serverURL = "http://www.changeme.com"
-	}
-	development {
-		grails.serverURL = "http://localhost:8080/${appName}"
-	}
-	test {
-		grails.serverURL = "http://localhost:8080/${appName}"
-    }
-}
-
 grails.doc.authors='Daniel Henrique Alves Lima (text revised by Gislaine Fonseca Ribeiro and others)'
 grails.doc.license='Apache License 2.0'
 
