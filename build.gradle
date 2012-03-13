@@ -11,43 +11,30 @@ buildscript {
 	}
 }
 
-//apply plugin: 'idea'
 apply plugin: "groovy"
 
-archivesBaseName = "freemarker-manual"
-output = file("build/manual")
+defaultTasks 'compileManual'
 
-modifyPom = { pom ->
-	pom.project {
-		name "Grails Freemarker Manual - Grails Freemarker"
-		description "Freemarker plugin user guide and API reference."
-	}
-}
+//defualt dir locations
+docOutputDir = "docs/manual"
+docSrcDir = "src/docs/manual"
+docTmpDir = "docs/tmp/manual"
 
 task compileManual {
 	substitutionProperties = [
-		"geb-version": project.version,
-		"spock-version": "0.5-groovy-1.7",
-		"selenium-version": '2.15.0',
-		"groovy-version": '1.7.10',
+		"freemarker-version": project.version,
 		"created-at": new java.text.SimpleDateFormat("MMMM, yyyy").format(new Date()),
 		"home-page": "http://grails.org/plugin/freemarker"
 	]
-	
-	inputs.properties substitutionProperties
-	inputs.dir "doc/manual/src"
-	outputs.dir "$buildDir/manual"
 
 	doLast {
-		def tmpSpace = file("$buildDir/tmp/manual")
+	    
+		def tmpSpace = file(docTmpDir)
 		assert !tmpSpace.exists() || tmpSpace.deleteDir()
 		
 		copy {
-			from "doc/manual/src"
+			from docSrcDir
 			into tmpSpace
-			
-			// There's an issue with encoding being messed up by filter(), so do it manually for now
-			//filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: substitutionProperties)
 		}
 		
 		tmpSpace.eachFileRecurse { filterFile ->
@@ -61,7 +48,7 @@ task compileManual {
 			}
 		}
 		
-		new markdown2book.Generator(file("$buildDir/tmp/manual"), file("$buildDir/manual"), "UTF-8").generate()
+		new markdown2book.Generator(file(docTmpDir), file(docOutputDir), "UTF-8").generate()
 	}
 }
 

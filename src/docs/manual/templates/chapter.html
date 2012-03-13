@@ -4,7 +4,7 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <link href="css/stylesheet.css" rel="stylesheet" type="text/css">
-  <title>Grails Freemarker - Table of Contents - @geb-version@</title>
+  <title>Grails Freemarker - <%= chapter.title %> - version @geb-version@</title>
 
   <link type="text/css" rel="stylesheet" href="css/shCore.css"></link>
   <link type="text/css" rel="stylesheet" href="css/shThemeEclipse.css"></link>
@@ -27,17 +27,29 @@
   </script>
 </head>
 
-<body id="documentation">
+<body>
   <div id="wrapper">
-    <h1 class="title">Grails Freemarker</h1>
-    <p class="tag">— Very Groovy browser automation… web testing, screen scraping and more —</p>
-    <div class="toc">
-      <h2>Version: @geb-version@</h2>
-      <%= toc %>
+    <div id="header">
+      <% if (prev) { %><span class="left">&#x25C0; <a href="<%= prev.filename %>"><%= prev.title %></a></span><% } %>
+      <span class="center"><a href="index.html">Table of Contents</a></span>
+      <% if (next) { %><span class="right"><a href="<%= next.filename %>"><%= next.title %></a> &#x25B6;</span><% } %>
+    </div>
+    <hr />
+    <div class="page_toc">
+      <h3>Chapter Contents</h3>
+      <%= chapter.toc %>
+    </div>
+    <hr />
+    <%= chapter.content %>
+    <hr />
+    <div id="footer">
+      <% if (prev) { %><span class="left">&#x25C0; <a href="<%= prev.filename %>"><%= prev.title %></a></span><% } %>
+      <span class="center"><a href="index.html">Table of Contents</a></span>
+      <% if (next) { %><span class="right"><a href="<%= next.filename %>"><%= next.title %></a> &#x25B6;</span><% } %>
     </div>
   </div>
   <p style="text-align: center">
-    <a href="http://@home-page@">Grails Freemarker</a> - @geb-version@ - @created-at@<br />
+    <a href="http://@home-page@">Grails Freemarker Manual</a> - @freemarker-version@ - @created-at@<br />
     Licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>
   </p>
 </body>
