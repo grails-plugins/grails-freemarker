@@ -1,7 +1,7 @@
 grails.project.dependency.resolution = {
     def versions
     if ("$grailsVersion" > "1.3.7") {
-        versions = [geb:"0.6.2", selenium:"2.16.1", spock:"0.6-SNAPSHOT",pluginConfig:"0.1.5"]      
+        versions = [geb:"0.6.2", selenium:"2.16.1", spock:"0.6",pluginConfig:"0.1.5"]      
     }else{
         versions = [geb:"0.6.0", selenium:"2.16.1", spock:"0.5-groovy-1.7",pluginConfig:"0.1.5"]
     }
