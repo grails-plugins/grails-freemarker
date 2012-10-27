@@ -17,6 +17,7 @@ package grails.plugin.freemarker;
 
 import java.io.CharArrayWriter;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Collections;
 import java.util.Iterator;
@@ -181,6 +182,7 @@ public class TagLibToDirectiveAndFunction implements TemplateDirectiveModel,
                             ObjectWrapper objectWrapper = env.getObjectWrapper();
                             Map<String, TemplateModel> oldVariables = null;
                             TemplateModel oldIt = null;
+                            StringWriter bodyOutput = new StringWriter();
 
                             if (log.isDebugEnabled()) {
                                 log.debug("doCall it " + it);
@@ -211,7 +213,8 @@ public class TagLibToDirectiveAndFunction implements TemplateDirectiveModel,
                                         env.setVariable("it",objectWrapper.wrap(it));
                                     }
                                 }
-                                body.render((Writer) tagInstance.getProperty("out"));
+
+                                body.render(bodyOutput);
                             } finally {
                                 if (oldVariables != null) {
                                     for (Map.Entry<String, TemplateModel> entry : oldVariables.entrySet()) {
@@ -222,7 +225,7 @@ public class TagLibToDirectiveAndFunction implements TemplateDirectiveModel,
                                 }
                             }
 
-                            return "";
+                            return bodyOutput.getBuffer().toString();
                         }
 
                     };
