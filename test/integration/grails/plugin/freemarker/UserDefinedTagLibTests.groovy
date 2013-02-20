@@ -27,7 +27,11 @@ class UserDefinedTagLibTests extends GroovyTestCase {
 
     def freemarkerConfig
     private StringWriter sWriter = new StringWriter()
-    
+
+	void testReverse() {
+		String result = parseFtlTemplate('[#ftl/][@g.reverse]Hi Sam[/@g.reverse]');
+		assertEquals 'maS iH', result
+	}
 
     void testEmoticon() {
         String result = parseFtlTemplate('[#ftl/][@g.emoticon happy="true"]Hi John[/@g.emoticon]');
