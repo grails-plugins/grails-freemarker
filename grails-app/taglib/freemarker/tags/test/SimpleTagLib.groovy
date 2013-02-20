@@ -21,6 +21,10 @@ class SimpleTagLib {
         out << body() << (attrs.happy == 'true' ? " :-)" : " :-(")
     }
 
+	def reverse = { attrs, body ->
+		out << (body() as String).reverse()
+	}
+
     def dateFormat = { attrs, body ->
         out << new java.text.SimpleDateFormat(attrs.format).format(attrs.date)
     }
