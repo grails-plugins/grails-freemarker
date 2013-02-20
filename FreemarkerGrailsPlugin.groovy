@@ -39,7 +39,7 @@ class FreemarkerGrailsPlugin {
     //def dependsOn = [pluginConfig: '0.1.3 > *']
 
 	def observe = ["controllers", 'groovyPages']
-	def loadAfter = ['controllers', 'groovyPages']
+	def loadAfter = ['controllers', 'groovyPages', 'pluginConfig']
 	
     // resources that are excluded from plugin packaging
     def pluginExcludes = [
