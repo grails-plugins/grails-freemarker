@@ -13,33 +13,27 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package grails.plugin.freemarker;
+package grails.plugin.freemarker
 
-
-import org.codehaus.groovy.grails.commons.ArtefactHandler;
+import org.codehaus.groovy.grails.commons.ArtefactHandler
 import org.codehaus.groovy.grails.commons.GrailsApplication
-import org.codehaus.groovy.grails.commons.TagLibArtefactHandler;
+import org.codehaus.groovy.grails.commons.TagLibArtefactHandler
 import org.springframework.beans.BeansException
-import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessor
 import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter
 
-
 /**
- * 
  * @author Daniel Henrique Alves Lima
- *
  */
-class TagLibPostProcessor extends InstantiationAwareBeanPostProcessorAdapter implements InstantiationAwareBeanPostProcessor {
+class TagLibPostProcessor extends InstantiationAwareBeanPostProcessorAdapter {
 
     GrailsApplication grailsApplication
-    
+
     @Override
-    public boolean postProcessAfterInstantiation(Object bean, String beanName)
-            throws BeansException {
-        
+    boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException {
+
         ArtefactHandler tagLibHandler = grailsApplication.getArtefactHandler(TagLibArtefactHandler.TYPE)
         if (tagLibHandler.isArtefact(bean.class) && beanName.endsWith('_fm')) {
-            
+
             ThreadLocal<Deque> outStack = new ThreadLocal<Deque>()
             def _getX = {
                 Deque<Object> d = outStack.get()
@@ -47,31 +41,25 @@ class TagLibPostProcessor extends InstantiationAwareBeanPostProcessorAdapter imp
                     d = new LinkedList<Object>()
                     outStack.set(d)
                 }
-                
+
                 return d
             }
-            
-            
+
             MetaClass mc = bean.metaClass
             mc.getOut = {->
                 Deque d = _getX()
                 return (d.size() > 0)?d.last : null
             }
-            
+
             mc.popOut = {->
                 return _getX().removeLast()
             }
-            
+
             mc.pushOut = {out ->
-                _getX().addLast(out) 
+                _getX().addLast(out)
             }
-            
-            
         }
-                
+
         return true
     }
-
-    
-
 }

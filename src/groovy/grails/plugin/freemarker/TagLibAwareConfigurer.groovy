@@ -13,24 +13,17 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package grails.plugin.freemarker;
+package grails.plugin.freemarker
 
-
-import groovy.lang.GroovyObject;
-
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContext
 
 /**
- * 
  * @author Daniel Henrique Alves Lima
- *
  */
 class TagLibAwareConfigurer extends AbstractTagLibAwareConfigurer {
 
     @Override
-    protected GroovyObject getTagLibInstance(ApplicationContext springContext,
-            String className) {
+    protected GroovyObject getTagLibInstance(ApplicationContext springContext, String className) {
         return springContext."${className}_fm"
     }
-
 }

@@ -22,17 +22,17 @@ import grails.util.GrailsUtil
 
 includeTargets << grailsScript('_GrailsBootstrap')
 
-target(default: 'Parses all FreeMarker templates to validate their syntax') {
+target(fmValidateTemplates: 'Parses all FreeMarker templates to validate their syntax') {
     depends checkVersion, configureProxy, bootstrap
 
     def springCtx = grailsApp.mainContext
-    def viewResolver = springCtx.getBean('freemarkerViewResolver')
-    def viewConfig = springCtx.getBean('freemarkerConfig')
+    def viewResolver = springCtx.freemarkerViewResolver
+    def viewConfig = springCtx.freemarkerConfig
 
     def suffix = viewResolver.suffix
     def templateLoaderPath = "${BuildSettingsHolder.settings.baseDir.absolutePath}/grails-app/views"
     // TODO: Use viewConfig to derivate the loader path
-    
+
     def baseDir = new File(templateLoaderPath)
 
     def scanner = ant.fileScanner {
@@ -49,9 +49,9 @@ target(default: 'Parses all FreeMarker templates to validate their syntax') {
         try {
             configuration.getTemplate(templateName)
         } catch (IOException e) {
-            GrailsUtil.deepSanitize(e)
-            e.printStackTrace()
+            GrailsUtil.deepSanitize(e).printStackTrace()
         }
     }
-
 }
+
+setDefaultTarget 'fmValidateTemplates'

@@ -16,54 +16,42 @@
 package grails.plugin.freemarker;
 
 import java.util.Map;
-import java.util.Locale;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.codehaus.groovy.grails.web.util.WebUtils;
-
-import org.springframework.web.servlet.view.freemarker.FreeMarkerView;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 import org.springframework.beans.BeansException;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerView;
 
 /**
- * 
  * @author Jeff Brown
  * @author Joshua Burnett
- *
  */
 //request.setAttribute(GrailsLayoutDecoratorMapper.RENDERING_VIEW, Boolean.TRUE);
 public class GrailsFreeMarkerView extends FreeMarkerView {
-	private final Log log = LogFactory.getLog(GrailsFreeMarkerView.class);
-	
+
     public FreeMarkerConfig freemarkerConfig;
 
-    
     @Override
     protected void exposeHelpers(Map<String, Object> model, HttpServletRequest request) throws Exception {
-		//for Grails 2 we need to set this so sitemesh works
-		request.setAttribute("org.grails.rendering.view", Boolean.TRUE);
+        //for Grails 2 we need to set this so sitemesh works
+        request.setAttribute("org.grails.rendering.view", true);
         model.put("flash", WebUtils.retrieveGrailsWebRequest().getAttributes().getFlashScope(request));
         super.exposeHelpers(model, request);
     }
 
-	/**
-	 * called on instantiation, 
-	 * overrides the super default so that it uses the FreeMarkerConfigurer that is
-	 * injected into this without doing a new TaglibFactory each time. We have grails taglibs and dont need jsp taglibs
-	 * the freemarker config already has one setup
-	 * also, the old way only allowed 1 FreeMarkerConfig bean. This lets you have multiple FreeMarkerConfigs if need be.
-	 * we don't need the 
-	 */
-	@Override
-	protected void initServletContext(ServletContext servletContext) throws BeansException {
-		setConfiguration(freemarkerConfig.getConfiguration());
-	}
-	
-
-
+    /**
+     * called on instantiation,
+     * overrides the super default so that it uses the FreeMarkerConfigurer that is
+     * injected into this without doing a new TaglibFactory each time. We have grails taglibs and dont need jsp taglibs
+     * the freemarker config already has one setup
+     * also, the old way only allowed 1 FreeMarkerConfig bean. This lets you have multiple FreeMarkerConfigs if need be.
+     * we don't need the
+     */
+    @Override
+    protected void initServletContext(ServletContext servletContext) throws BeansException {
+        setConfiguration(freemarkerConfig.getConfiguration());
+    }
 }

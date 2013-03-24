@@ -1,66 +1,60 @@
+grails.project.work.dir = 'target'
+
 grails.project.dependency.resolution = {
-    def versions
-    if ("$grailsVersion" > "1.3.7") {
-        versions = [geb:"0.6.2", selenium:"2.16.1", spock:"0.6-SNAPSHOT",pluginConfig:"0.1.5"]      
-    }else{
-        versions = [geb:"0.6.0", selenium:"2.16.1", spock:"0.5-groovy-1.7",pluginConfig:"0.1.5"]
-    }
 
-    inherits('global') {
-        excludes //"httpclient"//, "httpcore"
-    }
+    inherits 'global'
+    log 'warn'
 
-    repositories {        
-        grailsPlugins()
-        grailsHome()
+    repositories {
         grailsCentral()
+        mavenLocal()
         mavenCentral()
-        //mavenLocal()
     }
+
+    String gebVersion = '0.7.0'
+    String seleniumVersion = '2.21.0'
 
     dependencies {
         compile "org.freemarker:freemarker:2.3.18"
         compile 'commons-io:commons-io:2.1'
 
-        test "org.codehaus.geb:geb-spock:${versions.geb}"
-            
-        test("org.seleniumhq.selenium:selenium-htmlunit-driver:${versions.selenium}") {
-            excludes "xml-apis"
+        test "org.codehaus.geb:geb-spock:$gebVersion"
+
+        test("org.seleniumhq.selenium:selenium-htmlunit-driver:$seleniumVersion") {
+            exclude "xml-apis"
+            export = false
         }
-        
-        provided("org.codehaus.groovy.modules.http-builder:http-builder:0.5.2"){
+
+        provided("org.codehaus.groovy.modules.http-builder:http-builder:0.5.2") {
             export = false
             excludes 'nekohtml', "httpclient", "httpcore","xml-apis","groovy"
         }
-        provided('net.sourceforge.nekohtml:nekohtml:1.9.15') { 
+        provided('net.sourceforge.nekohtml:nekohtml:1.9.15') {
             export = false
-            excludes "xml-apis" 
+            excludes "xml-apis"
         }
     }
 
     plugins {
-        compile(":plugin-config:${versions.pluginConfig}"){}
+        compile(":plugin-config:0.1.5")
         compile(":tomcat:$grailsVersion", ":hibernate:$grailsVersion") {
             export = false
         }
-        if ("$grailsVersion" > "1.3.7") {
-            provided(":executor:0.3"){
-                export = false
-            }
+
+        provided(":executor:0.3") {
+            export = false
         }
 
-        test ":geb:${versions.geb}",":spock:${versions.spock}"
-        
-        build(':release:1.0.1') {
-              excludes 'http-builder','nekohtml','svn'
-              export = false
+        test ":geb:$gebVersion", ":spock:0.6", {
+            export = false
         }
-        //this seems to prevent svn from being added to application properties
-        build(":svn:1.0.2"){
+
+        build ':release:2.2.1', ':rest-client-builder:1.0.3', {
             export = false
         }
     }
 }
+
 //grails.project.work.dir = '.grails'
 
 if (appName == "freemarker") {

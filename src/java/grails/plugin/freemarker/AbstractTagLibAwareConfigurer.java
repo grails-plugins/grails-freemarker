@@ -41,11 +41,10 @@ import groovy.lang.GroovyObject;
  */
 public abstract class AbstractTagLibAwareConfigurer extends FreeMarkerConfigurer implements GrailsApplicationAware {
 
-    public static final String CONFIGURED_ATTRIBUTE_NAME = "_"
-            + AbstractTagLibAwareConfigurer.class.getName() + ".configured";
+    public static final String CONFIGURED_ATTRIBUTE_NAME = "_" + AbstractTagLibAwareConfigurer.class.getName() + ".configured";
 
-    private final Log log = LogFactory.getLog(AbstractTagLibAwareConfigurer.class);
-	private GrailsApplication grailsApplication = null;
+    private final Log log = LogFactory.getLog(getClass());
+    private GrailsApplication grailsApplication;
 
     @Override
     public void setConfiguration(Configuration configuration) {
@@ -65,7 +64,7 @@ public abstract class AbstractTagLibAwareConfigurer extends FreeMarkerConfigurer
         return configuration;
     }
 
-	//called in onChange to reset the configuration
+    //called in onChange to reset the configuration
     protected void reconfigure() {
         Configuration configuration = super.getConfiguration();
         if (configuration != null) {
@@ -102,34 +101,35 @@ public abstract class AbstractTagLibAwareConfigurer extends FreeMarkerConfigurer
                                 sharedVar = new LinkedHashMap<String, TemplateModel>();
                                 sharedVars.put(namespace, sharedVar);
                             }
-                            
+
                             Set<String> tagNamesWithReturn = tagLibClass.getTagNamesThatReturnObject();
                             if (tagNamesWithReturn == null) {
-								tagNamesWithReturn = Collections.emptySet();
-							}else{
-							    if (log.isDebugEnabled()) log.debug("found TagNamesThatReturnObject" + tagNamesWithReturn);
-							}
+                                tagNamesWithReturn = Collections.emptySet();
+                            }
+                            else {
+                                if (log.isDebugEnabled()) log.debug("found TagNamesThatReturnObject" + tagNamesWithReturn);
+                            }
 
                             for (String tagName : tagLibClass.getTagNames()) {
                                 if (log.isDebugEnabled()) log.debug("reconfigure(): tag " + tagName);
-                                if(tagName.equals("grailsApplication")){
+                                if (tagName.equals("grailsApplication")){
                                     continue;
                                 }
                                 Object tagInstanceObject = null;
                                 try {
                                     tagInstanceObject = tagLibInstance.getProperty(tagName);
-                                } catch (IllegalStateException e) {
+                                }
+                                catch (IllegalStateException e) {
                                     //Workaround for properties exposed as tags and dependent of RequestAttributes
                                     log.debug("reconfigure() error on " + tagName, e);
                                 }
                                 if (tagInstanceObject != null && tagInstanceObject instanceof Closure) {
                                     Closure tagInstance = (Closure) tagInstanceObject;
                                     sharedVar.put(tagName,new TagLibToDirectiveAndFunction(
-                                                    namespace, tagLibInstance,
-                                                    tagName, tagInstance, tagNamesWithReturn.contains(tagName)));
+                                            namespace, tagLibInstance,
+                                            tagName, tagInstance, tagNamesWithReturn.contains(tagName)));
                                 }
                             }
-
                         }
 
                         for (Map.Entry<String, Map<String, TemplateModel>> entry : sharedVars.entrySet()) {
@@ -138,13 +138,13 @@ public abstract class AbstractTagLibAwareConfigurer extends FreeMarkerConfigurer
                         }
 
                         configuration.setCustomAttribute(AbstractTagLibAwareConfigurer.CONFIGURED_ATTRIBUTE_NAME,Boolean.TRUE);
-                    } catch (TemplateModelException e) {
+                    }
+                    catch (TemplateModelException e) {
                         throw new RuntimeException(e);
                     }
                 }//end if
             }//end snchronized
         }//end if
-
     }
 
     @Override
@@ -152,7 +152,5 @@ public abstract class AbstractTagLibAwareConfigurer extends FreeMarkerConfigurer
         this.grailsApplication = grailsApplication;
     }
 
-    abstract protected GroovyObject getTagLibInstance(
-            ApplicationContext springContext, String className);
-
+    protected abstract GroovyObject getTagLibInstance(ApplicationContext springContext, String className);
 }

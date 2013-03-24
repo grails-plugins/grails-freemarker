@@ -28,26 +28,26 @@ task compileManual {
 	]
 
 	doLast {
-	    
+
 		def tmpSpace = file(docTmpDir)
 		assert !tmpSpace.exists() || tmpSpace.deleteDir()
-		
+
 		copy {
 			from docSrcDir
 			into tmpSpace
 		}
-		
+
 		tmpSpace.eachFileRecurse { filterFile ->
 			if (["md", "html"].any { filterFile.name.endsWith(it) }) {
 				def text = filterFile.getText("UTF-8")
 				substitutionProperties.each { k, v ->
 					text = text.replace("@$k@", v)
 				}
-				
+
 				filterFile.setText(text, "UTF-8")
 			}
 		}
-		
+
 		new markdown2book.Generator(file(docTmpDir), file(docOutputDir), "UTF-8").generate()
 	}
 }

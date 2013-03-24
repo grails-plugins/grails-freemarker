@@ -17,8 +17,6 @@ package grails.plugin.freemarker
 
 import freemarker.template.Configuration
 import freemarker.template.Template
-import grails.test.*
-
 
 /**
  * @author Daniel Henrique Alves Lima
@@ -28,17 +26,10 @@ class ConcurrencyTests extends GroovyTestCase {
     def freemarkerConfig
     private Exception threadException
     private ThreadGroup myThreadGroup = new ThreadGroup('x') {
-        public void uncaughtException(Thread t,Throwable e) {
-            super.uncaughtException(t, e); threadException = e
+        void uncaughtException(Thread t,Throwable e) {
+            super.uncaughtException(t, e)
+            threadException = e
         }
-    }
-
-    protected void setUp() {
-        super.setUp(); threadException = null
-    }
-
-    protected void tearDown() {
-        super.tearDown()
     }
 
     void testConcurrency() {
@@ -58,7 +49,8 @@ class ConcurrencyTests extends GroovyTestCase {
                 final int myCounter = counter
                 StringWriter result = new StringWriter()
                 template.process([name: myCounter + 1], result)
-                List lines = new StringReader(result.toString()).readLines(); result = null
+                List lines = new StringReader(result.toString()).readLines()
+                result = null
                 assertEquals "thread ${myCounter} ${lines.size()}", 100, lines.size()
                 lines.eachWithIndex { line, index ->
                     if (Math.random() <= 0.1) {
@@ -75,30 +67,33 @@ class ConcurrencyTests extends GroovyTestCase {
                 while (thread.isAlive() && threadException == null) {
                     Thread.sleep 1000
                 }
-                
+
                 println "Exiting ${idx + 1}: ${thread} ${System.currentTimeMillis()}"
             }
-            if (threadException != null) {
+            if (threadException) {
                 throw threadException
             }
         }
     }
 
     private runInParallel = { Closure c ->
-        if (threadException != null) {
+        if (threadException) {
             throw threadException
         }
-        def thread = null; boolean executed = false
+        def thread
+        boolean executed = false
         Closure c1 = {
             try {
                 c()
-            } finally {
+            }
+            finally {
                 executed = true
             }
         }
 
-        thread = new Thread(myThreadGroup, c1 as Runnable); //thread.daemon = true;
-        thread.start(); thread.yield()
+        thread = new Thread(myThreadGroup, c1 as Runnable) //thread.daemon = true
+        thread.start()
+        thread.yield()
         return thread
     }
 }

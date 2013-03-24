@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.groovy.grails.web.sitemesh.GrailsRoutablePrintWriter;
 import org.codehaus.groovy.grails.web.taglib.GroovyPageAttributes;
 
 import freemarker.core.Environment;
@@ -41,25 +42,21 @@ import freemarker.template.TemplateModelIterator;
 import freemarker.template.utility.DeepUnwrap;
 import groovy.lang.Closure;
 import groovy.lang.GroovyObject;
-import org.codehaus.groovy.grails.web.sitemesh.GrailsRoutablePrintWriter;
 
 /**
  * @author Daniel Henrique Alves Lima
  */
-public class TagLibToDirectiveAndFunction implements TemplateDirectiveModel,
-        TemplateMethodModelEx {
+public class TagLibToDirectiveAndFunction implements TemplateDirectiveModel, TemplateMethodModelEx {
 
     private static final Map<String, String> RESERVED_WORDS_TRANSLATION;
     private final Log log = LogFactory.getLog(getClass());
 
     @SuppressWarnings("serial")
-    private static final Closure EMPTY_BODY = new Closure(
-            TagLibToDirectiveAndFunction.class) {
+    private static final Closure EMPTY_BODY = new Closure(TagLibToDirectiveAndFunction.class) {
         @SuppressWarnings("unused")
         public Object doCall(Object[] it) throws IOException, TemplateException {
             return "";
         }
-
     };
 
     static {
@@ -87,8 +84,7 @@ public class TagLibToDirectiveAndFunction implements TemplateDirectiveModel,
 
     @SuppressWarnings("serial")
     @Override
-    public Object exec(@SuppressWarnings("rawtypes") List arguments)
-            throws TemplateModelException {
+    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException {
         if (log.isDebugEnabled()) {
             log.debug("exec(): @" + namespace + "." + tagName);
         }
@@ -108,9 +104,7 @@ public class TagLibToDirectiveAndFunction implements TemplateDirectiveModel,
             }
 
             Object result = null;
-            args = args != null ? unwrapParams((TemplateHashModelEx) args,
-                    Boolean.TRUE) : unwrapParams(Collections.EMPTY_MAP,
-                    Boolean.TRUE);
+            args = args != null ? unwrapParams((TemplateHashModelEx) args, true) : unwrapParams(Collections.EMPTY_MAP, true);
             if (log.isDebugEnabled()) {
                 //log.debug("exec(): args " + args);
                 //log.debug("exec(): body " + body);
@@ -118,7 +112,8 @@ public class TagLibToDirectiveAndFunction implements TemplateDirectiveModel,
 
             if (tagInstance.getMaximumNumberOfParameters() == 1) {
                 result = tagInstance.call(args);
-            } else {
+            }
+            else {
                 Closure bodyClosure = EMPTY_BODY;
 
                 if (body != null || hasReturnValue) {
@@ -139,9 +134,11 @@ public class TagLibToDirectiveAndFunction implements TemplateDirectiveModel,
             }
 
             return result;
-        } catch (RuntimeException e) {
+        }
+        catch (RuntimeException e) {
             throw new TemplateModelException(e);
-        } finally {
+        }
+        finally {
             tagInstance.invokeMethod("popOut", null);
         }
     }
@@ -151,26 +148,27 @@ public class TagLibToDirectiveAndFunction implements TemplateDirectiveModel,
     public void execute(final Environment env,@SuppressWarnings("rawtypes") Map params, TemplateModel[] loopVars,
             final TemplateDirectiveBody body) throws TemplateException,IOException {
         try {
-            
-			Writer wout = env.getOut();
-			if(wout instanceof GrailsRoutablePrintWriter){
-				wout = ((GrailsRoutablePrintWriter)wout).getOut();
-			}
+
+            Writer wout = env.getOut();
+            if (wout instanceof GrailsRoutablePrintWriter){
+                wout = ((GrailsRoutablePrintWriter)wout).getOut();
+            }
 
             tagInstance.invokeMethod("pushOut", wout);
 
-            params = unwrapParams(params, Boolean.TRUE);
+            params = unwrapParams(params, true);
             if (log.isDebugEnabled()) {
-				log.debug("wout is "+ wout.getClass());
-				log.debug("execute(): @" + namespace + "." + tagName);
+                log.debug("wout is "+ wout.getClass());
+                log.debug("execute(): @" + namespace + "." + tagName);
                 log.debug("execute(): params " + params);
                 log.debug("execute(): body " + body);
-				log.debug("hasReturnValue " + hasReturnValue);
+                log.debug("hasReturnValue " + hasReturnValue);
             }
             Object result = null;
             if (tagInstance.getMaximumNumberOfParameters() == 1) {
                 result = tagInstance.call(params);
-            } else {
+            }
+            else {
                 Closure bodyClosure = EMPTY_BODY;
 
                 if (body != null) {
@@ -195,7 +193,8 @@ public class TagLibToDirectiveAndFunction implements TemplateDirectiveModel,
                                     for (Map.Entry<String, Object> entry : itMap.entrySet()) {
                                         oldVariables.put(entry.getKey(), env.getVariable(entry.getKey()));
                                     }
-                                } else {
+                                }
+                                else {
                                     oldIt = env.getVariable("it");
                                 }
                             }
@@ -207,24 +206,26 @@ public class TagLibToDirectiveAndFunction implements TemplateDirectiveModel,
                                         for (Map.Entry<String, Object> entry : itMap.entrySet()) {
                                             env.setVariable(entry.getKey(),objectWrapper.wrap(entry.getValue()));
                                         }
-                                    } else {
+                                    }
+                                    else {
                                         env.setVariable("it",objectWrapper.wrap(it));
                                     }
                                 }
                                 body.render((Writer) tagInstance.getProperty("out"));
-                            } finally {
+                            }
+                            finally {
                                 if (oldVariables != null) {
                                     for (Map.Entry<String, TemplateModel> entry : oldVariables.entrySet()) {
                                         env.setVariable(entry.getKey(),entry.getValue());
                                     }
-                                } else if (oldIt != null) {
+                                }
+                                else if (oldIt != null) {
                                     env.setVariable("it", oldIt);
                                 }
                             }
 
                             return "";
                         }
-
                     };
                 }
 
@@ -237,16 +238,17 @@ public class TagLibToDirectiveAndFunction implements TemplateDirectiveModel,
             }
             //FIXME this used to check for hasReturnValue but since I can't get out passed in right then I always append the result
             if (result != null && hasReturnValue) {
-            //if (result != null) {
+                //if (result != null) {
                 env.getOut().append(result.toString());
             }
-        } catch (RuntimeException e) {
+        }
+        catch (RuntimeException e) {
             log.error(e.getMessage(),e);
             throw new TemplateException(e, env);
-        } finally {
+        }
+        finally {
             tagInstance.invokeMethod("popOut", null);
         }
-
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -254,7 +256,7 @@ public class TagLibToDirectiveAndFunction implements TemplateDirectiveModel,
             Boolean translateReservedWords) throws TemplateModelException {
 
         if (translateReservedWords == null) {
-            translateReservedWords = Boolean.TRUE;
+            translateReservedWords = true;
         }
 
         Map unwrappedParams = new GroovyPageAttributes(new LinkedHashMap());
@@ -279,19 +281,17 @@ public class TagLibToDirectiveAndFunction implements TemplateDirectiveModel,
         }
 
         return unwrappedParams;
-
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     protected Map unwrapParams(Map params, Boolean translateReservedWords)
             throws TemplateModelException {
         if (translateReservedWords == null) {
-            translateReservedWords = Boolean.TRUE;
+            translateReservedWords = true;
         }
 
         Map unwrappedParams = new GroovyPageAttributes(new LinkedHashMap());
         Iterator<Map.Entry> iterator = params.entrySet().iterator();
-
         while (iterator.hasNext()) {
             Map.Entry entry = iterator.next();
             Object value = entry.getValue();
@@ -312,5 +312,4 @@ public class TagLibToDirectiveAndFunction implements TemplateDirectiveModel,
 
         return unwrappedParams;
     }
-
 }

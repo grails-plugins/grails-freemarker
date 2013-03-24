@@ -17,8 +17,6 @@ package grails.plugin.freemarker
 
 import freemarker.template.Configuration
 import freemarker.template.Template
-import grails.test.*
-
 
 /**
  * @author Daniel Henrique Alves Lima
@@ -27,7 +25,6 @@ class CoreTagLibTests extends GroovyTestCase {
 
     def freemarkerConfig
     private StringWriter sWriter = new StringWriter()
-    
 
     void testForm() {
         String result = parseFtlTemplate('''
@@ -36,11 +33,11 @@ class CoreTagLibTests extends GroovyTestCase {
    [@g.textField name="myField" value="${g.formatNumber({'number': myNumber, 'type': 'number', 'minIntegerDigits': 9, 'locale': 'en_US'})}"  /]\n
    [@g.textArea name="myField2" value="${myNumber?string('000')}" rows=5 cols=40 /]\n
 [/@g.form]\n
-''', [myNumber: 123.12]);
-        
+''', [myNumber: 123.12])
+
         List lines = new StringReader(result).readLines()
         assertEquals 5, lines.size()
-        
+
         println lines
         assertTrue "Unexpected '${lines[1]}'", lines[1].contains('<form ')
         assertTrue "Unexpected '${lines[1]}'", lines[1].contains('name="myForm"')
@@ -50,8 +47,7 @@ class CoreTagLibTests extends GroovyTestCase {
         assertTrue "Unexpected '${lines[3]}'", lines[3].contains('123')
         assertTrue "Unexpected '${lines[4]}'", lines[4].contains('</form>')
     }
-    
-  
+
     private parseFtlTemplate = {String templateSourceCode, Map binding = [:] ->
         if (sWriter.buffer.length() > 0) {sWriter.buffer.delete 0, sWriter.buffer.length()}
         Configuration cfg = freemarkerConfig.configuration
@@ -59,7 +55,4 @@ class CoreTagLibTests extends GroovyTestCase {
         template.process (binding, sWriter)
         return sWriter.toString()
     }
-    
-   
-    
 }

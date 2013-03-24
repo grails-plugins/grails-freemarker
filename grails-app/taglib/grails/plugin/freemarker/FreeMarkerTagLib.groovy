@@ -16,9 +16,7 @@
 package grails.plugin.freemarker
 
 /**
- * 
  * @author Jeff Brown
- *
  */
 class FreeMarkerTagLib {
 
@@ -27,14 +25,16 @@ class FreeMarkerTagLib {
     def freemarkerConfig
 
     def render = { attrs ->
-        if(!attrs.template)
-        	throwTagError("Tag [fm:render] is missing required attribute [template]")
-        
-		def templateName = attrs.template
+        if (!attrs.template) {
+            throwTagError("Tag [fm:render] is missing required attribute [template]")
+        }
+
+        def templateName = attrs.template
         def template
-        if(templateName[0] == '/') {
+        if (templateName[0] == '/') {
             template = freemarkerConfig.configuration.getTemplate("${templateName}.ftl")
-        } else {
+        }
+        else {
             def controllerUri = grailsAttributes.getControllerUri(request)
             template = freemarkerConfig.configuration.getTemplate("${controllerUri}/${templateName}.ftl")
         }

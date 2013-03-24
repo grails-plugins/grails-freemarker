@@ -15,16 +15,14 @@
  */
 package grails.plugin.freemarker
 
-import freemarker.template.Configuration
-import freemarker.template.Template
-
 import org.apache.commons.io.output.StringBuilderWriter
 
+import freemarker.template.Template
+
 /**
- * A service to work directly with the freemarker templates and config.
- * 
- * @author Joshua Burnett
+ * Works directly with the freemarker templates and config.
  *
+ * @author Joshua Burnett
  */
 class FreemarkerTemplateService {
 
@@ -37,11 +35,12 @@ class FreemarkerTemplateService {
      * sets a threadlocal and then passes call to getView(viewname, locale)
      */
     Template getTemplate(String templateName, String pluginName = null) {
-        try{
+        try {
             if(pluginName) GrailsTemplateLoader.pluginNameForTemplate.set(pluginName)
             return freemarkerConfig.configuration.getTemplate(templateName)
-        }finally{
-            if(pluginName) GrailsTemplateLoader.pluginNameForTemplate.remove()
+        }
+        finally {
+            if (pluginName) GrailsTemplateLoader.pluginNameForTemplate.remove()
         }
     }
 
@@ -51,7 +50,6 @@ class FreemarkerTemplateService {
 
     /**
      * skips the dependency on the response and request. Renders straight to a passed in writer. Expects a model as well
-     *
      */
     Writer render(Template template , Map model, Writer writer){
         // Consolidate static and dynamic model attributes.
@@ -59,15 +57,14 @@ class FreemarkerTemplateService {
         return writer
     }
 
-	
     /**
      * creates a new template from the string and parses/processes it with the passed in model.
-     * This can be fairly inefficient as once the template is built/compiled its not cached 
+     * This can be fairly inefficient as once the template is built/compiled its not cached
      * This creates/parses a new template from scratch on each call to this method
-     * 
+     *
      * @param templateContent a string with the template code
      * @param model the hash of data to be used in the template
-     * @param writer (optional) a writer if you have one. a org.apache.commons.io.output.StringBuilderWriter will be created by default. 
+     * @param writer (optional) a writer if you have one. a org.apache.commons.io.output.StringBuilderWriter will be created by default.
      * @return the resulting processed content as a writer (a StringBuilderWriter). Use writer.toString to get the string content
      */
     Writer processString(String templateContent , Map model, Writer writer = new StringBuilderWriter()){
@@ -75,16 +72,16 @@ class FreemarkerTemplateService {
         templateInst.process(model, writer)
         return writer
     }
-    
+
     /**
-     * creates a new template from the passed in file name. 
+     * creates a new template from the passed in file name.
      * Whats different about this is that its not confined by the template loaders and so it can be a pointer to any file on the file system
-     * This can be fairly inefficient as once the template is built/compiled its not cached 
+     * This can be fairly inefficient as once the template is built/compiled its not cached
      * This creates/parses a new template from scratch on each call to this method
-     * 
+     *
      * @param templateFileName the template file name
      * @param model the hash model of data to be used in the template
-     * @param writer (optional) a writer if you have one. a org.apache.commons.io.output.StringBuilderWriter will be created by default. 
+     * @param writer (optional) a writer if you have one. a org.apache.commons.io.output.StringBuilderWriter will be created by default.
      * @return the resulting processed content as a writer (a StringBuilderWriter). Use writer.toString to get the string content
      */
     Writer processFileName(String templateFileName , Map model, Writer writer = new StringBuilderWriter()){
@@ -92,6 +89,4 @@ class FreemarkerTemplateService {
         templateInst.process(model, writer)
         return writer
     }
-    
 }
-

@@ -15,6 +15,8 @@
 */
 package freemarker.tags.test
 
+import java.text.SimpleDateFormat
+
 class SimpleTagLib {
 
     def emoticon = { attrs, body ->
@@ -22,24 +24,23 @@ class SimpleTagLib {
     }
 
     def dateFormat = { attrs, body ->
-        out << new java.text.SimpleDateFormat(attrs.format).format(attrs.date)
+        out << new SimpleDateFormat(attrs.format).format(attrs.date)
     }
-    
+
     def isAdmin = { attrs, body ->
         def user = attrs['user']
-        if(user != null && user.admin) {
-              out << body()
+        if (user != null && user.admin) {
+            out << body()
         }
-   }
-    
+    }
+
     def repeat = { attrs, body ->
         attrs.times?.toInteger().times { num ->
             out << body(num)
         }
     }
-    
+
     def thread = { attrs ->
         out << "Thread-${attrs.name}"
     }
-    
 }

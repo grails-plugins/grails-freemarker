@@ -15,12 +15,10 @@
  */
 package grails.plugin.freemarker
 
-import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
-import org.springframework.grails.freemarker.*
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig
+
 import freemarker.template.Configuration
 import freemarker.template.Template
-import grails.test.*
-
 
 /**
  * @author Daniel Henrique Alves Lima
@@ -31,13 +29,10 @@ class GrailsFreeMarkerConfigurerTests extends GroovyTestCase {
     private StringWriter sWriter = new StringWriter()
     private Exception threadException
     private ThreadGroup myThreadGroup = new ThreadGroup('x') {
-        public void uncaughtException(Thread t,Throwable e) {
-            super.uncaughtException(t, e); threadException = e
+        void uncaughtException(Thread t,Throwable e) {
+            super.uncaughtException(t, e)
+            threadException = e
         }
-    }
-
-    protected void setUp() {
-        super.setUp(); threadException = null
     }
 
     void testConfigReference() {
@@ -47,17 +42,16 @@ class GrailsFreeMarkerConfigurerTests extends GroovyTestCase {
     }
 
     void testParseRegularTemplate() {
-        String result = parseFtlTemplate('[#ftl/]${s}', [s: 'ok']);
+        String result = parseFtlTemplate('[#ftl/]${s}', [s: 'ok'])
         assertEquals 'ok', result
 
-        result = parseFtlTemplate('<#ftl/>${s}', [s: 'fail']);
+        result = parseFtlTemplate('<#ftl/>${s}', [s: 'fail'])
         assertEquals 'fail', result
     }
 
-
     void testParseRegularTemplateWithoutRequestContext() {
         runInParallel {
-            String result = parseFtlTemplate('[#ftl/]<input type="text" name="${xyz}"/>', [xyz: 'abc']);
+            String result = parseFtlTemplate('[#ftl/]<input type="text" name="${xyz}"/>', [xyz: 'abc'])
             assertTrue result, result.contains('<input type="text"')
             assertTrue result, result.contains('name="abc"')
         }
@@ -66,7 +60,7 @@ class GrailsFreeMarkerConfigurerTests extends GroovyTestCase {
     void testParseRegularView() {
         String result = parseFtlView('/demo/fmtemplate.ftl', [name: 'fmView'])
         assertTrue result.contains('fmView')
-        
+
         //result = parseFtlView('/demo/bluesky.ftl', [testvar: 'weirdValue'])
         //assertTrue result.contains('weirdValue')
     }
@@ -77,7 +71,6 @@ class GrailsFreeMarkerConfigurerTests extends GroovyTestCase {
             assertTrue result.contains('fmView123')
         }
     }
-
 
     private parseFtlView = {String viewPath, Map binding = [:] ->
         if (sWriter.buffer.length() > 0) {
@@ -101,23 +94,30 @@ class GrailsFreeMarkerConfigurerTests extends GroovyTestCase {
     }
 
     private runInParallel = {Closure c ->
-        if (threadException != null) {
+        if (threadException) {
             throw threadException
         }
-        def thread = null; boolean executed = false
+
+        def thread
+        boolean executed = false
         Closure c1 = {
             try {
                 c()
-            } finally {
+            }
+            finally {
                 executed = true
             }
         }
 
-        thread = new Thread(myThreadGroup, c1 as Runnable); thread.daemon = true; thread.start(); thread.yield()
+        thread = new Thread(myThreadGroup, c1 as Runnable)
+        thread.daemon = true
+        thread.start()
+        thread.yield()
+
         while (thread.isAlive() && !executed) {
             Thread.sleep 1000
         }
-        if (threadException != null) {
+        if (threadException) {
             throw threadException
         }
     }

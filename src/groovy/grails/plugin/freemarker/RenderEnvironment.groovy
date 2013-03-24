@@ -16,27 +16,28 @@
 
 package grails.plugin.freemarker
 
-import org.codehaus.groovy.grails.web.servlet.WrappedResponseHolder
-import org.springframework.web.context.request.RequestContextHolder
-import org.springframework.web.servlet.support.RequestContextUtils
-import org.springframework.context.i18n.LocaleContextHolder
-import org.springframework.context.i18n.LocaleContext;
-import org.springframework.web.servlet.DispatcherServlet
-import org.springframework.context.ApplicationContext
-
 import grails.util.GrailsWebUtil
+
+import org.apache.log4j.Logger
+import org.codehaus.groovy.grails.web.servlet.WrappedResponseHolder
+import org.springframework.context.ApplicationContext
+import org.springframework.context.i18n.LocaleContext
+import org.springframework.context.i18n.LocaleContextHolder
+import org.springframework.web.context.request.RequestContextHolder
+import org.springframework.web.servlet.DispatcherServlet
+import org.springframework.web.servlet.support.RequestContextUtils
 
 /**
  * based on the class of same name in grails-rendering and private class in grails-mail
  */
 class RenderEnvironment {
-	static log = org.apache.log4j.Logger.getLogger(RenderEnvironment.class) 
-	
+	static Logger log = Logger.getLogger(this)
+
 	final Writer out
 	final Locale locale
 	final ApplicationContext applicationContext
 
-	private originalRequestAttributes = null
+	private originalRequestAttributes
 	private renderRequestAttributes
 
 	RenderEnvironment(ApplicationContext applicationContext, Writer out, Locale locale = null) {
@@ -44,20 +45,19 @@ class RenderEnvironment {
 		this.locale = locale
 		this.applicationContext = applicationContext
 	}
-	
+
 	private initCopy() {
 		originalRequestAttributes = RequestContextHolder.getRequestAttributes()
-		
+
 		def renderLocale = locale
 		if (!renderLocale && originalRequestAttributes) {
 			renderLocale = RequestContextUtils.getLocale(originalRequestAttributes.request)
 		}
 		renderRequestAttributes = bindRequest(applicationContext,  out, renderLocale)
-		
+
 		if (originalRequestAttributes) {
 			renderRequestAttributes.controllerName = originalRequestAttributes.controllerName
 		}
-
 	}
 
 	private close() {
@@ -88,30 +88,29 @@ class RenderEnvironment {
 	String getControllerName() {
 		renderRequestAttributes.controllerName
 	}
-	
-	static def bindRequestIfNull(ApplicationContext appCtx, Writer out, Locale preferredLocale = null) {
+
+	static bindRequestIfNull(ApplicationContext appCtx, Writer out, Locale preferredLocale = null) {
 		def grailsWebRequest = RequestContextHolder.getRequestAttributes()
-		if(grailsWebRequest){
+		if (grailsWebRequest){
 			//TODO unbindRequest = false
 			log.debug("grailsWebRequest exists")
 			return grailsWebRequest
-		}else{
-			return bindRequest( appCtx,  out,  preferredLocale ) 
 		}
 
+		return bindRequest( appCtx,  out,  preferredLocale )
 	}
-	
-	static def bindRequest(ApplicationContext appCtx, Writer wout, Locale preferredLocale = null) {
+
+	static bindRequest(ApplicationContext appCtx, Writer wout, Locale preferredLocale = null) {
 		//TODO unbindRequest = true
 		log.debug("a mock grailsWebRequest is being bound")
 		def grailsWebRequest = GrailsWebUtil.bindMockWebRequest(appCtx)
 		//setup locale on request and in LocaleContextHolder
 		LocaleContextHolder.setLocaleContext(new LocaleContext() {
-			public Locale getLocale() {
-				return appCtx.localeResolver.resolveLocale(grailsWebRequest.request);
+			Locale getLocale() {
+				return appCtx.localeResolver.resolveLocale(grailsWebRequest.request)
 			}
-		});
-		//LOCALE_RESOLVER_ATTRIBUTE(request attr) LOCALE_RESOLVER_BEAN_NAME(localResolver) LOCALE_SESSION_ATTRIBUTE_NAME() 
+		})
+		//LOCALE_RESOLVER_ATTRIBUTE(request attr) LOCALE_RESOLVER_BEAN_NAME(localResolver) LOCALE_SESSION_ATTRIBUTE_NAME()
 		grailsWebRequest.request.setAttribute(DispatcherServlet.LOCALE_RESOLVER_ATTRIBUTE, appCtx.localeResolver)
 		grailsWebRequest.request.addPreferredLocale(preferredLocale?:Locale.default)
 		//setup contextPath so tags like resouce and linkTo work
@@ -122,5 +121,4 @@ class RenderEnvironment {
 		WrappedResponseHolder.wrappedResponse = grailsWebRequest.currentResponse
 		return grailsWebRequest
 	}
-	
 }
