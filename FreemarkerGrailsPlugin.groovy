@@ -30,7 +30,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer
  * @author Joshua Burnett
  */
 class FreemarkerGrailsPlugin {
-    def version = "1.0.0"
+    def version = "2.0.0-SNAPSHOT"
     def grailsVersion = "1.2 > *"
 
     def observe = ["controllers", 'groovyPages']

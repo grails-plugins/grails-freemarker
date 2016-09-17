@@ -17,6 +17,7 @@ package grails.plugin.freemarker
 
 import freemarker.template.Configuration
 import freemarker.template.Template
+import org.codehaus.groovy.grails.web.util.GrailsPrintWriter 
 
 /**
  * @author Daniel Henrique Alves Lima
@@ -24,7 +25,7 @@ import freemarker.template.Template
 class CoreTagLibTests extends GroovyTestCase {
 
     def freemarkerConfig
-    private StringWriter sWriter = new StringWriter()
+    private GrailsPrintWriter sWriter = new GrailsPrintWriter (new StringWriter())
 
     void testForm() {
         String result = parseFtlTemplate('''
@@ -34,7 +35,7 @@ class CoreTagLibTests extends GroovyTestCase {
    [@g.textArea name="myField2" value="${myNumber?string('000')}" rows=5 cols=40 /]\n
 [/@g.form]\n
 ''', [myNumber: 123.12])
-
+        println result.toString()
         List lines = new StringReader(result).readLines()
         assertEquals 5, lines.size()
 
@@ -49,10 +50,10 @@ class CoreTagLibTests extends GroovyTestCase {
     }
 
     private parseFtlTemplate = {String templateSourceCode, Map binding = [:] ->
-        if (sWriter.buffer.length() > 0) {sWriter.buffer.delete 0, sWriter.buffer.length()}
+        if (sWriter.out.buffer.length() > 0) {sWriter.out.buffer.delete 0, sWriter.out.buffer.length()}
         Configuration cfg = freemarkerConfig.configuration
         Template template = new Template('template', new StringReader(templateSourceCode), cfg)
         template.process (binding, sWriter)
-        return sWriter.toString()
+        return sWriter.out.toString()
     }
 }

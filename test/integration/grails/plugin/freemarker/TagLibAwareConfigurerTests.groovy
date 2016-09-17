@@ -17,6 +17,7 @@ package grails.plugin.freemarker
 
 import freemarker.template.Configuration
 import freemarker.template.Template
+import org.codehaus.groovy.grails.web.util.GrailsPrintWriter 
 
 /**
  * @author Daniel Henrique Alves Lima
@@ -25,7 +26,7 @@ class TagLibAwareConfigurerTests extends GroovyTestCase {
 
     def freemarkerConfig
     def grailsApplication
-    private StringWriter sWriter = new StringWriter()
+    private GrailsPrintWriter sWriter = new GrailsPrintWriter (new StringWriter())
     private Exception threadException
     private ThreadGroup myThreadGroup = new ThreadGroup('x') {
         void uncaughtException(Thread t,Throwable e) {
@@ -81,11 +82,11 @@ class TagLibAwareConfigurerTests extends GroovyTestCase {
     }
 
     private parseFtlTemplate = { String templateSourceCode, Map binding = [:] ->
-        if (sWriter.buffer.length() > 0) {sWriter.buffer.delete 0, sWriter.buffer.length()}
+        if (sWriter.out.buffer.length() > 0) {sWriter.out.buffer.delete 0, sWriter.out.buffer.length()}
         Configuration cfg = freemarkerConfig.configuration
         Template template = new Template('template', new StringReader(templateSourceCode), cfg)
         template.process (binding, sWriter)
-        return sWriter.toString()
+        return sWriter.out.toString()
     }
 
     private runInParallel = {Closure c ->
