@@ -1,3 +1,4 @@
+grails.useGrails3FolderLayout = true
 grails.servlet.version = "3.0" // Change depending on target container compliance (2.5 or 3.0)
 grails.project.class.dir = "target/classes"
 grails.project.test.class.dir = "target/test-classes"
@@ -20,7 +21,7 @@ grails.project.fork = [
     // configure settings for the Console UI JVM
     console: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256]
 ]
-grails.project.work.dir = '.grails'
+//grails.project.work.dir = '.grails'
 grails.project.dependency.resolver = "maven" // or ivy
 
 grails.project.dependency.resolution = {
@@ -89,10 +90,12 @@ grails.project.dependency.resolution = {
 }
 
 //grails.project.work.dir = '.grails'
-grails.plugin.location.'view-tools' = "/Users/basejump/source/nine/grails-view-tools"
+// grails.plugin.location.'view-tools' = "/Users/basejump/source/nine/grails-view-tools"
 
 if (appName == "freemarker") {
-    grails.plugin.location.'free-plugin' = "test/projects/free-plugin"
+    //grails.plugin.location.'free-plugin' = "test-projects/free-plugin"
+    grails.plugin.location.'freemarker-plugin-test' = "test-projects/freemarker-plugin-test"
+
     //grails.plugin.location.executor = "../../nine/executor"
 }
 
