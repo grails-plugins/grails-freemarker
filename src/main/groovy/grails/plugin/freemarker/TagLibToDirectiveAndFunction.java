@@ -105,10 +105,6 @@ public class TagLibToDirectiveAndFunction implements TemplateDirectiveModel, Tem
 
             Object result = null;
             args = args != null ? unwrapParams((TemplateHashModelEx) args, true) : unwrapParams(Collections.EMPTY_MAP, true);
-            if (log.isDebugEnabled()) {
-                //log.debug("exec(): args " + args);
-                //log.debug("exec(): body " + body);
-            }
 
             if (tagInstance.getMaximumNumberOfParameters() == 1) {
                 result = tagInstance.call(args);
@@ -234,7 +230,7 @@ public class TagLibToDirectiveAndFunction implements TemplateDirectiveModel, Tem
 
             if (log.isDebugEnabled()) {
                 log.debug("hasReturnValue " + hasReturnValue);
-                log.debug("result " + result);
+                //log.debug("result " + result);
             }
             //FIXME this used to check for hasReturnValue but since I can't get out passed in right then I always append the result
             if (result != null && hasReturnValue) {

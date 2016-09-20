@@ -86,11 +86,13 @@ grails.project.dependency.resolution = {
         test (":geb:$gebVersion"){ export = false }
 
         build(":release:3.1.2", ":rest-client-builder:2.1.1") { export = false }
+
+        compile(":view-tools:0.2-grails2")
     }
 }
 
 //grails.project.work.dir = '.grails'
-// grails.plugin.location.'view-tools' = "/Users/basejump/source/nine/grails-view-tools"
+//grails.plugin.location.'view-tools' = "/Users/basejump/source/nine/grails-view-tools"
 
 if (appName == "freemarker") {
     //grails.plugin.location.'free-plugin' = "test-projects/free-plugin"

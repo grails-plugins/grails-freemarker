@@ -15,11 +15,14 @@
 */
 package grails.plugin.freemarker;
 
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.groovy.grails.web.util.WebUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
@@ -31,8 +34,8 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerView;
  */
 //request.setAttribute(GrailsLayoutDecoratorMapper.RENDERING_VIEW, Boolean.TRUE);
 public class GrailsFreeMarkerView extends FreeMarkerView {
-
-    public FreeMarkerConfig freemarkerConfig;
+    protected final Log log = LogFactory.getLog(getClass());
+    public FreeMarkerConfig freeMarkerConfigurer;
 
     @Override
     protected void exposeHelpers(Map<String, Object> model, HttpServletRequest request) throws Exception {
@@ -52,6 +55,22 @@ public class GrailsFreeMarkerView extends FreeMarkerView {
      */
     @Override
     protected void initServletContext(ServletContext servletContext) throws BeansException {
-        setConfiguration(freemarkerConfig.getConfiguration());
+        setConfiguration(freeMarkerConfigurer.getConfiguration());
     }
+
+    /**
+     * Check that the FreeMarker template used for this view exists and is valid.
+     * <p>Can be overridden to customize the behavior, for example in case of
+     * multiple templates to be rendered into a single view.
+     */
+    @Override
+    public boolean checkResource(Locale locale) throws Exception {
+        log.debug("Checking resource");
+        boolean gotit =  super.checkResource(locale);
+        if(gotit){
+            log.debug("checkResource found: " + getUrl());
+        }
+        return gotit;
+    }
+
 }

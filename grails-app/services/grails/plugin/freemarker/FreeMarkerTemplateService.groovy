@@ -15,33 +15,30 @@
  */
 package grails.plugin.freemarker
 
+import groovy.transform.CompileStatic
 import org.apache.commons.io.output.StringBuilderWriter
 
 import freemarker.template.Template
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig
 
 /**
  * Works directly with the freemarker templates and config.
  *
  * @author Joshua Burnett
  */
-class FreemarkerTemplateService {
+@CompileStatic
+class FreeMarkerTemplateService {
 
     static transactional = false
 
-    def freemarkerConfig
+    FreeMarkerConfig freeMarkerConfigurer
 
     /**
      * get the view for a plugin.
      * sets a threadlocal and then passes call to getView(viewname, locale)
      */
     Template getTemplate(String templateName, String pluginName = null) {
-        try {
-            if(pluginName) GrailsTemplateLoader.pluginNameForTemplate.set(pluginName)
-            return freemarkerConfig.configuration.getTemplate(templateName)
-        }
-        finally {
-            if (pluginName) GrailsTemplateLoader.pluginNameForTemplate.remove()
-        }
+        return freeMarkerConfigurer.configuration.getTemplate(templateName)
     }
 
     Writer render(String viewName , Map model, Writer writer, String pluginName = null){
@@ -68,7 +65,7 @@ class FreemarkerTemplateService {
      * @return the resulting processed content as a writer (a StringBuilderWriter). Use writer.toString to get the string content
      */
     Writer processString(String templateContent , Map model, Writer writer = new StringBuilderWriter()){
-        Template templateInst = new Template("One-off-template-from-string",new StringReader(templateContent),freemarkerConfig.configuration)
+        Template templateInst = new Template("One-off-template-from-string",new StringReader(templateContent),freeMarkerConfigurer.configuration)
         templateInst.process(model, writer)
         return writer
     }
@@ -85,7 +82,7 @@ class FreemarkerTemplateService {
      * @return the resulting processed content as a writer (a StringBuilderWriter). Use writer.toString to get the string content
      */
     Writer processFileName(String templateFileName , Map model, Writer writer = new StringBuilderWriter()){
-        Template templateInst = new Template("One-off-template-from-fileName",new FileReader(templateFileName),freemarkerConfig.configuration)
+        Template templateInst = new Template("One-off-template-from-fileName",new FileReader(templateFileName),freeMarkerConfigurer.configuration)
         templateInst.process(model, writer)
         return writer
     }

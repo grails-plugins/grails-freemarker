@@ -17,50 +17,74 @@ import grails.plugin.freemarker.GrailsFreeMarkerViewResolver
 import grails.plugin.freemarker.GrailsTemplateLoader
 import grails.plugin.freemarker.TagLibAwareConfigurer
 import grails.plugin.freemarker.TagLibPostProcessor
-
+import grails.plugin.viewtools.ViewResourceLocator
 import org.codehaus.groovy.grails.commons.GrailsClass
 import org.codehaus.groovy.grails.commons.TagLibArtefactHandler
 import org.codehaus.groovy.grails.web.util.WebUtils
 import org.springframework.context.ApplicationContext
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer
-
+import org.codehaus.groovy.grails.web.pages.discovery.DefaultGroovyPageLocator
 /**
  * @author Jeff Brown
  * @author Daniel Henrique Alves Lima
  * @author Joshua Burnett
  */
 class FreemarkerGrailsPlugin {
-    def version = "2.0.0-SNAPSHOT"
-    def grailsVersion = "1.2 > *"
+    def version        = "2.0.0-SNAPSHOT"
+    def grailsVersion  = "2.3 > *"
+    def pluginExcludes = [
+            "grails-app/views/**/*",
+            "grails-app/controllers/**/*",
+            "grails-app/services/grails/plugin/freemarker/test/**/*",
+            "src/groovy/grails/plugin/freemarker/test/**/*",
+            "src/docs/**/*",
+            "grails-app/i18n/*",
+            'grails-app/taglib/**/test/**/*',
+            'scripts/**/Eclipse.groovy',
+            "test-plugins/**/*",
+            "web-app/**/*"
+    ]
+
+    def title           = "FreeMarker Views Plugin"
+    def description     = 'The Grails FreeMarker plugin provides support for rendering FreeMarker templates as views.'
+    def documentation   = "https://github.com/grails-plugins/grails-freemarker"
+    def license         = "APACHE"
+    def developers      = [
+            [name: 'Jeff Brown', email: "jeff.brown@springsource.com"],
+            [name: 'Joshua Burnett', email: 'joshdev@9ci.com'],
+            [name: 'Daniel Henrique Alves Lima', email: 'xxx']
+    ]
+
+    def scm             = [ url: "https://github.com/grails-plugins/grails-freemarker" ]
+    def issueManagement = [ system: "GITHUB", url: "http://github.com/grails-plugins/grails-freemarker" ]
 
     def observe = ["controllers", 'groovyPages']
     def loadAfter = ['controllers', 'groovyPages']
 
-    def pluginExcludes = [
-        "grails-app/views/**/*",
-        "grails-app/controllers/**/*",
-        "grails-app/services/grails/plugin/freemarker/test/**/*",
-        "src/groovy/grails/plugin/freemarker/test/**/*",
-        "grails-app/i18n/*",
-        'grails-app/taglib/**/test/**/*',
-        'scripts/**/Eclipse.groovy',
-        "test-plugins/**/*",
-        "web-app/**/*"
-    ]
 
     def author = "Jeff Brown"
     def authorEmail = "jeff.brown@springsource.com"
-    def title = "FreeMarker Grails Plugin"
-    def description = 'The Grails FreeMarker plugin provides support for rendering FreeMarker templates as views.'
-
-    def documentation = "http://grails.org/plugin/freemarker"
 
     def doWithSpring = {
         def freeconfig = application.mergedConfig.asMap(true).grails.plugin.freemarker
         String ftlSuffix = '.ftl'
 
-        freemarkerGrailsTemplateLoader(GrailsTemplateLoader) { bean ->
+        freeMarkerViewResourceLocator(ViewResourceLocator) { bean ->
+            bean.lazyInit = true
+
+            //initial serach locations, default adds ["classpath:freemarker/"]
+            searchLocations = freeconfig.viewResourceLocator.searchLocations
+
+            //in dev mode there will be a groovyPageResourceLoader that helps find the views
+            if(!application.warDeployed){
+                developmentResourceLoader = ref('groovyPageResourceLoader')
+            }
+
+        }
+
+        freeMarkerGrailsTemplateLoader(GrailsTemplateLoader) { bean ->
             bean.autowire = "byName"
+            viewResourceLocator = ref('freeMarkerViewResourceLocator')
         }
 
         def resolveLoaders = {List loaders ->
@@ -68,28 +92,28 @@ class FreemarkerGrailsPlugin {
         }
 
         Class configClass = freeconfig.tags.enabled == true ? TagLibAwareConfigurer : FreeMarkerConfigurer
-        freemarkerConfig(configClass) {
-            if (freeconfig.preTemplateLoaders) {
-                preTemplateLoaders = resolveLoaders(freeconfig.preTemplateLoaders)
+
+        /* factory to return FreeMarkerConfig
+         * @see org.springframework.web.servlet.view.freemarker.FreeMarkerConfig */
+        freeMarkerConfigurer(configClass) {
+
+            if (freeconfig.templateLoaderPaths) {
+                postTemplateLoaders = freeconfig.templateLoaderPaths as String[]
             }
 
-            def confLoaderPaths = freeconfig.templateLoaderPaths ?: []
-            confLoaderPaths.add("classpath:freemarker/")
-            templateLoaderPaths = confLoaderPaths as String[]
-
-            if (freeconfig.postTemplateLoaders) {
-                postTemplateLoaders = resolveLoaders(freeconfig.postTemplateLoaders)
-                postTemplateLoaders.add(0, ref('freemarkerGrailsTemplateLoader'))
-            }
-            else{
-                postTemplateLoaders = [ref('freemarkerGrailsTemplateLoader')]
+            if (freeconfig.templateLoaders) {
+                // default config has the 'freeMarkerGrailsTemplateLoader'
+                postTemplateLoaders = resolveLoaders(freeconfig.templateLoaders)
             }
 
             freemarkerSettings = application.mergedConfig.grails.plugin.freemarker.configSettings?.toProperties()
         }
 
-        freemarkerViewResolver(GrailsFreeMarkerViewResolver) {
-            freemarkerConfig = ref('freemarkerConfig')
+        //the key bean that kicks it all off using Spring/Grails ViewResolver concepts
+        freeMarkerViewResolver(GrailsFreeMarkerViewResolver) {
+            //viewLocator = ref("viewLocator")
+            viewResourceLocator = ref("freeMarkerViewResourceLocator")
+            freeMarkerConfigurer = ref('freeMarkerConfigurer')
             prefix = ''
             suffix = ftlSuffix
             requireViewSuffix = freeconfig.requireViewSuffix
@@ -116,23 +140,23 @@ class FreemarkerGrailsPlugin {
 
     def doWithDynamicMethods = { ctx ->
 
-        for (controller in application.controllerClasses) {
-            modRenderMethod(application, controller)
-        }
+//        for (controller in application.controllerClasses) {
+//            modRenderMethod(application, controller)
+//        }
 
         /** Fremarker configuration mods **/
         def configLocalizedLookup = application.config.grails.plugin.freemarker.localizedLookup
         //turn off the localizedLookup by default
         if (!configLocalizedLookup) {
-            ctx.freemarkerConfig.configuration.localizedLookup = false
+            ctx.freeMarkerConfigurer.configuration.localizedLookup = false
         }
     }
 
     def onChange = { event ->
         def freeconfig = application.mergedConfig.asMap(true).grails.plugin.freemarker
-        if (application.isControllerClass(event.source) ) {
-            modRenderMethod(application, event.source)
-        }
+//        if (application.isControllerClass(event.source) ) {
+//            modRenderMethod(application, event.source)
+//        }
 
         if (freeconfig.tags.enabled == true && application.isArtefactOfType(TagLibArtefactHandler.TYPE, event.source)) {
             GrailsClass taglibClass = application.addArtefact(TagLibArtefactHandler.TYPE, event.source)
@@ -161,20 +185,20 @@ class FreemarkerGrailsPlugin {
             }
         }
     }
-
-    def modRenderMethod(application, controller) {
-        def original = controller.metaClass.getMetaMethod("render", [Map] as Class[])
-
-        controller.metaClass.render = {Map args ->
-            //if args has a pluginName then set it in a threadlocal so we can get to it from the freemarkerViewResolver
-            def request = WebUtils.retrieveGrailsWebRequest()?.getCurrentRequest()
-            if (args.plugin && request) {
-                request.setAttribute(GrailsTemplateLoader.PLUGIN_NAME_ATTRIBUTE,args.plugin)
-            }
-            if (args.loaderAttribute && request) {
-                request.setAttribute("loaderAttribute",args.loaderAttribute)
-            }
-            original.invoke(delegate, [args] as Object[])
-        }
-    }
+//
+//    def modRenderMethod(application, controller) {
+//        def original = controller.metaClass.getMetaMethod("render", [Map] as Class[])
+//
+//        controller.metaClass.render = {Map args ->
+//            //if args has a pluginName then set it in a threadlocal so we can get to it from the freemarkerViewResolver
+//            def request = WebUtils.retrieveGrailsWebRequest()?.getCurrentRequest()
+//            if (args.plugin && request) {
+//                request.setAttribute(GrailsTemplateLoader.PLUGIN_NAME_ATTRIBUTE,args.plugin)
+//            }
+//            if (args.loaderAttribute && request) {
+//                request.setAttribute("loaderAttribute",args.loaderAttribute)
+//            }
+//            original.invoke(delegate, [args] as Object[])
+//        }
+//    }
 }

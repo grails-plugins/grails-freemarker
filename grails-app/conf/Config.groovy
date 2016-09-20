@@ -11,14 +11,22 @@ log4j = {
            'org.hibernate',
            'net.sf.ehcache.hibernate'
 
-/*		     trace  'org.springframework.web.servlet.view',
-		          'org.springframework.context.support'
+		     //trace  'org.springframework.web.servlet.view',
+		     //     'org.springframework.context.support'
+    trace   'grails.plugin.freemarker.GrailsFreeMarkerViewResolver',
+            'org.springframework.web.servlet.view'
 
-		     debug  'grails.plugin.freemarker.GrailsTemplateLoader', //'grails.plugin.freemarker.GrailsFreeMarkerView',
-		            'org.springframework.ui.freemarker.SpringTemplateLoader',
-		            'grails.app.services.grails.plugin.freemarker.FreemarkerViewService',
-					'grails.plugin.freemarker.TagLibToDirectiveAndFunction'
-*/
+    debug   'grails.app.services.grails.plugin.freemarker.FreeMarkerViewService',
+            'grails.app.taglib.grails.plugin.freemarker',
+            'grails.plugin.freemarker.TagLibToDirectiveAndFunction',
+            'grails.plugin.freemarker.GrailsTemplateLoader',
+            'grails.plugin.freemarker.GrailsFreeMarkerViewResolver',
+            'grails.plugin.freemarker.ViewResourceLocator','grails.plugin.freemarker.GrailsFreeMarkerView'
+            //,'org.codehaus.groovy.grails.web'
+        //'grails.plugin.freemarker'
+        // 'grails.plugin.freemarker.GrailsTemplateLoader','grails.plugin.freemarker.GrailsFreeMarkerView',
+        // 'org.springframework.ui.freemarker.SpringTemplateLoader',
+
 }
 
 grails.doc.authors='Daniel Henrique Alves Lima (text revised by Gislaine Fonseca Ribeiro and others)'

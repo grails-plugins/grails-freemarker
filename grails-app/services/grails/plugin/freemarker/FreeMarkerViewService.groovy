@@ -1,89 +1,96 @@
 package grails.plugin.freemarker
 
+import freemarker.template.Template
+import grails.plugin.viewtools.RenderEnvironment
+import grails.plugin.viewtools.ViewResourceLocator
+import groovy.transform.CompileStatic
+import groovy.transform.CompileDynamic
+import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.springframework.web.context.request.RequestContextHolder
+import org.springframework.web.context.request.ServletRequestAttributes
+import org.springframework.web.servlet.LocaleResolver
 import org.springframework.web.servlet.View
 
 import freemarker.template.SimpleHash
+import org.springframework.web.servlet.view.freemarker.FreeMarkerView
 
 /**
  * Retrieves and processes views for freemarker tempalates.
  *
  * @author Joshua Burnett
  */
-class FreemarkerViewService {
+@CompileStatic
+class FreeMarkerViewService {
 
     static transactional = false
 
-    def freemarkerViewResolver
-    def grailsApplication
-    def localeResolver
+    GrailsFreeMarkerViewResolver freeMarkerViewResolver
+    ViewResourceLocator freeMarkerViewResourceLocator
+    GrailsApplication grailsApplication
+    LocaleResolver localeResolver
 
     /**
-     * get the view for, a plugin if sepcieified.
-     * sets a threadlocal and then passes call to getTemplate(viewname, locale)
-     * @param viewName      the name of the view, usually will be realtive to the view path
-     * @param pluginName    (optional) the name of the plugin it should try for the location on the view
-     * @param removePluginNameFromThread (optional) in the finally of this method remove the pluginNameForTemplate threadlocal (defaults to true )
+     * get the view. just a shortcut to freemarkerViewResolver.resolveViewName( viewName, getLocale())
+     *
+     * @param viewName the name of the view
+     *
      */
-    View getView(String viewName, String pluginName = null, boolean removePluginNameFromThread = true) {
-        try {
-            if(pluginName) GrailsTemplateLoader.pluginNameForTemplate.set(pluginName)
-            log.debug("getView called with viewname : $viewName and pluginName : $pluginName")
-            return freemarkerViewResolver.resolveViewName( viewName, getLocale())
-        }
-        finally {
-            if (pluginName && removePluginNameFromThread)  GrailsTemplateLoader.pluginNameForTemplate.remove()
-        }
+    View getView(String viewName, String pluginName = null) {
+        if(pluginName) viewName = freeMarkerViewResourceLocator.getUriWithPluginPath(viewName,pluginName)
+        return freeMarkerViewResolver.resolveViewName( viewName, getLocale())
     }
 
     /**
      * Calls getView to grab the freemarker tempalte and and then passes to render(view,model...)
      */
-    Writer render(String viewName , Map model, Writer writer = new CharArrayWriter(), String pluginName = null){
+    Writer render(String viewName , Map model, Writer writer = new CharArrayWriter()){
         RenderEnvironment.bindRequestIfNull(grailsApplication.mainContext, writer)
-        View view = getView(viewName, pluginName,false)
+        FreeMarkerView view = (FreeMarkerView)freeMarkerViewResolver.resolveViewName( viewName, getLocale())
         if (!view) {
-            throw new IllegalArgumentException("The ftl view [${viewName}] could not be found" + ( pluginName ? " with plugin [${pluginName}]" : "" ))
+            throw new IllegalArgumentException("The ftl view [${viewName}] could not be found" )
         }
-        render( view,  model,  writer, pluginName)
+        render( view,  model,  writer)
     }
 
     /**
      * processes the freemarker template in the View.
      * sets the plugin thread local if passed in and bind a request if none exists before processing.
      *
-     * @param view  the GrailsFreeMarkerView that holds the template
+     * @param view  the GrailsFreeMarkerView/FreeMarkerView that holds the template
      * @param model the hash model the should be passed into the freemarker tempalate
      * @param writer (optional) a writer if you have one. a CharArrayWriter will be created by default.
-     * @param pluginName (optional) the plugin to look in for the view
      * @return the writer that was passed in.
      */
-    Writer render(View view , Map model, Writer writer = new CharArrayWriter() , String pluginName = null){
-        try {
-            if (!view) {
-                throw new IllegalArgumentException("The 'view' argument cannot be null")
-            }
-            log.debug("primary render called with view : $view ")
-            if (pluginName) GrailsTemplateLoader.pluginNameForTemplate.set(pluginName)
-            // Consolidate static and dynamic model attributes.
-            Map mergedModel = new HashMap(view.attributesMap.size() + (model != null ? model.size() : 0))
-            mergedModel.putAll(view.attributesMap)
-            if (model)  mergedModel.putAll(model)
-            RenderEnvironment.bindRequestIfNull(grailsApplication.mainContext, writer)
-            def template = view.getTemplate(getLocale())
-            template.process(new SimpleHash(mergedModel), writer)
-            return writer
+    Writer render(FreeMarkerView view , Map model, Writer writer = new CharArrayWriter()){
+
+        if (!view) {
+            throw new IllegalArgumentException("The 'view' argument cannot be null")
         }
-        finally {
-            if(pluginName)  GrailsTemplateLoader.pluginNameForTemplate.remove()
-        }
+        log.debug("primary render called with view : $view ")
+        // Consolidate static and dynamic model attributes.
+        Map attributesMap = view.attributesMap
+        int mapSize = attributesMap.size() + (model != null ? model.size() : 0)
+        Map mergedModel = new HashMap(mapSize)
+        mergedModel.putAll(attributesMap)
+        if (model)  mergedModel.putAll(model)
+        RenderEnvironment.bindRequestIfNull(grailsApplication.mainContext, writer)
+        Template template = getTemplate(view)
+        template.process(new SimpleHash(mergedModel), writer)
+        return writer
+
     }
+
+    @CompileDynamic
+    public Template getTemplate(FreeMarkerView view){
+        view.getTemplate(getLocale())
+    }
+
 
     /**
      * returns the local by using the localResolver and the webrequest from RequestContextHolder.getRequestAttributes()
      */
-    def getLocale(){
-        def webRequest = RequestContextHolder.getRequestAttributes()
+    Locale getLocale(){
+        ServletRequestAttributes webRequest = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes()
         return localeResolver.resolveLocale(webRequest.request)
     }
 }
