@@ -25,7 +25,7 @@ import freemarker.template.Template
  */
 class GrailsFreeMarkerConfigurerTests extends GroovyTestCase {
 
-    def freemarkerConfig
+    def freeMarkerConfigurer
     private StringWriter sWriter = new StringWriter()
     private Exception threadException
     private ThreadGroup myThreadGroup = new ThreadGroup('x') {
@@ -36,9 +36,9 @@ class GrailsFreeMarkerConfigurerTests extends GroovyTestCase {
     }
 
     void testConfigReference() {
-        assertNotNull freemarkerConfig
-        assertTrue freemarkerConfig instanceof FreeMarkerConfig
-        assertSame freemarkerConfig.configuration, freemarkerConfig.configuration
+        assertNotNull freeMarkerConfigurer
+        assertTrue freeMarkerConfigurer instanceof FreeMarkerConfig
+        assertSame freeMarkerConfigurer.configuration, freeMarkerConfigurer.configuration
     }
 
     void testParseRegularTemplate() {
@@ -65,18 +65,18 @@ class GrailsFreeMarkerConfigurerTests extends GroovyTestCase {
         //assertTrue result.contains('weirdValue')
     }
 
-    void testParseRegularViewWithoutRequestContext() {
-        runInParallel {
-            String result = parseFtlView('/demo/fmtemplate.ftl', [name: 'fmView123'])
-            assertTrue result.contains('fmView123')
-        }
-    }
+    // void testParseRegularViewWithoutRequestContext() {
+    //     runInParallel {
+    //         String result = parseFtlView('/demo/fmtemplate.ftl', [name: 'fmView123'])
+    //         assertTrue result.contains('fmView123')
+    //     }
+    // }
 
     private parseFtlView = {String viewPath, Map binding = [:] ->
         if (sWriter.buffer.length() > 0) {
             sWriter.buffer.delete 0, sWriter.buffer.length()
         }
-        Configuration cfg = freemarkerConfig.configuration
+        Configuration cfg = freeMarkerConfigurer.configuration
         Template template = cfg.getTemplate(viewPath)
         assertNotNull("Could not find ${viewPath}".toString(), template)
         template.process(binding, sWriter)
@@ -87,7 +87,7 @@ class GrailsFreeMarkerConfigurerTests extends GroovyTestCase {
         if (sWriter.buffer.length() > 0) {
             sWriter.buffer.delete 0, sWriter.buffer.length()
         }
-        Configuration cfg = freemarkerConfig.configuration
+        Configuration cfg = freeMarkerConfigurer.configuration
         Template template = new Template('template', new StringReader(templateSourceCode), cfg)
         template.process (binding, sWriter)
         return sWriter.toString()

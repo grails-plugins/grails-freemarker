@@ -24,7 +24,7 @@ import org.codehaus.groovy.grails.web.util.GrailsPrintWriter
  */
 class TagLibAwareConfigurerTests extends GroovyTestCase {
 
-    def freemarkerConfig
+    def freeMarkerConfigurer
     def grailsApplication
     private GrailsPrintWriter sWriter = new GrailsPrintWriter (new StringWriter())
     private Exception threadException
@@ -36,12 +36,12 @@ class TagLibAwareConfigurerTests extends GroovyTestCase {
     }
 
     void testConfigReference() {
-        assertNotNull freemarkerConfig
-        assertTrue freemarkerConfig instanceof AbstractTagLibAwareConfigurer
+        assertNotNull freeMarkerConfigurer
+        assertTrue freeMarkerConfigurer instanceof AbstractTagLibAwareConfigurer
     }
 
     void testAvailableTagLibs() {
-        Configuration config = freemarkerConfig.configuration
+        Configuration config = freeMarkerConfigurer.configuration
         Set names = config.getSharedVariableNames()
         assertTrue names.contains('g')
         assertTrue names.contains('plugin')
@@ -83,7 +83,7 @@ class TagLibAwareConfigurerTests extends GroovyTestCase {
 
     private parseFtlTemplate = { String templateSourceCode, Map binding = [:] ->
         if (sWriter.out.buffer.length() > 0) {sWriter.out.buffer.delete 0, sWriter.out.buffer.length()}
-        Configuration cfg = freemarkerConfig.configuration
+        Configuration cfg = freeMarkerConfigurer.configuration
         Template template = new Template('template', new StringReader(templateSourceCode), cfg)
         template.process (binding, sWriter)
         return sWriter.out.toString()

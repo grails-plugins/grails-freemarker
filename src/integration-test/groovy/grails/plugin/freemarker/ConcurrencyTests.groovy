@@ -23,7 +23,7 @@ import freemarker.template.Template
  */
 class ConcurrencyTests extends GroovyTestCase {
 
-    def freemarkerConfig
+    def freeMarkerConfigurer
     private Exception threadException
     private ThreadGroup myThreadGroup = new ThreadGroup('x') {
         void uncaughtException(Thread t,Throwable e) {
@@ -38,7 +38,7 @@ class ConcurrencyTests extends GroovyTestCase {
             text.append(i)
             text.append(': [@g.thread name=name /]\n')
         }
-        Configuration cfg = freemarkerConfig.configuration
+        Configuration cfg = freeMarkerConfigurer.configuration
         Template template = new Template('template', new StringReader(text.toString()), cfg)
         text = null
 

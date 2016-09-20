@@ -23,7 +23,7 @@ import freemarker.template.Template
  */
 class UserDefinedTagLibTests extends GroovyTestCase {
 
-    def freemarkerConfig
+    def freeMarkerConfigurer
     private StringWriter sWriter = new StringWriter()
 
     void testEmoticon() {
@@ -107,7 +107,7 @@ class UserDefinedTagLibTests extends GroovyTestCase {
 
     private parseFtlTemplate = {String templateSourceCode, Map binding = [:] ->
         if (sWriter.buffer.length() > 0) {sWriter.buffer.delete 0, sWriter.buffer.length()}
-        Configuration cfg = freemarkerConfig.configuration
+        Configuration cfg = freeMarkerConfigurer.configuration
         Template template = new Template('template', new StringReader(templateSourceCode), cfg)
         template.process (binding, sWriter)
         return sWriter.toString()

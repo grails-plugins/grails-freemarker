@@ -24,7 +24,7 @@ import org.codehaus.groovy.grails.web.util.GrailsPrintWriter
  */
 class CoreTagLibTests extends GroovyTestCase {
 
-    def freemarkerConfig
+    def freeMarkerConfigurer
     private GrailsPrintWriter sWriter = new GrailsPrintWriter (new StringWriter())
 
     void testForm() {
@@ -51,7 +51,7 @@ class CoreTagLibTests extends GroovyTestCase {
 
     private parseFtlTemplate = {String templateSourceCode, Map binding = [:] ->
         if (sWriter.out.buffer.length() > 0) {sWriter.out.buffer.delete 0, sWriter.out.buffer.length()}
-        Configuration cfg = freemarkerConfig.configuration
+        Configuration cfg = freeMarkerConfigurer.configuration
         Template template = new Template('template', new StringReader(templateSourceCode), cfg)
         template.process (binding, sWriter)
         return sWriter.out.toString()

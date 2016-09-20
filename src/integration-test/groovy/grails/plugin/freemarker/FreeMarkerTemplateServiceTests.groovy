@@ -3,33 +3,33 @@ package grails.plugin.freemarker
 /**
  * @author Joshua Burnett
  */
-class FreemarkerTemplateServiceTests extends GroovyTestCase {
+class FreeMarkerTemplateServiceTests extends GroovyTestCase {
 
-    FreemarkerTemplateService freemarkerTemplateService
+    FreeMarkerTemplateService freeMarkerTemplateService
 
     private String suffix = ".ftl"
 
     void testGetView() {
-        def view = freemarkerTemplateService.getTemplate("demo/index${suffix}")
-        assertNotNull view //.getTemplate(Locale.US)
+        def view = freeMarkerTemplateService.getTemplate("demo/index${suffix}")
+        assert view //.getTemplate(Locale.US)
     }
 
     void testGetViewPlugin() {
-        def view = freemarkerTemplateService.getTemplate("pluginTest/itWorks${suffix}","freemarker-plugin-test")
-        assertNotNull view //.getTemplate(Locale.US)
+        def view = freeMarkerTemplateService.getTemplate("pluginTest/itWorks${suffix}","free-plugin")
+        assert view //.getTemplate(Locale.US)
     }
 
     void testRenderName() {
         def writer = new StringWriter()
-        freemarkerTemplateService.render("demo/index${suffix}" , [name:"basejump",state:"IL"], writer)
+        freeMarkerTemplateService.render("demo/index${suffix}" , [name:"basejump", state:"IL"], writer)
         println writer.toString()
-        assertTrue writer.toString().contains("Name: basejump")
+        assert writer.toString().contains("Name: basejump")
     }
 
     void testRenderNamePlugin() {
         def writer = new StringWriter()
-        freemarkerTemplateService.render("gobaby${suffix}" , [testvar:"basejump"], writer, "freemarker-plugin-test")
+        freeMarkerTemplateService.render("gobaby${suffix}" , [testvar:"basejump"], writer, "free-plugin")
         println writer.toString()
-        assertTrue writer.toString().contains("<p>basejump</p>")
+        assert writer.toString().contains("<p>basejump</p>")
     }
 }

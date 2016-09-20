@@ -1,5 +1,3 @@
-package functional
-
 import geb.spock.GebSpec
 
 class PluginTestControllerSpec extends GebSpec {
@@ -28,15 +26,6 @@ class PluginTestControllerSpec extends GebSpec {
 		then:
 			def html = driver.pageSource
 			html.contains('this is the one you should see')
-	}
-
-	def "no render and itWorks"() {
-		when:
-			go "pluginTest/itWorks"
-
-		then:
-			def html = driver.pageSource
-			html.contains('you know it')
 	}
 
 	def "service in plugin"() {

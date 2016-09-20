@@ -1,11 +1,23 @@
-# application.properties
-target/
+*.iws
+*Db.properties
+*Db.script
+.settings
 stacktrace.log
+/*.zip
 plugin.xml
-grails-freemarker-*.zip
+/*.log
+/*DB.*
+/cobertura.ser
+.DS_Store
+target/
+/out/
 web-app/*
 !web-app/WEB-INF
-.grails
+/.link_to_grails_plugins/
+/target-eclipse/
+
+.grails/
+#test/
 
 # Eclipse Project files
 .classpath

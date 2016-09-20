@@ -2,11 +2,11 @@ package grails.plugin.freemarker
 
 class TaglibFromServiceTests extends GroovyTestCase {
 
-    def freemarkerViewService
+    def freeMarkerViewService
     def executorService
 
     void testGetView() {
-        def view = freemarkerViewService.getView("tagPlay/index")
+        def view = freeMarkerViewService.getView("tagPlay/index.ftl")
         assertNotNull view //.getTemplate(Locale.US)
     }
 }
