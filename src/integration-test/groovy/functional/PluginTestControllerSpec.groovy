@@ -1,3 +1,4 @@
+package functional
 import geb.spock.GebSpec
 
 class PluginTestControllerSpec extends GebSpec {

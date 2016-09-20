@@ -70,7 +70,7 @@ class FreemarkerGrailsPlugin {
         String ftlSuffix = '.ftl'
 
         freeMarkerViewResourceLocator(ViewResourceLocator) { bean ->
-            bean.lazyInit = true
+            //bean.lazyInit = true
 
             //initial serach locations, default adds ["classpath:freemarker/"]
             searchLocations = freeconfig.viewResourceLocator.searchLocations

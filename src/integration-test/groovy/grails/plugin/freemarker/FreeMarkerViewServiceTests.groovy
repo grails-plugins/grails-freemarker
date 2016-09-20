@@ -3,8 +3,15 @@ package grails.plugin.freemarker
 class FreeMarkerViewServiceTests extends GroovyTestCase {
 
     FreeMarkerViewService freeMarkerViewService
+    def freeMarkerViewResourceLocator
 
+    @spock.lang.IgnoreRest
     void testGetView() {
+        def res = freeMarkerViewResourceLocator.locate('demo/index.ftl')
+        assert res
+
+        assert res.getURI().toString().endsWith("demo/index.ftl")
+
         def view = freeMarkerViewService.getView("/demo/index.ftl")
         assert view //.getTemplate(Locale.US)
     }
@@ -37,7 +44,7 @@ class FreeMarkerViewServiceTests extends GroovyTestCase {
 
     void testRender_file_in_test_dir() {
         def writer = new StringWriter()
-        freeMarkerViewService.render("file:test/views/foo.ftl" ,[:],  writer)
+        freeMarkerViewService.render("file:test-projects/views/foo.ftl" ,[:],  writer)
         println writer.toString()
         assertTrue writer.toString().contains("sitting here in the test")
     }

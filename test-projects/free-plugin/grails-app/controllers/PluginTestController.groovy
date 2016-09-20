@@ -1,7 +1,7 @@
 
 class PluginTestController {
     
-	def freemarkerViewService
+	def freeMarkerViewService
 	
 	def goBaby = {
 		render view: '/gobaby.ftl', model: [testvar: 'fly away']
@@ -17,7 +17,15 @@ class PluginTestController {
 
 	def service = {
 		response.setHeader("Content-Type","text/html;charset=ISO-8859-1")
-		freemarkerViewService.render('itWorks.ftl', [testvar: 'flying squids'],response.writer)
+		freeMarkerViewService.render('pluginTest/itWorks.ftl', [testvar: 'flying squids'],response.writer)
+		render false
+	}
+
+	def serviceDemoIndex = {
+		def view = freeMarkerViewService.getView("/demo/index.ftl")
+        assert view //.getTemplate(Locale.US)
+		response.setHeader("Content-Type","text/html;charset=ISO-8859-1")
+		freeMarkerViewService.render('/demo/index.ftl', [testvar: 'flying squids'],response.writer)
 		render false
 	}
 

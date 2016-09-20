@@ -162,6 +162,7 @@ public class TagLibToDirectiveAndFunction implements TemplateDirectiveModel, Tem
             }
             Object result = null;
             if (tagInstance.getMaximumNumberOfParameters() == 1) {
+                
                 result = tagInstance.call(params);
             }
             else {
