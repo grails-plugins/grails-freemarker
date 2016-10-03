@@ -2,6 +2,7 @@
 <head>
 </head>
 <body>
+in gsp first name from controller ${firstName}
 #before fmtemplate# 
 <br/>
 <fm:render template="fmtemplate" model="[name: firstName]"/> 

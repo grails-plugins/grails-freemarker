@@ -22,23 +22,29 @@ class FreeMarkerTagLib {
 
     static namespace = 'fm'
 
-    def freemarkerConfig
+    FreeMarkerViewService freeMarkerViewService
+    //def freeMarkerConfigurer
 
     def render = { attrs ->
         if (!attrs.template) {
             throwTagError("Tag [fm:render] is missing required attribute [template]")
         }
 
-        def templateName = attrs.template
-        def template
-        if (templateName[0] == '/') {
-            template = freemarkerConfig.configuration.getTemplate("${templateName}.ftl")
+        String templateName = attrs.template
+        if (!templateName.endsWith('.ftl')) {
+            templateName = "${templateName}.ftl"
         }
-        else {
-            def controllerUri = grailsAttributes.getControllerUri(request)
-            template = freemarkerConfig.configuration.getTemplate("${controllerUri}/${templateName}.ftl")
+        def controllerUri = grailsAttributes.getControllerUri(request)
+        if (!templateName.startsWith('/') && controllerUri) {
+            templateName = "${controllerUri}/${templateName}"
         }
-        def model = attrs.model ?: [:]
-        template.process(model, out)
+
+        Map atmodel = attrs.model ?: [:]
+        //grab the model thats in the page and controller as well
+        Map model = pageScope.getVariablesMap() + atmodel
+        log.debug("model: $model")
+
+        freeMarkerViewService.render(templateName, model , out)
+
     }
 }

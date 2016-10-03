@@ -40,6 +40,10 @@ class SimpleTagLib {
         }
     }
 
+    def reverse = { attrs, body ->
+        out << (body() as String).reverse()
+    }
+
     def thread = { attrs ->
         out << "Thread-${attrs.name}"
     }

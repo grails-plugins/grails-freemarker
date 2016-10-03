@@ -4,26 +4,28 @@ import grails.util.Holders
 
 class TagPlayController {
 
-	def freemarkerViewService
+	def freeMarkerViewService
 	def grailsApplication
 
 	def sanity = {
 		render "wtf"
 	}
+	//let grails add the controller name prefix
+	def index(){
+		render view: 'index.ftl', model: [name: 'Abe', state: 'Illinois']
+	}
 
-	def index = {
-		def context = Holders.getServletContext()
-		log.info "*** scontext  is ${context.getContextPath()} "
-		[name: 'Jake', state: 'Missouri']
+	def normal(){
+		[name: 'Abe', state: 'Illinois']
 	}
 
 	//let grails add the controller name prefix
-	def justTheView = {
+	def basic(){
 		render view: 'basic.ftl', model: [name: 'Abe', state: 'Illinois']
 	}
 
 	def service = {
-		def wout = freemarkerViewService.render('/tagPlay/index.ftl', [name: 'Abe', state: 'Illinois'])
+		def wout = freeMarkerViewService.render('/tagPlay/index.ftl', [name: 'Abe', state: 'Illinois'])
 		println "what the hell  $wout"
 		render wout
 	}
@@ -34,7 +36,7 @@ class TagPlayController {
 		runAsync{
 			try{
 				log.debug "calling freemarkerViewService.render"
-				wout = freemarkerViewService.render('/tagPlay/index.ftl', [name: 'Abe', state: 'Illinois'])
+				wout = freeMarkerViewService.render('/tagPlay/index.ftl', [name: 'Abe', state: 'Illinois'])
 				log.debug  "what the hell  $wout"
 				//log.info "html " + wout
 			}

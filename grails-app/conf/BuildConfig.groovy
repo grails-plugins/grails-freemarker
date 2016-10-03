@@ -1,43 +1,82 @@
-grails.project.work.dir = 'target'
+grails.useGrails3FolderLayout = true
+
+grails.servlet.version = "3.0" // Change depending on target container compliance (2.5 or 3.0)
+grails.project.class.dir = "target/classes"
+grails.project.test.class.dir = "target/test-classes"
+grails.project.test.reports.dir = "target/test-reports"
+grails.project.work.dir = "target/work"
+grails.project.target.level = 1.6
+grails.project.source.level = 1.6
+//grails.project.war.file = "target/${appName}-${appVersion}.war"
+
+grails.project.fork = [
+    // configure settings for compilation JVM, note that if you alter the Groovy version forked compilation is required
+    //  compile: [maxMemory: 256, minMemory: 64, debug: false, maxPerm: 256, daemon:true],
+
+    // configure settings for the test-app JVM, uses the daemon by default
+    test: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, daemon:true],
+    // configure settings for the run-app JVM
+    run: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, forkReserve:false],
+    // configure settings for the run-war JVM
+    war: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, forkReserve:false],
+    // configure settings for the Console UI JVM
+    console: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256]
+]
+//grails.project.work.dir = '.grails'
+grails.project.dependency.resolver = "maven" // or ivy
 
 grails.project.dependency.resolution = {
+    // inherit Grails' default dependencies
+    inherits("global") {
+    }
 
-    inherits 'global'
-    log 'warn'
-
+    log "warn" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
+    
     repositories {
         grailsCentral()
         mavenLocal()
         mavenCentral()
     }
 
-    String gebVersion = '0.7.0'
-    String seleniumVersion = '2.21.0'
+    def gebVersion = "0.13.1"
+    def webdriverVersion = "2.53.1"
 
     dependencies {
-        compile "org.freemarker:freemarker:2.3.18"
-        compile 'commons-io:commons-io:2.1'
+        compile "org.freemarker:freemarker:2.3.25-incubating"
+        compile 'commons-io:commons-io:2.5'
 
-        test "org.codehaus.geb:geb-spock:$gebVersion"
+        //TESTING GEB
+        //test("org.seleniumhq.selenium:selenium-support:$seleniumVersion"){ export = false }
+        test "org.gebish:geb-spock:${gebVersion}"
 
-        test("org.seleniumhq.selenium:selenium-htmlunit-driver:$seleniumVersion") {
-            exclude "xml-apis"
+        test("org.seleniumhq.selenium:selenium-support:${webdriverVersion}",
+                "org.seleniumhq.selenium:selenium-chrome-driver:${webdriverVersion}",
+                "org.seleniumhq.selenium:selenium-firefox-driver:${webdriverVersion}",
+                "org.seleniumhq.selenium:selenium-ie-driver:${webdriverVersion}")
+        {
             export = false
         }
 
-        provided("org.codehaus.groovy.modules.http-builder:http-builder:0.5.2") {
-            export = false
-            excludes 'nekohtml', "httpclient", "httpcore","xml-apis","groovy"
+        test("com.codeborne:phantomjsdriver:1.3.0") {
+            // phantomjs driver pulls in a different selenium version amongs other stuff it seemed
+            transitive = false
         }
-        provided('net.sourceforge.nekohtml:nekohtml:1.9.15') {
-            export = false
-            excludes "xml-apis"
-        }
+        test "io.github.bonigarcia:webdrivermanager:1.4.9"
+
+        //test "org.grails:grails-datastore-test-support:1.0.2-grails-2.4"
+
+        // For downloading browser-specific drivers that browsers like Chrome and IE require
+
+
     }
 
     plugins {
-        compile(":plugin-config:0.1.5")
-        compile(":tomcat:$grailsVersion", ":hibernate:$grailsVersion") {
+        compile(":plugin-config:0.2.1")
+
+        build(":tomcat:7.0.70"){
+            export = false
+        }
+        compile(":hibernate4:4.3.10") {
             export = false
         }
 
@@ -45,19 +84,22 @@ grails.project.dependency.resolution = {
             export = false
         }
 
-        test ":geb:$gebVersion", ":spock:0.6", {
-            export = false
-        }
+        test (":geb:$gebVersion"){ export = false }
 
-        build ':release:2.2.1', ':rest-client-builder:1.0.3', {
-            export = false
-        }
+        build(":release:3.1.2", ":rest-client-builder:2.1.1") { export = false }
+
+        compile(":view-tools:0.3-grails2")
     }
 }
 
 //grails.project.work.dir = '.grails'
 
+
+//grails.plugin.location.'view-tools' = "/Users/basejump/source/nine/grails-view-tools"
 if (appName == "freemarker") {
-    grails.plugin.location.'freemarker-plugin-test' = "test-plugins/freemarker-plugin-test"
+    //grails.plugin.location.'free-plugin' = "test-projects/free-plugin"
+    grails.plugin.location.'free-plugin' = "test-projects/free-plugin"
+
     //grails.plugin.location.executor = "../../nine/executor"
 }
+
