@@ -30,7 +30,7 @@ import org.codehaus.groovy.grails.web.pages.discovery.DefaultGroovyPageLocator
  * @author Joshua Burnett
  */
 class FreemarkerGrailsPlugin {
-    def version        = "2.0"
+    def version        = "2.0.1"
     def grailsVersion  = "2.3 > *"
     def pluginExcludes = [
             "grails-app/views/**/*",
