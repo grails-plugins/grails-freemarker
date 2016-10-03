@@ -43,6 +43,7 @@ import freemarker.template.TemplateModelIterator;
 import freemarker.template.utility.DeepUnwrap;
 import groovy.lang.Closure;
 import groovy.lang.GroovyObject;
+import org.codehaus.groovy.grails.web.util.GrailsPrintWriter;
 
 /**
  * @author Daniel Henrique Alves Lima
@@ -210,8 +211,9 @@ public class TagLibToDirectiveAndFunction implements TemplateDirectiveModel, Tem
                                         env.setVariable("it",objectWrapper.wrap(it));
                                     }
                                 }
-                                //body.render((Writer) tagInstance.getProperty("out"));
-                                body.render(bodyOutput);
+                                //Writer wout = (Writer) tagInstance.getProperty("out");
+
+                                body.render(new GrailsPrintWriter(bodyOutput));
                             }
                             finally {
                                 if (oldVariables != null) {
