@@ -1,5 +1,0 @@
-The plugin will try to expose all the TagLib artefacts, registered at grailsApplication.tagLibsClasses, as user-defined directives and functions (for implementation details, please refer to "FreeMarker FAQ":http://freemarker.sourceforge.net/docs/app_faq.html#faq_implement_function_or_macro_in_java ). These directives and functions will be defined at runtime and exposed as shared variables, using the same namespace of the source taglibs, in any FreeMarker template created further.
-
-{warning}
-Be aware that some templates can mistakenly/inadvertently "shadow" shared variables definitions.
-{warning}

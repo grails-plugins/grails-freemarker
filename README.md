@@ -144,31 +144,35 @@ begginers.
 
 ### Maps vs. Hashes
 
-GSP
+**GSP**
 ```groovy
 [key1: 'abc', key2: 2]
 ${g.createLink(action:'list')}
 ```
 
 
-FTL  -- *note that you must enclose the keys names with quotes just like JSON.*  
-```json
+**FTL**  -- *note that you must enclose the keys names with quotes just like JSON.*  
+```groovy
 {'key1': 'abc', 'key2': 2}
 ${g.createLink({'action':'list'})}
 ```
 
 ### GSP Tags vs. FTL Tags
 
-.gsp  
-	&lt;g:includeJs script="myscript" />
+.**gsp**  
+```html
+<g:includeJs script="myscript" />
+```
 
-.ftl 
-	&lt;@g.includeJs script="myscript" />  
-	&lt;@g.renderErrors bean=myUserInstance _as="list" /> (notice the _as vs as)  
+.**ftl** 
+```html
+<@g.includeJs script="myscript" />  
+<@g.renderErrors bean=myUserInstance _as="list" /> (notice the _as vs as)  
 
 or  
-	[@g.includeJs script="myscript" /]
 
+[@g.includeJs script="myscript" /]
+```
 
 Parameter values are (arbitrary complex) expressions that are not quoted. So assuming you want to pass an integer to
 foo, <\@foo bar=1 /> is good, but <\@foo bar="1" /> is wrong as it passes in the value as a string (because "1" is a
@@ -178,12 +182,14 @@ does something else.
 ### Tags as method calls vs. Method calls
 
 .gsp  
-	&lt;span id="title" class="label ${hasErrors(bean:book,field:'title','errors')}">Title&lt;/span>
-
+```html
+<span id="title" class="label ${hasErrors(bean:book,field:'title','errors')}">Title</span>
+```
 .ftl -- *note that the arguments are passed in as a hash (map) enclosed in {}, also remember to enclose your key names in
 quotes*  
-	&lt;span id="title" class="label ${g.hasErrors({'bean':book,'field':'title'},'errors')}">Title&lt;/span>
-
+```html
+<span id="title" class="label ${g.hasErrors({'bean':book,'field':'title'},'errors')}">Title</span>
+```
 
 >Note:
 >The plugin will define functions using the same namespace of the corresponding directives.
@@ -280,22 +286,19 @@ FreeMarker reserved words present in Grails Core TagLibs that can cause errors t
 preceded by '_' (underscore).
 
 .gsp  
-	
-	&lt;g:renderErrors bean="${myUserInstance}" as="list" />
+```renderErrors bean="${myUserInstance}" as="list" />```
 
 .ftl  
-	
-	&lt;@g.renderErrors bean=myUserInstance _as="list" />
+```@g.renderErrors bean=myUserInstance _as="list" />```
 
 or  
-	
-	[@g.renderErrors bean=myUserInstance _as="list" /]
+```[@g.renderErrors bean=myUserInstance _as="list" /]```
 
 
 
 # History
 
-* 2.0.0  
+* 2.0.1  
 	* major refactoring to work with 2.5
 	* prepping for grails 3 compatability
 * 1.0.0  
