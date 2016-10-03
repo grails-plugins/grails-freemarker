@@ -61,7 +61,7 @@ grails.project.dependency.resolution = {
             // phantomjs driver pulls in a different selenium version amongs other stuff it seemed
             transitive = false
         }
-        test "io.github.bonigarcia:webdrivermanager:1.4.8"
+        test "io.github.bonigarcia:webdrivermanager:1.4.9"
 
         //test "org.grails:grails-datastore-test-support:1.0.2-grails-2.4"
 

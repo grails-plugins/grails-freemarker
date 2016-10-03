@@ -105,6 +105,11 @@ class UserDefinedTagLibTests extends GroovyTestCase {
         assertTrue result.contains('<form ')
     }
 
+    void testTagBody_unsingReverse() {
+        String result = parseFtlTemplate('[#ftl/][@g.reverse]Hi Sam[/@g.reverse]');
+        assert 'maS iH' == result
+    }
+
     private parseFtlTemplate = {String templateSourceCode, Map binding = [:] ->
         if (sWriter.buffer.length() > 0) {sWriter.buffer.delete 0, sWriter.buffer.length()}
         Configuration cfg = freeMarkerConfigurer.configuration

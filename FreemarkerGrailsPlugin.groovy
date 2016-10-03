@@ -59,7 +59,7 @@ class FreemarkerGrailsPlugin {
     def issueManagement = [ system: "GITHUB", url: "http://github.com/grails-plugins/grails-freemarker" ]
 
     def observe = ["controllers", 'groovyPages']
-    def loadAfter = ['controllers', 'groovyPages']
+    def loadAfter = ['controllers', 'groovyPages','pluginConfig']
 
 
     def author = "Jeff Brown"
