@@ -5,7 +5,6 @@ class FreeMarkerViewServiceTests extends GroovyTestCase {
     FreeMarkerViewService freeMarkerViewService
     def freeMarkerViewResourceLocator
 
-    @spock.lang.IgnoreRest
     void testGetView() {
         def res = freeMarkerViewResourceLocator.locate('demo/index.ftl')
         assert res
@@ -15,11 +14,11 @@ class FreeMarkerViewServiceTests extends GroovyTestCase {
         def view = freeMarkerViewService.getView("/demo/index.ftl")
         assert view //.getTemplate(Locale.US)
     }
-
-    void testGetViewPlugin() {
-        def view = freeMarkerViewService.getView("/pluginTest/itWorks.ftl","free-plugin")
-        assert view //.getTemplate(Locale.US)
-    }
+//
+//    void testGetViewPlugin() {
+//        def view = freeMarkerViewService.getView("/pluginTest/itWorks.ftl","free-plugin")
+//        assert view //.getTemplate(Locale.US)
+//    }
 
     void testRenderName() {
         def writer = new StringWriter()

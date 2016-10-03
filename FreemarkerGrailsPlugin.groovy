@@ -30,7 +30,7 @@ import org.codehaus.groovy.grails.web.pages.discovery.DefaultGroovyPageLocator
  * @author Joshua Burnett
  */
 class FreemarkerGrailsPlugin {
-    def version        = "2.0.0-SNAPSHOT"
+    def version        = "2.0"
     def grailsVersion  = "2.3 > *"
     def pluginExcludes = [
             "grails-app/views/**/*",
@@ -66,18 +66,23 @@ class FreemarkerGrailsPlugin {
     def authorEmail = "jeff.brown@springsource.com"
 
     def doWithSpring = {
-        def freeconfig = application.mergedConfig.asMap(true).grails.plugin.freemarker
+        def freeconfig = application.mergedConfig.asMap().grails.plugin.freemarker
         String ftlSuffix = '.ftl'
 
-        freeMarkerViewResourceLocator(ViewResourceLocator) { bean ->
-            //bean.lazyInit = true
+        freeMarkerViewResourceLocator(grails.plugin.viewtools.ViewResourceLocator) { bean ->
+            searchBinaryPlugins = false //whether to look in binary plugins, does not work in grails2
+            
+            //initial searchLocations
+            searchPaths = freeconfig.viewResourceLocator.searchLocations
 
-            //initial serach locations, default adds ["classpath:freemarker/"]
-            searchLocations = freeconfig.viewResourceLocator.searchLocations
+            //resourceLoaders to use right after searchLocations above are scanned
+            //searchLoaders = [ref('tenantViewResourceLoader')]
 
-            //in dev mode there will be a groovyPageResourceLoader that helps find the views
-            if(!application.warDeployed){
-                developmentResourceLoader = ref('groovyPageResourceLoader')
+            // in dev mode there will be a groovyPageResourceLoader with base dir set to the running project
+            //if(Environment.isDevelopmentEnvironmentAvailable()) <- better for Grails 3
+            if(!application.warDeployed){ // <- grails2
+                grailsViewPaths = ["/grails-app/views"]
+                webInfPrefix = ""
             }
 
         }
@@ -97,10 +102,6 @@ class FreemarkerGrailsPlugin {
          * @see org.springframework.web.servlet.view.freemarker.FreeMarkerConfig */
         freeMarkerConfigurer(configClass) {
 
-            if (freeconfig.templateLoaderPaths) {
-                postTemplateLoaders = freeconfig.templateLoaderPaths as String[]
-            }
-
             if (freeconfig.templateLoaders) {
                 // default config has the 'freeMarkerGrailsTemplateLoader'
                 postTemplateLoaders = resolveLoaders(freeconfig.templateLoaders)
@@ -117,7 +118,7 @@ class FreemarkerGrailsPlugin {
             prefix = ''
             suffix = ftlSuffix
             requireViewSuffix = freeconfig.requireViewSuffix
-            hideException = freeconfig.viewResolver.hideException
+            //hideException = freeconfig.viewResolver.hideException
             order = 10
         }
 

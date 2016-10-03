@@ -23,13 +23,13 @@
 
 The Grails FreeMarker plugin provides support for rendering FreeMarker templates as views. 
 
-With this plugin you can also use the
+This plugin also allows the use of custom user added TagLibs and most of the 
 [Grails Tag Libraries](http://grails.org/doc/latest/guide/single.html#6.3%20Tag%20Libraries) in
 [FreeMarker](http://freemarker.sourceforge.net/) templates. No JSP tag libraries are involved at
 all, the plugin connects FreeMarker to Grails TagLibs system as directly as possible.
 
 > **Warning:**
-Sitemesh and the grails taglib incorporation into freemarker currently do not work in version 2 of this. 
+Sitemesh does not work in version 2 of this. 
 
 
 ## Quick Simple Example
@@ -64,21 +64,18 @@ For more information, please consult <a href="http://freemarker.sourceforge.net/
 > **Warning:**
 > Be aware that while there are many simiilarities, FreeMarker syntax can differs from GSP syntax (they are very different beasts).
 
-## Grails Taglib Example
+## Grails Taglib Example (a very verbose one)
 
 Create your Grails application
 
 Assuming you have a domain class as follows:
 
-	class MyUser{
-		String username
-		String password
-
-		static constraints = {
-			username(unique: true, blank: false)
-			password(blank: false)
-		}
-	}
+```groovy
+class MyUser{
+    String username
+    String password
+}
+```
 
 Create a controller *MyUserController.groovy*
 
@@ -87,69 +84,42 @@ Create a controller *MyUserController.groovy*
 		render(view: "login", model: [myUserInstance: myUserInstance])
 	}
 
-	def doLogin = {
-		def myUserInstance = new MyUser(params)
- 
-		boolean ok = myUserInstance.validate(['password']) 
-		if (ok) {
-			if (!myUserInstance.username || !myUserInstance.password || !myUserInstance.password.equals("pass")) {
-				flash.message = "${message(code: 'Invalid password or username', args: [])}"
-				ok = false
-			}
-		}
-
-		if (ok) {
-			redirect(action: "index")
-		} else {
-			myUserInstance.password = null
-			render(view: "login", model: [myUserInstance: myUserInstance])
-		}
-	}
-
 Create your *grails-app/views/myUser/login.ftl*
-
-	<#ftl>
-	<html>
-		<head>
-			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-			<meta name="layout" content="main" />
-		</head>
-		<body>
-			<div class="body">
-				<#if flash.message?exists><div class="message">${flash.message}</div></#if>
-				<@g.hasErrors bean=myUserInstance>
-					<div class="errors">
-						<@g.renderErrors bean=myUserInstance _as="list" />
-					</div>
-				</@g.hasErrors> 
-				<@g.form action="doLogin" method="post">
-					<div class="dialog">
-						<table>
-							<tr class="prop">
-								<td valign="top" class="name">
-									<label for="username"><@g.message code="myUser.username.label" default="Username" /></label>
-								</td>
-								<td valign="top" class="value ${g.hasErrors({'bean': myUserInstance, 'field': 'username'}, 'errors')}">
-									<@g.textField name="username" value=myUserInstance.username />
-								</td>
-							</tr>	  
-							<tr class="prop">
-								<td valign="top" class="name">
-									<label for="password"><@g.message code="myUser.password.label" default="Password" /></label>
-								</td>
-								<td valign="top" class="value ${g.hasErrors({'bean': myUserInstance, 'field': 'password'}, 'errors')}">
-									<@g.passwordField name="password" value=myUserInstance.password />
-								</td>
-							</tr>
-						</table>
-					</div>
-					<div class="buttons">
-						<span class="button"><@g.submitButton name="submit" value="${g.message({'code': 'default.button.login.label', 'default': 'Login'})}" /></span>
-					</div>
-				</@g.form>
-			</div>
-		</body>
-	</html>
+The example shows both of 
+```html
+<#ftl>
+<#if flash.message?exists><div class="message">${flash.message}</div></#if>
+<@g.hasErrors bean=myUserInstance>
+    <div class="errors">
+        <@g.renderErrors bean=myUserInstance _as="list" />
+    </div>
+</@g.hasErrors> 
+<@g.form action="doLogin" method="post">
+    <div class="dialog">
+        <table>
+            <tr class="prop">
+                <td valign="top" class="name">
+                    <label for="username"><@g.message code="myUser.username.label" default="Username" /></label>
+                </td>
+                <td valign="top" class="value ${g.hasErrors({'bean': myUserInstance, 'field': 'username'}, 'errors')}">
+                    <@g.textField name="username" value=myUserInstance.username />
+                </td>
+            </tr>	  
+            <tr class="prop">
+                <td valign="top" class="name">
+                    <label for="password"><@g.message code="myUser.password.label" default="Password" /></label>
+                </td>
+                <td valign="top" class="value ${g.hasErrors({'bean': myUserInstance, 'field': 'password'}, 'errors')}">
+                    <@g.passwordField name="password" value=myUserInstance.password />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="buttons">
+        <span class="button"><@g.submitButton name="submit" value="${g.message({'code': 'default.button.login.label', 'default': 'Login'})}" /></span>
+    </div>
+</@g.form>
+```
 
 Use your browser to navigate to [http://localhost:8080/test-freemaker-prj/myUser/login]()
 
@@ -174,20 +144,27 @@ begginers.
 
 ### Maps vs. Hashes
 
-.gsp  
-	[key1: 'abc', key2: 2]
+GSP
+```groovy
+[key1: 'abc', key2: 2]
+${g.createLink(action:'list')}
+```
 
 
-.ftl  -- *note that you must enclose the keys names with quotes.*  
-	{'key1': 'abc', 'key2': 2}
+FTL  -- *note that you must enclose the keys names with quotes just like JSON.*  
+```json
+{'key1': 'abc', 'key2': 2}
+${g.createLink({'action':'list'})}
+```
 
-### Tags vs. Tags
+### GSP Tags vs. FTL Tags
 
 .gsp  
 	&lt;g:includeJs script="myscript" />
 
-.ftl  
-	&lt;@g.includeJs script="myscript" />
+.ftl 
+	&lt;@g.includeJs script="myscript" />  
+	&lt;@g.renderErrors bean=myUserInstance _as="list" /> (notice the _as vs as)  
 
 or  
 	[@g.includeJs script="myscript" /]
@@ -235,52 +212,60 @@ The methods are safe to use in a thread or quartz job. It checks to see that a R
 
 Here is an example config with explanations
 
-	grails {
-	    plugin {
-	        freemarker {
-            
-	            /* A list of template loaderinstances or strings - Strings will be used as beanNames. */
-	            preTemplateLoaders = ['myCustomPreLoaderService']
+```groovy
+grails {
+    plugin {
+        freemarker {
+            /**
+             * when referencing a freemarker view name then require the .ftl suffix
+             * if this is false then every single view lookup (render view:xxx, model:yyy)
+             * goes through the look up for freemarker first
+             */
+            requireViewSuffix = true
 
-				/* a list of any additional paths to search in. this can be any valid resource that spring accepts */
-	            templateLoaderPaths = ['some/path/to/views','classpath:com/corp/freemarker']
-            
-	            /* A list of template loaders or strings - Strings will be used as beanNames. */
-	            postTemplateLoaders = ['myCustomPostLoaderService']
+            /* A list of bean names that implement freemarker.cache.TemplateLoader
+            'freeMarkerGrailsTemplateLoader' bean is the deafult and probably only one you will ever need
+            best to configure viewResourceLocator to look as then the GrailsFreeMarkerViewResolver has access too*/
+            templateLoaders = ["freeMarkerGrailsTemplateLoader"]
 
-				//tries to find templates by appending the local to the name.
-				//an odd feature in freemarker that is true by default
-				localizedLookup = false
-			
-				//when referencing a freemarker view name then require the .ftl suffix
-				requireViewSuffix = true
-            
-	            viewResolver { 
-					/*blow exception in resolver or swallow it and move on */
-	                hideException = false //default
-	            }
+            viewResourceLocator{
+                // a list of location paths or URLS to add to the list for searching.
+                // the default here is to allow a templates dir in conf for helpful macros
+                searchLocations = ["classpath:templates/"] //consistent with spring boot defaults
+            }
+            viewResolver {
+                /*blow exception in resolver or swallow it and move on */
+                //hideException = true
 
-	            tags {
-					/* whether to enable the grails taglibs in the templates */
-	                enabled = true //default
-	            }
-	            //extra settings to pass straight through to the Freemarker Configuration
-				//see http://freemarker.sourceforge.net/docs/api/freemarker/template/Configuration.html#setSetting(java.lang.String, java.lang.String)
-				//http://freemarker.sourceforge.net/docs/api/freemarker/core/Configurable.html#setSetting(java.lang.String, java.lang.String)
-			
-				configSettings{
-					//for example this will set it to be more secure and allows no user class resolution.
-					new_builtin_class_resolver = 'allows_nothing'
-					//simple is the most secure and means that only recognized objects in model can be accessed 
-					//(String,Date,Number,Boolean,Collection,Map,Iterator,isArray, or TemplateModel)
-					//simple will only allow field access and never method calls. 
-					//Best to pass in a Map of Maps for the hash model for the highest level of security
-					object_wrapper = 'simple'
-				}
+                /*allow access with URLs for resourceLoader outside of sandbox with url locations (file:, http:, etc)*/
+                //TODO implement this
+                //enableUrlLocations = false
+            }
 
-	        }
-	    }
-	}
+            tags {
+                /* whether to enable the grails taglibs in the templates */
+                enabled = true
+                //list of tags to include
+                //TODO implement this
+                //includeTaglibs = ['g.resource','g.ttt',etc...]
+            }
+            //extra settings to pass through to the Freemarker Configuration
+            //see http://freemarker.sourceforge.net/docs/api/freemarker/template/Configuration.html#setSetting(java.lang.String, java.lang.String)
+            // && http://freemarker.sourceforge.net/docs/api/freemarker/core/Configurable.html#setSetting(java.lang.String, java.lang.String)
+            /*
+            configSettings {
+                //for example this will set it to be even more secure.
+                new_builtin_class_resolver
+            }
+            */
+
+            //tries to find templates by appending the local to the name.
+            //an odd feature in freemarker that is on by default but we turn it off by default
+            localizedLookup = false
+        }
+    }
+}
+```
 
 ## Logging
 

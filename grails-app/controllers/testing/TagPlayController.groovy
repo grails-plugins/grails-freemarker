@@ -10,9 +10,17 @@ class TagPlayController {
 	def sanity = {
 		render "wtf"
 	}
+	//let grails add the controller name prefix
+	def index(){
+		render view: 'index.ftl', model: [name: 'Abe', state: 'Illinois']
+	}
+
+	def normal(){
+		[name: 'Abe', state: 'Illinois']
+	}
 
 	//let grails add the controller name prefix
-	def justTheView = {
+	def basic(){
 		render view: 'basic.ftl', model: [name: 'Abe', state: 'Illinois']
 	}
 

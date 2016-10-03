@@ -123,7 +123,7 @@ public class GrailsFreeMarkerViewResolver extends FreeMarkerViewResolver {
             gview.freeMarkerConfigurer = freeMarkerConfigurer;
             View result = (View) getApplicationContext().getAutowireCapableBeanFactory().initializeBean(gview, viewName);
 
-            ContextResource resource = viewResourceLocator.locate(gview.url);
+            Resource resource = viewResourceLocator.getResource(gview.url);
             if (resource?.exists()) {
                 if(resource instanceof ContextResource) {
                     gview.setUrl(resource.getURL().toString())

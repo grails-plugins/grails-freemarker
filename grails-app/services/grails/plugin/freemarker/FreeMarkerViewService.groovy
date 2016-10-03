@@ -1,11 +1,12 @@
 package grails.plugin.freemarker
 
 import freemarker.template.Template
-import grails.plugin.viewtools.RenderEnvironment
+import grails.plugin.viewtools.GrailsWebEnvironment
 import grails.plugin.viewtools.ViewResourceLocator
 import groovy.transform.CompileStatic
 import groovy.transform.CompileDynamic
 import org.codehaus.groovy.grails.commons.GrailsApplication
+import org.codehaus.groovy.grails.web.servlet.mvc.GrailsWebRequest
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import org.springframework.web.servlet.LocaleResolver
@@ -25,26 +26,21 @@ class FreeMarkerViewService {
     static transactional = false
 
     GrailsFreeMarkerViewResolver freeMarkerViewResolver
-    ViewResourceLocator freeMarkerViewResourceLocator
+    //ViewResourceLocator freeMarkerViewResourceLocator
     GrailsApplication grailsApplication
     LocaleResolver localeResolver
 
-    /**
-     * get the view. just a shortcut to freemarkerViewResolver.resolveViewName( viewName, getLocale())
-     *
-     * @param viewName the name of the view
-     *
-     */
-    View getView(String viewName, String pluginName = null) {
-        if(pluginName) viewName = freeMarkerViewResourceLocator.getUriWithPluginPath(viewName,pluginName)
-        return freeMarkerViewResolver.resolveViewName( viewName, getLocale())
+    View getView(String viewName, Locale locale = null){
+        locale = locale ?: getLocale()
+        //GrailsWebEnvironment.bindRequestIfNull(grailsApplication.mainContext)
+        return freeMarkerViewResolver.resolveViewName( viewName, locale)
     }
 
     /**
      * Calls getView to grab the freemarker tempalte and and then passes to render(view,model...)
      */
     Writer render(String viewName , Map model, Writer writer = new CharArrayWriter()){
-        RenderEnvironment.bindRequestIfNull(grailsApplication.mainContext, writer)
+        GrailsWebEnvironment.bindRequestIfNull(grailsApplication.mainContext, writer)
         FreeMarkerView view = (FreeMarkerView)freeMarkerViewResolver.resolveViewName( viewName, getLocale())
         if (!view) {
             throw new IllegalArgumentException("The ftl view [${viewName}] could not be found" )
@@ -73,7 +69,7 @@ class FreeMarkerViewService {
         Map mergedModel = new HashMap(mapSize)
         mergedModel.putAll(attributesMap)
         if (model)  mergedModel.putAll(model)
-        RenderEnvironment.bindRequestIfNull(grailsApplication.mainContext, writer)
+        GrailsWebEnvironment.bindRequestIfNull(grailsApplication.mainContext, writer)
         Template template = getTemplate(view)
         template.process(new SimpleHash(mergedModel), writer)
         return writer
@@ -89,8 +85,14 @@ class FreeMarkerViewService {
     /**
      * returns the local by using the localResolver and the webrequest from RequestContextHolder.getRequestAttributes()
      */
-    Locale getLocale(){
-        ServletRequestAttributes webRequest = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes()
-        return localeResolver.resolveLocale(webRequest.request)
+
+    Locale getLocale() {
+        def locale
+        def request = GrailsWebRequest.lookup()?.currentRequest
+        locale = localeResolver?.resolveLocale(request)
+        if(locale == null) {
+            locale = Locale.default
+        }
+        return locale
     }
 }

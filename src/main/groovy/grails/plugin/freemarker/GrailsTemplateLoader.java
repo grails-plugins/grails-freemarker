@@ -81,9 +81,9 @@ public class GrailsTemplateLoader implements TemplateLoader, ApplicationContextA
 		if (log.isDebugEnabled()) {log.debug("GrailsTemplateLoader Looking for template with name ["+ templateName + "]");}
 
 		//add the slash back on
-		templateName = "/"+templateName;
+		//templateName = "/"+templateName;
 
-		Resource resource = viewResourceLocator.locate(templateName);
+		Resource resource = viewResourceLocator.getResource(templateName);
 		if (resource != null && resource.exists()) {
 			if (log.isDebugEnabled()) {log.debug("viewResourceLocator found ["+ templateName + "] ");}
 			return resource;
