@@ -25,6 +25,7 @@ import grails.plugin.freemarker.TagLibAwareConfigurer
 import grails.plugin.freemarker.TagLibPostProcessor
 import grails.plugin.viewtools.ViewResourceLocator
 import grails.plugins.Plugin
+import grails.util.Environment
 import grails.util.Holders
 import org.grails.core.artefact.TagLibArtefactHandler
 import org.springframework.context.ApplicationContext
@@ -90,7 +91,7 @@ class FreemarkerGrailsPlugin extends Plugin  {
             //searchLoaders = [ref('tenantViewResourceLoader')]
 
             // in dev mode there will be a groovyPageResourceLoader with base dir set to the running project
-            if(Environment.isDevelopmentEnvironmentAvailable()){
+            if(Environment.isDevelopmentEnvironmentAvailable()) {
                 grailsViewPaths = ["/grails-app/views"]
                 webInfPrefix = ""
             }
@@ -141,8 +142,8 @@ class FreemarkerGrailsPlugin extends Plugin  {
                 }
             }
 
-            "${TagLibPostProcessor.name}"(TagLibPostProcessor) {
-                grailsApplication = grailsApplication
+            "${TagLibPostProcessor.name}"(TagLibPostProcessor) {bean ->
+                bean.autowire = "byName"
             }
         }
     }}
@@ -164,14 +165,13 @@ class FreemarkerGrailsPlugin extends Plugin  {
 
     @Override
     void onChange(Map<String,Object> event) {
-        def application = grailsApplication
-        def freeconfig = Holders.config.grails.plugin.freemarker as Map
+        def freeconfig = getConfig().grails.plugin.freemarker as Map
 //        if (application.isControllerClass(event.source) ) {
 //            modRenderMethod(application, event.source)
 //        }
 
-        if (freeconfig.tags.enabled == true && application.isArtefactOfType(TagLibArtefactHandler.TYPE, event.source)) {
-            GrailsClass taglibClass = application.addArtefact(TagLibArtefactHandler.TYPE, event.source)
+        if (freeconfig.tags.enabled == true && grailsApplication.isArtefactOfType(TagLibArtefactHandler.TYPE, event.source)) {
+            GrailsClass taglibClass = grailsApplication.addArtefact(TagLibArtefactHandler.TYPE, event.source)
             if (taglibClass) {
                 // replace tag library bean
                 def beanName = taglibClass.fullName
@@ -181,15 +181,15 @@ class FreemarkerGrailsPlugin extends Plugin  {
                         //bean.scope = 'request'
                     }
 
-                    "${TagLibPostProcessor.name}"(TagLibPostProcessor) {
-                        grailsApplication = ref('grailsApplication')
+                    "${TagLibPostProcessor.name}"(TagLibPostProcessor) {bean ->
+                        bean.autowire = "byName"
                     }
                 }
                 beans.registerBeans(event.ctx)
 
                 //event.manager?.getGrailsPlugin('groovyPages')?.doWithDynamicMethods(event.ctx)
 
-                def ApplicationContext springContext = application.mainContext
+                def ApplicationContext springContext = grailsApplication.mainContext
                 for (configurerBeanName in springContext.getBeanNamesForType(AbstractTagLibAwareConfigurer)) {
                     def configurer = springContext.getBean(configurerBeanName)
                     configurer.reconfigure()

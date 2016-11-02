@@ -18,8 +18,8 @@ if (Environment.isDevelopmentMode() && targetDir != null) {
         }
     }
     logger("StackTrace", ERROR, ['FULL_STACKTRACE'], false)
-    root(DEBUG, ['STDOUT', 'FULL_STACKTRACE'])
+    root(ERROR, ['STDOUT', 'FULL_STACKTRACE'])
 }
 else {
-    root(DEBUG, ['STDOUT'])
+    root(ERROR, ['STDOUT'])
 }
