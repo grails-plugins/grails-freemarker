@@ -5,7 +5,6 @@ import grails.util.Holders
 class TagPlayController {
 
 	def freeMarkerViewService
-	def grailsApplication
 
 	def sanity = {
 		render "wtf"

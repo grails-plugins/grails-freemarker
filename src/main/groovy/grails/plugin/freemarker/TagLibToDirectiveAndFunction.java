@@ -27,8 +27,6 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.codehaus.groovy.grails.web.sitemesh.GrailsRoutablePrintWriter;
-import org.codehaus.groovy.grails.web.taglib.GroovyPageAttributes;
 
 import freemarker.core.Environment;
 import freemarker.template.ObjectWrapper;
@@ -43,7 +41,9 @@ import freemarker.template.TemplateModelIterator;
 import freemarker.template.utility.DeepUnwrap;
 import groovy.lang.Closure;
 import groovy.lang.GroovyObject;
-import org.codehaus.groovy.grails.web.util.GrailsPrintWriter;
+import org.grails.buffer.GrailsPrintWriter;
+import org.grails.taglib.GroovyPageAttributes;
+import org.grails.web.sitemesh.GrailsRoutablePrintWriter;
 
 /**
  * @author Daniel Henrique Alves Lima

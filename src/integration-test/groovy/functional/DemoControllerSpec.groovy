@@ -1,6 +1,8 @@
 package functional
 import geb.spock.GebSpec
+import grails.test.mixin.integration.Integration
 
+@Integration(applicationClass=grails.plugin.freemarker.Application)
 class DemoControllerSpec extends GebSpec {
 
 	def "sanity check"() {

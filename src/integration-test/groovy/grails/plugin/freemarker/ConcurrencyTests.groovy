@@ -17,11 +17,14 @@ package grails.plugin.freemarker
 
 import freemarker.template.Configuration
 import freemarker.template.Template
+import grails.test.mixin.integration.Integration
+import spock.lang.Specification
 
 /**
  * @author Daniel Henrique Alves Lima
  */
-class ConcurrencyTests extends GroovyTestCase {
+@Integration
+class ConcurrencyTests extends Specification {
 
     def freeMarkerConfigurer
     private Exception threadException
@@ -33,6 +36,7 @@ class ConcurrencyTests extends GroovyTestCase {
     }
 
     void testConcurrency() {
+        when:
         def text = new StringBuilder('[#ftl/]')
         for (int i = 0; i < 100; i++) {
             text.append(i)
@@ -51,12 +55,15 @@ class ConcurrencyTests extends GroovyTestCase {
                 template.process([name: myCounter + 1], result)
                 List lines = new StringReader(result.toString()).readLines()
                 result = null
-                assertEquals "thread ${myCounter} ${lines.size()}", 100, lines.size()
+                then:
+                100 == lines.size()
+                when:
                 lines.eachWithIndex { line, index ->
                     if (Math.random() <= 0.1) {
                         //assertTrue "random ${index} ${myCounter+1}", false
                     }
-                    assertEquals "${index}: Thread-${myCounter+1}".toString(), line
+                    then:
+                    "${index}: Thread-${myCounter+1}".toString() == line
                 }
             }
             threads << t
@@ -74,6 +81,8 @@ class ConcurrencyTests extends GroovyTestCase {
                 throw threadException
             }
         }
+        then:
+        1==1
     }
 
     private runInParallel = { Closure c ->

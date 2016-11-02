@@ -1,12 +1,18 @@
 package grails.plugin.freemarker
 
-class TaglibFromServiceTests extends GroovyTestCase {
+import grails.test.mixin.integration.Integration
+import spock.lang.Specification
+
+@Integration
+class TaglibFromServiceTests extends Specification {
 
     def freeMarkerViewService
     def executorService
 
     void testGetView() {
+        when:
         def view = freeMarkerViewService.getView("tagPlay/index.ftl")
-        assertNotNull view //.getTemplate(Locale.US)
+        then:
+        view //.getTemplate(Locale.US)
     }
 }

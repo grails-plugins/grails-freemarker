@@ -1,3 +1,9 @@
+package grails.plugin.freemarker
+
+import freemarker.template.Configuration
+import grails.core.DefaultGrailsApplication
+import grails.core.GrailsClass
+
 /* Copyright 2009 Jeff Brown
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,20 +24,21 @@ import grails.plugin.freemarker.GrailsTemplateLoader
 import grails.plugin.freemarker.TagLibAwareConfigurer
 import grails.plugin.freemarker.TagLibPostProcessor
 import grails.plugin.viewtools.ViewResourceLocator
-import org.codehaus.groovy.grails.commons.GrailsClass
-import org.codehaus.groovy.grails.commons.TagLibArtefactHandler
-import org.codehaus.groovy.grails.web.util.WebUtils
+import grails.plugins.Plugin
+import grails.util.Holders
+import org.grails.core.artefact.TagLibArtefactHandler
 import org.springframework.context.ApplicationContext
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer
-import org.codehaus.groovy.grails.web.pages.discovery.DefaultGroovyPageLocator
+
+
 /**
  * @author Jeff Brown
  * @author Daniel Henrique Alves Lima
  * @author Joshua Burnett
  */
-class FreemarkerGrailsPlugin {
-    def version        = "2.0.1"
-    def grailsVersion  = "2.3 > *"
+class FreemarkerGrailsPlugin extends Plugin  {
+    def version        = "3.0.0"
+    def grailsVersion  = "3.2.0 > *"
     def pluginExcludes = [
             "grails-app/views/**/*",
             "grails-app/controllers/**/*",
@@ -65,12 +72,16 @@ class FreemarkerGrailsPlugin {
     def author = "Jeff Brown"
     def authorEmail = "jeff.brown@springsource.com"
 
-    def doWithSpring = {
-        def freeconfig = application.mergedConfig.asMap().grails.plugin.freemarker
+    Closure doWithSpring() {{->
+        def freeconfig = getConfig().grails.plugin.freemarker
+        Properties freeconfigProp = new Properties()
+        if (freeconfig.hasProperty('configSettings') && freeconfig.configSettings){
+            freeconfigProp = freeconfig.configSettings.toProperties()
+        }
         String ftlSuffix = '.ftl'
 
         freeMarkerViewResourceLocator(grails.plugin.viewtools.ViewResourceLocator) { bean ->
-            searchBinaryPlugins = false //whether to look in binary plugins, does not work in grails2
+            searchBinaryPlugins = true //whether to look in binary plugins, does not work in grails2
             
             //initial searchLocations
             searchPaths = freeconfig.viewResourceLocator.searchLocations
@@ -79,8 +90,7 @@ class FreemarkerGrailsPlugin {
             //searchLoaders = [ref('tenantViewResourceLoader')]
 
             // in dev mode there will be a groovyPageResourceLoader with base dir set to the running project
-            //if(Environment.isDevelopmentEnvironmentAvailable()) <- better for Grails 3
-            if(!application.warDeployed){ // <- grails2
+            if(Environment.isDevelopmentEnvironmentAvailable()){
                 grailsViewPaths = ["/grails-app/views"]
                 webInfPrefix = ""
             }
@@ -101,13 +111,11 @@ class FreemarkerGrailsPlugin {
         /* factory to return FreeMarkerConfig
          * @see org.springframework.web.servlet.view.freemarker.FreeMarkerConfig */
         freeMarkerConfigurer(configClass) {
-
+            freemarkerSettings = freeconfigProp
             if (freeconfig.templateLoaders) {
                 // default config has the 'freeMarkerGrailsTemplateLoader'
                 postTemplateLoaders = resolveLoaders(freeconfig.templateLoaders)
             }
-
-            freemarkerSettings = application.mergedConfig.grails.plugin.freemarker.configSettings?.toProperties()
         }
 
         //the key bean that kicks it all off using Spring/Grails ViewResolver concepts
@@ -124,7 +132,7 @@ class FreemarkerGrailsPlugin {
 
         if (freeconfig.tags.enabled == true) {
             // Now go through tag libraries and configure them in spring too. With AOP proxies and so on
-            for (taglib in application.tagLibClasses) {
+            for (taglib in grailsApplication.tagLibClasses) {
                 "${taglib.fullName}_fm"(taglib.clazz) { bean ->
                     bean.autowire = true
                     bean.lazyInit = true
@@ -134,27 +142,30 @@ class FreemarkerGrailsPlugin {
             }
 
             "${TagLibPostProcessor.name}"(TagLibPostProcessor) {
-                grailsApplication = ref('grailsApplication')
+                grailsApplication = grailsApplication
             }
         }
-    }
+    }}
 
-    def doWithDynamicMethods = { ctx ->
-
+    @Override
+    void doWithDynamicMethods(){
+        def ctx = getApplicationContext()
 //        for (controller in application.controllerClasses) {
 //            modRenderMethod(application, controller)
 //        }
 
         /** Fremarker configuration mods **/
-        def configLocalizedLookup = application.config.grails.plugin.freemarker.localizedLookup
+        def configLocalizedLookup = grailsApplication.config.grails.plugin.freemarker.localizedLookup
         //turn off the localizedLookup by default
         if (!configLocalizedLookup) {
             ctx.freeMarkerConfigurer.configuration.localizedLookup = false
         }
     }
 
-    def onChange = { event ->
-        def freeconfig = application.mergedConfig.asMap(true).grails.plugin.freemarker
+    @Override
+    void onChange(Map<String,Object> event) {
+        def application = grailsApplication
+        def freeconfig = Holders.config.grails.plugin.freemarker as Map
 //        if (application.isControllerClass(event.source) ) {
 //            modRenderMethod(application, event.source)
 //        }

@@ -17,97 +17,133 @@ package grails.plugin.freemarker
 
 import freemarker.template.Configuration
 import freemarker.template.Template
+import grails.test.mixin.integration.Integration
+import spock.lang.Specification
+
 
 /**
  * @author Daniel Henrique Alves Lima
  */
-class UserDefinedTagLibTests extends GroovyTestCase {
+@Integration
+class UserDefinedTagLibTests extends Specification {
 
     def freeMarkerConfigurer
     private StringWriter sWriter = new StringWriter()
 
     void testEmoticon() {
+        when:
         String result = parseFtlTemplate('[#ftl/][@g.emoticon happy="true"]Hi John[/@g.emoticon]')
-        assertEquals 'Hi John :-)', result
+        then:
+        'Hi John :-)' == result
 
+        when:
         result = parseFtlTemplate('[#ftl/][@g.emoticon happy="false"]Hi Mary[/@g.emoticon]')
-        assertEquals 'Hi Mary :-(', result
+        then:'Hi Mary :-(' == result
 
+        when:
         result = parseFtlTemplate('[#ftl/][@g.emoticon happy="false"/]')
-        assertEquals ' :-(', result
+        then: ' :-(' == result
 
+        when:
         result = parseFtlTemplate('[#ftl/]<x value="${g.emoticon({\'happy\': \'true\'})}">')
-        assertEquals '<x value=" :-)">', result //??????
+        then:
+        '<x value=" :-)">' == result //??????
     }
 
     void testDateFormat() {
+        when:
         Map binding = [now: new GregorianCalendar(2011, Calendar.JUNE, 30).time]
         String result = parseFtlTemplate('[#ftl/][@g.dateFormat format="dd-MM-yyyy" date=now /]', binding)
-        assertEquals '30-06-2011', result
+        then:
+        '30-06-2011' == result
 
+        when:
         result = parseFtlTemplate('[#ftl/]${now?string("dd-MM-yyyy")}', binding)
-        assertEquals '30-06-2011', result
+        then:
+        '30-06-2011' == result
 
+        when:
         result= parseFtlTemplate('[#ftl/]a=${g.dateFormat({"format": "dd-MM-yyyy", "date":now})}', binding)
-        assertEquals 'a=30-06-2011', result
+        then:
+        'a=30-06-2011' == result
     }
 
     void testIsAdmin() {
+        when:
         String template = '[#ftl/][@g.isAdmin user=myUser]// some restricted content[/@g.isAdmin]'
         Map model = [myUser: [admin: true]]
 
         String result = parseFtlTemplate(template, model)
-        assertEquals '// some restricted content', result
+        then: '// some restricted content' == result
 
+        when:
         model.myUser.admin = false
         result = parseFtlTemplate(template, model)
-        assertEquals '', result
+        then:
+        '' == result
     }
 
     void testRepeat() {
+        when:
         String result = parseFtlTemplate('[#ftl/][@g.repeat times=3]\
 <p>Repeat this 3 times! Current repeat = ${it}</p>\
 [/@g.repeat]')
-        assertEquals '<p>Repeat this 3 times! Current repeat = 0</p><p>Repeat this 3 times! Current repeat = 1</p><p>Repeat this 3 times! Current repeat = 2</p>', result
-
+        then:
+        '<p>Repeat this 3 times! Current repeat = 0</p><p>Repeat this 3 times! Current repeat = 1</p><p>Repeat this 3 times! Current repeat = 2</p>' == result
+        when:
         result = parseFtlTemplate('[#ftl/][@g.repeat times=3]A${it}[@g.repeat times=2]B${it}[/@g.repeat][/@g.repeat]')
-        assertEquals 'A0B0B1A1B0B1A2B0B1', result
+        then:
+        'A0B0B1A1B0B1A2B0B1' == result
     }
 
     void testMyRepeat() {
+        when:
         String result = parseFtlTemplate('[#ftl/][@my.repeat times=3 var="j"]\
 <p>Repeat this 3 times! Current repeat = ${j}</p>\
 [/@my.repeat]')
-        assertEquals '<p>Repeat this 3 times! Current repeat = 0</p><p>Repeat this 3 times! Current repeat = 1</p><p>Repeat this 3 times! Current repeat = 2</p>', result
+        then:
+        '<p>Repeat this 3 times! Current repeat = 0</p><p>Repeat this 3 times! Current repeat = 1</p><p>Repeat this 3 times! Current repeat = 2</p>' == result
 
+        when:
         result = parseFtlTemplate('[#ftl/][@my.repeat times=3 var="j"]A${j}[@my.repeat times=2 var="j"]B${j}[/@my.repeat][/@my.repeat]')
-        assertEquals 'A0B0B1A1B0B1A2B0B1', result
+        then: 'A0B0B1A1B0B1A2B0B1' == result
 
+        when:
         result = parseFtlTemplate('[#ftl/][@my.repeat times=3 var="i"]A${i}[@my.repeat times=2 var="j"]B${i}${j}[/@my.repeat][/@my.repeat]')
-        assertEquals 'A0B00B01A1B10B11A2B20B21', result
+        then:
+        'A0B00B01A1B10B11A2B20B21' == result
     }
 
     void testMySum() {
+        when:
         String result = parseFtlTemplate('[#ftl/][@my.sum a=1 b=2 c=876/]')
-        assertEquals '879', result
-
+        then:
+        '879' == result
+        when:
         result = parseFtlTemplate('[#ftl/][#assign result=my.sum({"a":1, "b":2, "c":876}) /]${result?string("000.00")}')
-        assertEquals '879.00', result
+        then:
+        '879.00' == result
     }
 
     void testMyAnotherExample() {
+        when:
         String result = parseFtlTemplate('[#ftl/][@my.anotherExample /]')
-        assertEquals 'example another', result
+        then:
+        'example another' == result
     }
 
     void testMySpecialForm() {
+        when:
         String result = parseFtlTemplate('[#ftl/][@my.specialForm /]')
-        assertTrue result.contains('<form ')
+        then:
+        result.contains('<form ')
     }
 
     void testTagBody_unsingReverse() {
+        when:
         String result = parseFtlTemplate('[#ftl/][@g.reverse]Hi Sam[/@g.reverse]');
-        assert 'maS iH' == result
+        then:
+        'maS iH' == result
     }
 
     private parseFtlTemplate = {String templateSourceCode, Map binding = [:] ->

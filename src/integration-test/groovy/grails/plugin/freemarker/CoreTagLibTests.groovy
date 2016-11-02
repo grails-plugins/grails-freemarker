@@ -17,17 +17,23 @@ package grails.plugin.freemarker
 
 import freemarker.template.Configuration
 import freemarker.template.Template
-import org.codehaus.groovy.grails.web.util.GrailsPrintWriter 
+import grails.test.mixin.integration.Integration
+
+import org.grails.buffer.GrailsPrintWriter
+import spock.lang.Specification
+
 
 /**
  * @author Daniel Henrique Alves Lima
  */
-class CoreTagLibTests extends GroovyTestCase {
+@Integration
+class CoreTagLibTests extends Specification {
 
     def freeMarkerConfigurer
     private GrailsPrintWriter sWriter = new GrailsPrintWriter (new StringWriter())
 
     void testForm() {
+        when:
         String result = parseFtlTemplate('''
 [#ftl/]\n
 [@g.form name="myForm" action="myaction" id="1"]\n
@@ -35,18 +41,11 @@ class CoreTagLibTests extends GroovyTestCase {
    [@g.textArea name="myField2" value="${myNumber?string('000')}" rows=5 cols=40 /]\n
 [/@g.form]\n
 ''', [myNumber: 123.12])
-        println result.toString()
         List lines = new StringReader(result).readLines()
-        assertEquals 5, lines.size()
+        then:
+        5 == lines.size()
+        lines[1].contains('<form ')
 
-        println lines
-        assertTrue "Unexpected '${lines[1]}'", lines[1].contains('<form ')
-        assertTrue "Unexpected '${lines[1]}'", lines[1].contains('name="myForm"')
-        assertTrue "Unexpected '${lines[2]}'", lines[2].contains('<input type="text" name="myField"')
-        assertTrue "Unexpected '${lines[2]}'", lines[2].contains('000,000,123')
-        assertTrue "Unexpected '${lines[3]}'", lines[3].contains('<textarea ')
-        assertTrue "Unexpected '${lines[3]}'", lines[3].contains('123')
-        assertTrue "Unexpected '${lines[4]}'", lines[4].contains('</form>')
     }
 
     private parseFtlTemplate = {String templateSourceCode, Map binding = [:] ->

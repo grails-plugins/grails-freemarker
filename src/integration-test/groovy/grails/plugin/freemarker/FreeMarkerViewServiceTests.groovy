@@ -1,18 +1,23 @@
 package grails.plugin.freemarker
 
-class FreeMarkerViewServiceTests extends GroovyTestCase {
+import grails.test.mixin.integration.Integration
+import spock.lang.Specification
+@Integration
+class FreeMarkerViewServiceTests extends Specification {
 
     FreeMarkerViewService freeMarkerViewService
     def freeMarkerViewResourceLocator
 
     void testGetView() {
+        when:
         def res = freeMarkerViewResourceLocator.locate('demo/index.ftl')
-        assert res
-
-        assert res.getURI().toString().endsWith("demo/index.ftl")
-
+        then:
+        res
+        res.getURI().toString().endsWith("demo/index.ftl")
+        when:
         def view = freeMarkerViewService.getView("/demo/index.ftl")
-        assert view //.getTemplate(Locale.US)
+        then:
+        view //.getTemplate(Locale.US)
     }
 //
 //    void testGetViewPlugin() {
@@ -21,30 +26,38 @@ class FreeMarkerViewServiceTests extends GroovyTestCase {
 //    }
 
     void testRenderName() {
+        when:
         def writer = new StringWriter()
         freeMarkerViewService.render("demo/index.ftl" , [name:"basejump", state:"IL"],  writer)
         //println writer.toString()
-        assertTrue writer.toString().contains("Name: basejump")
+        then:
+        writer.toString().contains("Name: basejump")
     }
 
     void testRenderNamePlugin() {
+        when:
         def writer = new StringWriter()
         freeMarkerViewService.render("gobaby.ftl" , [testvar:"basejump"],  writer )
         //println writer.toString()
-        assertTrue writer.toString().contains("<p>basejump</p>")
+        then:
+        writer.toString().contains("<p>basejump</p>")
     }
 
     void testRenderInThisPugin() {
+        when:
         def writer = new StringWriter()
         freeMarkerViewService.render("/demo/index.ftl" , [name:"basejump", state:"IL"],  writer)
         println writer.toString()
-        assertTrue writer.toString().contains("Name: basejump")
+        then:
+        writer.toString().contains("Name: basejump")
     }
 
     void testRender_file_in_test_dir() {
+        when:
         def writer = new StringWriter()
         freeMarkerViewService.render("file:test-projects/views/foo.ftl" ,[:],  writer)
         println writer.toString()
-        assertTrue writer.toString().contains("sitting here in the test")
+        then:
+        writer.toString().contains("sitting here in the test")
     }
 }

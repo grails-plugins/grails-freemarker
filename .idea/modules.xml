@@ -2,9 +2,17 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/freePlugin-inplacePlugin.iml" filepath="$PROJECT_DIR$/freePlugin-inplacePlugin.iml" />
-      <module fileurl="file://$PROJECT_DIR$/freemarker.iml" filepath="$PROJECT_DIR$/freemarker.iml" />
-      <module fileurl="file://$PROJECT_DIR$/freemarker-grailsPlugins.iml" filepath="$PROJECT_DIR$/freemarker-grailsPlugins.iml" />
+      <module fileurl="file://$PROJECT_DIR$/test-projects/free-app/free-app.iml" filepath="$PROJECT_DIR$/test-projects/free-app/free-app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/test-projects/free-plugin/free-plugin.iml" filepath="$PROJECT_DIR$/test-projects/free-plugin/free-plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/grails-app/grails-app.iml" filepath="$PROJECT_DIR$/grails-app/grails-app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/grails-freemarker.iml" filepath="$PROJECT_DIR$/.idea/modules/grails-freemarker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/grails-freemarker_ast.iml" filepath="$PROJECT_DIR$/.idea/modules/grails-freemarker_ast.iml" group="grails-freemarker" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/grails-freemarker_integrationTest.iml" filepath="$PROJECT_DIR$/.idea/modules/grails-freemarker_integrationTest.iml" group="grails-freemarker" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/grails-freemarker_main.iml" filepath="$PROJECT_DIR$/.idea/modules/grails-freemarker_main.iml" group="grails-freemarker" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/grails-freemarker_test.iml" filepath="$PROJECT_DIR$/.idea/modules/grails-freemarker_test.iml" group="grails-freemarker" />
+      <module fileurl="file://$PROJECT_DIR$/src/integration-test/integration-test.iml" filepath="$PROJECT_DIR$/src/integration-test/integration-test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/src/main/main.iml" filepath="$PROJECT_DIR$/src/main/main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/src/test/test.iml" filepath="$PROJECT_DIR$/src/test/test.iml" />
     </modules>
   </component>
 </project>

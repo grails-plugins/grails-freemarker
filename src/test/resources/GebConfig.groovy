@@ -18,6 +18,7 @@ import org.openqa.selenium.phantomjs.PhantomJSDriver
 baseNavigatorWaiting = true
 
 atCheckWaiting = true
+baseUrl =  'http://localhost:8080/'
 
 //****Chrome as the default driver *****//
 ChromeDriverManager.getInstance().setup()

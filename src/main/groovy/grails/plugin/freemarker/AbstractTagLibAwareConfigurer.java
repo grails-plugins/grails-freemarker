@@ -20,13 +20,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import grails.core.GrailsApplication;
+import grails.core.GrailsClass;
+import grails.core.GrailsTagLibClass;
+import grails.core.support.GrailsApplicationAware;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.codehaus.groovy.grails.commons.GrailsApplication;
-import org.codehaus.groovy.grails.commons.GrailsClass;
-import org.codehaus.groovy.grails.commons.GrailsTagLibClass;
-import org.codehaus.groovy.grails.commons.TagLibArtefactHandler;
-import org.codehaus.groovy.grails.plugins.support.aware.GrailsApplicationAware;
+
+import org.grails.core.artefact.TagLibArtefactHandler;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
@@ -147,7 +148,6 @@ public abstract class AbstractTagLibAwareConfigurer extends FreeMarkerConfigurer
         }//end if
     }
 
-    @Override
     public void setGrailsApplication(GrailsApplication grailsApplication) {
         this.grailsApplication = grailsApplication;
     }

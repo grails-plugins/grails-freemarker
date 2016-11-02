@@ -1,12 +1,18 @@
 package grails.plugin.freemarker
 
-class GrailsFreeMarkerViewResolverTests extends GroovyTestCase {
+import grails.test.mixin.integration.Integration
+import spock.lang.Specification
+
+@Integration
+class GrailsFreeMarkerViewResolverTests extends Specification {
 
     def freeMarkerViewResolver
 
     void testGetView() {
+        when:
         def view = freeMarkerViewResolver.resolveViewName("/demo/index.ftl",Locale.US)
-        assert view //.getTemplate(Locale.US)
+        then:
+        view //.getTemplate(Locale.US)
     }
 
 }

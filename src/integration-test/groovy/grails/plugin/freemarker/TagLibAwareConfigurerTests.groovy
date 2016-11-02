@@ -17,12 +17,16 @@ package grails.plugin.freemarker
 
 import freemarker.template.Configuration
 import freemarker.template.Template
-import org.codehaus.groovy.grails.web.util.GrailsPrintWriter 
+import grails.test.mixin.integration.Integration
+import org.grails.buffer.GrailsPrintWriter
+import spock.lang.Specification
+
 
 /**
  * @author Daniel Henrique Alves Lima
  */
-class TagLibAwareConfigurerTests extends GroovyTestCase {
+@Integration
+class TagLibAwareConfigurerTests extends Specification {
 
     def freeMarkerConfigurer
     def grailsApplication
@@ -36,47 +40,63 @@ class TagLibAwareConfigurerTests extends GroovyTestCase {
     }
 
     void testConfigReference() {
-        assertNotNull freeMarkerConfigurer
-        assertTrue freeMarkerConfigurer instanceof AbstractTagLibAwareConfigurer
+        when:
+        assert  freeMarkerConfigurer != null
+        then:
+        freeMarkerConfigurer instanceof AbstractTagLibAwareConfigurer
     }
 
     void testAvailableTagLibs() {
+        when:
         Configuration config = freeMarkerConfigurer.configuration
         Set names = config.getSharedVariableNames()
-        assertTrue names.contains('g')
-        assertTrue names.contains('plugin')
-        assertTrue names.contains('sitemesh')
+        then:
+        names.contains('g')
+         names.contains('plugin')
+         names.contains('sitemesh')
     }
 
     void testParseRegularTemplate() {
+        when:
         String result = parseFtlTemplate('[#ftl/]${s}', [s: 'ok'])
-        assertEquals 'ok', result
-
+        then:
+        'ok' == result
+        when:
         result = parseFtlTemplate('<#ftl/>${s}', [s: 'fail'])
-        assertEquals 'fail', result
+        then:
+        'fail' == result
     }
 
     void testParseFmTagsTemplate() {
+        when:
         String result = parseFtlTemplate('[#ftl/][@g.form /]')
-        assertTrue result, result.contains('<form')
-        assertTrue result, result.contains('</form>')
-
+        then:
+        result == result.contains('<form')
+        result == result.contains('</form>')
+        when:
         result = parseFtlTemplate('[#ftl/]<a href="${g.message({\'code\': \'abc\', \'default\': \'xyz\'})}">')
-        assertEquals '<a href="xyz">', result
+        then:
+        '<a href="xyz">' == result
     }
 
     void testParseFmTagsTemplateWithoutRequestContext() {
+        String result
         runInParallel {
-            String result = parseFtlTemplate('[#ftl/][@g.textField name="abc"/]')
-            assertTrue result, result.contains('<input type="text"')
-            assertTrue result, result.contains('name="abc"')
+            when:
+            result = parseFtlTemplate('[#ftl/][@g.textField name="abc"/]')
+            then:
+            result.contains('<input type="text"')
+            result.contains('name="abc"')
 
             try {
+                when:
                 result = parseFtlTemplate('[#ftl/][@g.message code="abc" default="xyz" /]')
+                then:
                 fail('This tag cannot run without a thread-bound request')
             }
             catch (e) {
-                assertTrue e.message.contains('No thread-bound request found:')
+                then:
+                e.message.contains('No thread-bound request found:')
             }
         }
     }

@@ -16,12 +16,13 @@
 package grails.plugin.freemarker;
 
 import freemarker.cache.TemplateLoader;
+import grails.core.GrailsApplication;
 import grails.plugin.viewtools.ViewResourceLocator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.codehaus.groovy.grails.commons.GrailsApplication;
-import org.codehaus.groovy.grails.web.pages.discovery.DefaultGroovyPageLocator;
-import org.codehaus.groovy.grails.web.pages.discovery.GroovyPageStaticResourceLocator;
+
+import org.grails.gsp.io.DefaultGroovyPageLocator;
+import org.grails.gsp.io.GroovyPageStaticResourceLocator;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;

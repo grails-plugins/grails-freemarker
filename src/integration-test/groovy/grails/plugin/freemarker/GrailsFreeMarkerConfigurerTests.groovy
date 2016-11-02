@@ -15,15 +15,18 @@
  */
 package grails.plugin.freemarker
 
+import grails.test.mixin.integration.Integration
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig
 
 import freemarker.template.Configuration
 import freemarker.template.Template
+import spock.lang.Specification
 
 /**
  * @author Daniel Henrique Alves Lima
  */
-class GrailsFreeMarkerConfigurerTests extends GroovyTestCase {
+@Integration
+class GrailsFreeMarkerConfigurerTests extends Specification {
 
     def freeMarkerConfigurer
     private StringWriter sWriter = new StringWriter()
@@ -36,30 +39,39 @@ class GrailsFreeMarkerConfigurerTests extends GroovyTestCase {
     }
 
     void testConfigReference() {
-        assertNotNull freeMarkerConfigurer
-        assertTrue freeMarkerConfigurer instanceof FreeMarkerConfig
-        assertSame freeMarkerConfigurer.configuration, freeMarkerConfigurer.configuration
+        when:
+        freeMarkerConfigurer != null
+        then:
+        freeMarkerConfigurer instanceof FreeMarkerConfig
+        freeMarkerConfigurer.configuration == freeMarkerConfigurer.configuration
     }
 
     void testParseRegularTemplate() {
+        when:
         String result = parseFtlTemplate('[#ftl/]${s}', [s: 'ok'])
-        assertEquals 'ok', result
+        then: 'ok' == result
 
+        when:
         result = parseFtlTemplate('<#ftl/>${s}', [s: 'fail'])
-        assertEquals 'fail', result
+        then:
+        'fail' == result
     }
 
     void testParseRegularTemplateWithoutRequestContext() {
         runInParallel {
+            when:
             String result = parseFtlTemplate('[#ftl/]<input type="text" name="${xyz}"/>', [xyz: 'abc'])
-            assertTrue result, result.contains('<input type="text"')
-            assertTrue result, result.contains('name="abc"')
+            then:
+            result.contains('<input type="text"')
+            result.contains('name="abc"')
         }
     }
 
     void testParseRegularView() {
+        when:
         String result = parseFtlView('/demo/fmtemplate.ftl', [name: 'fmView'])
-        assertTrue result.contains('fmView')
+        then:
+        result.contains('fmView')
 
         //result = parseFtlView('/demo/bluesky.ftl', [testvar: 'weirdValue'])
         //assertTrue result.contains('weirdValue')

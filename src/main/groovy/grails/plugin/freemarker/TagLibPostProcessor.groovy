@@ -15,9 +15,9 @@
 */
 package grails.plugin.freemarker
 
-import org.codehaus.groovy.grails.commons.ArtefactHandler
-import org.codehaus.groovy.grails.commons.GrailsApplication
-import org.codehaus.groovy.grails.commons.TagLibArtefactHandler
+import grails.core.ArtefactHandler
+import grails.core.GrailsApplication
+import org.grails.core.artefact.TagLibArtefactHandler
 import org.springframework.beans.BeansException
 import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter
 

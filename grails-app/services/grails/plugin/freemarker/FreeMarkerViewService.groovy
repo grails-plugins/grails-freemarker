@@ -1,12 +1,12 @@
 package grails.plugin.freemarker
 
 import freemarker.template.Template
+import grails.core.GrailsApplication
 import grails.plugin.viewtools.GrailsWebEnvironment
 import grails.plugin.viewtools.ViewResourceLocator
 import groovy.transform.CompileStatic
 import groovy.transform.CompileDynamic
-import org.codehaus.groovy.grails.commons.GrailsApplication
-import org.codehaus.groovy.grails.web.servlet.mvc.GrailsWebRequest
+import org.grails.web.servlet.mvc.GrailsWebRequest
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import org.springframework.web.servlet.LocaleResolver
