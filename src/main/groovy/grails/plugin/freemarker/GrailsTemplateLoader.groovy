@@ -176,13 +176,13 @@ public class GrailsTemplateLoader implements TemplateLoader, ApplicationContextA
 
 	void debugInfo(String templateName){
 		DefaultGroovyPageLocator.PluginViewPathInfo pluginViewPathInfo = DefaultGroovyPageLocator.getPluginViewPathInfo("/"+templateName);
-        String path = pluginViewPathInfo.basePath;
-        String pluginName = pluginViewPathInfo.pluginName;
-        String pathRelativeToPlugin = pluginViewPathInfo.path;
-        log.debug("path: " + path);
-        log.debug("pluginName: " + pluginName);
-        log.debug("pathRelativeToPlugin: " + pathRelativeToPlugin);
-        
+		String path = pluginViewPathInfo.basePath;
+		String pluginName = pluginViewPathInfo.pluginName;
+		String pathRelativeToPlugin = pluginViewPathInfo.path;
+		log.debug("path: " + path);
+		log.debug("pluginName: " + pluginName);
+		log.debug("pathRelativeToPlugin: " + pathRelativeToPlugin);
+
 		log.debug(resourceLoader);
 		log.debug("webInfPrefix: " + webInfPrefix);
 		log.debug("isWarDeployed: " + grailsApplication.isWarDeployed());

@@ -9,8 +9,8 @@ buildscript {
     }
 }
 
-version "3.0.0"
-group "grails.plugin.freemarker"
+version "1.0.0"
+group "free2"
 
 apply plugin:"eclipse"
 apply plugin:"idea"
@@ -42,8 +42,9 @@ dependencies {
     compile "org.grails.plugins:cache"
     compile "org.grails.plugins:scaffolding"
     console "org.grails:grails-console"
-    compile "org.freemarker:freemarker:2.3.25-incubating"
-    compile 'commons-io:commons-io:2.5'
+    compile "org.grails.plugins:hibernate4"
+    compile "org.hibernate:hibernate-core:4.3.10.Final"
+    compile "org.hibernate:hibernate-ehcache:4.3.10.Final"
     compile "org.grails.plugins:view-tools:0.5"
     profile "org.grails.profiles:web-plugin"
     provided "org.grails:grails-plugin-services"
@@ -52,33 +53,11 @@ dependencies {
     runtime "com.bertramlabs.plugins:asset-pipeline-grails:2.8.2"
     testCompile "org.grails:grails-plugin-testing"
     testCompile "org.grails.plugins:geb"
-    testRuntime 'com.github.detro:phantomjsdriver:1.2.0'
-    testRuntime "io.github.bonigarcia:webdrivermanager:1.4.9"
-    testRuntime 'org.seleniumhq.selenium:selenium-htmlunit-driver:2.47.1'
-    testRuntime "org.seleniumhq.selenium:selenium-chrome-driver:2.53.1"
-    testRuntime "org.seleniumhq.selenium:selenium-firefox-driver:2.53.1"
-    testRuntime "org.seleniumhq.selenium:selenium-ie-driver:2.53.1"
 }
 
 grails{
     plugins{
-        if (rootProject.name == "freemarker") {
-            compile project(':test-projects/free-plugin')
-        }
+            compile project('../../../grails-freemarker')
     }
 }
-grailsPublish {
-    githubSlug = 'grails-plugins/grails-freemarker'
-    vcsUrl = 'https://github.com/grails-plugins/grails-freemarker'
-    license {
-        name = 'Apache-2.0'
-    }
-    title = "FreeMarker Views Plugin"
-    desc = 'The Grails FreeMarker plugin provides support for rendering FreeMarker templates as views.'
-    developers = ["jeff.brown@springsource.com": 'Jeff Brown','joshdev@9ci.com': 'Joshua Burnett', 'lima': 'Daniel Henrique Alves Lima']
-}
 
-
-assets {
-    packagePlugin = true
-}

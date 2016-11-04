@@ -100,6 +100,7 @@ class FreemarkerGrailsPlugin extends Plugin  {
 
         freeMarkerGrailsTemplateLoader(GrailsTemplateLoader) { bean ->
             bean.autowire = "byName"
+            grailsApplication = grailsApplication
             viewResourceLocator = ref('freeMarkerViewResourceLocator')
         }
 
@@ -186,7 +187,7 @@ class FreemarkerGrailsPlugin extends Plugin  {
                     }
                 }
                 beans.registerBeans(event.ctx)
-
+                org.grails.plugins.web.taglib.FormTagLib
                 //event.manager?.getGrailsPlugin('groovyPages')?.doWithDynamicMethods(event.ctx)
 
                 def ApplicationContext springContext = grailsApplication.mainContext

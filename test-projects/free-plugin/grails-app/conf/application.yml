@@ -2,7 +2,7 @@
 grails:
     profile: web-plugin
     codegen:
-        defaultPackage: grails.plugin.freemarker
+        defaultPackage: ''
     spring:
         transactionManagement:
             proxies: false
@@ -76,3 +76,4 @@ grails:
 endpoints:
     jmx:
         unique-names: true
+

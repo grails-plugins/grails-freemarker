@@ -71,8 +71,8 @@ class TagLibAwareConfigurerTests extends Specification {
         when:
         String result = parseFtlTemplate('[#ftl/][@g.form /]')
         then:
-        result == result.contains('<form')
-        result == result.contains('</form>')
+        result.contains('<form')
+        result.contains('</form>')
         when:
         result = parseFtlTemplate('[#ftl/]<a href="${g.message({\'code\': \'abc\', \'default\': \'xyz\'})}">')
         then:

@@ -294,10 +294,13 @@ preceded by '_' (underscore).
 or  
 ```[@g.renderErrors bean=myUserInstance _as="list" /]```
 
+## Known issues
 
+For Grails 3 has issues with parsing of some grails taglibs, for example `g:form`
 
 # History
-
+*3.0.0
+	* updated for work with grails 3
 * 2.0.1  
 	* major refactoring to work with 2.5
 	* prepping for grails 3 compatability

@@ -19,10 +19,17 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="freemarker_ast" target="1.8" />
+      <module name="freemarker_integrationTest" target="1.8" />
+      <module name="freemarker_main" target="1.8" />
+      <module name="freemarker_test" target="1.8" />
       <module name="grails-freemarker_ast" target="1.8" />
       <module name="grails-freemarker_integrationTest" target="1.8" />
       <module name="grails-freemarker_main" target="1.8" />
       <module name="grails-freemarker_test" target="1.8" />
+      <module name="test-projects_free-plugin_ast" target="1.8" />
+      <module name="test-projects_free-plugin_main" target="1.8" />
+      <module name="test-projects_free-plugin_test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

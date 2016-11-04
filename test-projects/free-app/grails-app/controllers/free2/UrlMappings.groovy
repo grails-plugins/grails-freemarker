@@ -1,3 +1,5 @@
+package free2
+
 class UrlMappings {
 
 	static mappings = {

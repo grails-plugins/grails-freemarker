@@ -89,7 +89,7 @@ class FreeMarkerViewService {
     Locale getLocale() {
         def locale
         def request = GrailsWebRequest.lookup()?.currentRequest
-        locale = localeResolver?.resolveLocale(request)
+        if (request) locale = localeResolver?.resolveLocale(request)
         if(locale == null) {
             locale = Locale.default
         }

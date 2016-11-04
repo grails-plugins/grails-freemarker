@@ -1,13 +1,10 @@
-grails:
-  plugin:
-    freemarker:
-      requireViewSuffix: true
-      templateLoaders:
-        - 'freeMarkerGrailsTemplateLoader'
-      viewResourceLocator:
-        searchLocations:
-          - 'classpath:templates/'
-          - 'classpath:freemarker/'
-      tags:
-        enabled: true
-      localizedLookup: true
+requireViewSuffix: true
+templateLoaders:
+  - 'freeMarkerGrailsTemplateLoader'
+viewResourceLocator:
+  searchLocations:
+    - 'classpath:templates/'
+    - 'classpath:freemarker/'
+tags:
+  enabled: true
+localizedLookup: true

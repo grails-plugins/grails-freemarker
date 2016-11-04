@@ -28,5 +28,5 @@ class MyTagLib {
         out << my.example(name: 'another')
     }
 
-    def specialForm = { attrs, body -> out << g.form() }
+    def specialForm = { attrs -> out << g.form() }
 }

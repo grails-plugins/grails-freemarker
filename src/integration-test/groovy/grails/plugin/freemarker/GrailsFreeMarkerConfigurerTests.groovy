@@ -90,7 +90,7 @@ class GrailsFreeMarkerConfigurerTests extends Specification {
         }
         Configuration cfg = freeMarkerConfigurer.configuration
         Template template = cfg.getTemplate(viewPath)
-        assertNotNull("Could not find ${viewPath}".toString(), template)
+        assert template
         template.process(binding, sWriter)
         return sWriter.toString()
     }
