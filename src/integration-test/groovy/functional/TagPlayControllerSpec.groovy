@@ -1,15 +1,17 @@
 package functional
 import geb.spock.GebSpec
 import grails.test.mixin.integration.Integration
+import grails.transaction.Rollback
 
-@Integration(applicationClass=grails.plugin.freemarker.Application)
+@Integration
+@Rollback
 class TagPlayControllerSpec extends GebSpec {
 
 	def executorService
 
-	def "grails taglibs"() {
+	void "grails taglibs"() {
 		when:
-			go "tagPlay"
+			go "/tagPlay"
 
 		then:
 			true
@@ -23,9 +25,9 @@ class TagPlayControllerSpec extends GebSpec {
 			// browser.$('#repeat').text() == 'Repeat 0 Repeat 1 Repeat 2'
 	}
 
-	def "test async background"() {
+	void "test async background"() {
 		when:
-			go "tagPlay/async"
+			go "/tagPlay/async"
 
 		then:
 			true

@@ -1,13 +1,17 @@
 package functional
+
+import geb.spock.GebReportingSpec
 import geb.spock.GebSpec
 import grails.test.mixin.integration.Integration
+import grails.transaction.Rollback
 
-@Integration(applicationClass=grails.plugin.freemarker.Application)
+@Integration
+@Rollback
 class DemoControllerSpec extends GebSpec {
 
-	def "sanity check"() {
+	void "sanity check"() {
 		when:
-			go "demo/wtf"
+			go "/demo/wtf"
 
 		then:
 			println driver.pageSource
@@ -15,9 +19,9 @@ class DemoControllerSpec extends GebSpec {
 	}
 
 	//@spock.lang.IgnoreRest
-	def "default index"() {
+	void "default index"() {
 		when:
-			go "demo"
+			go "/demo"
 
 		then:
 		def html = driver.pageSource
@@ -25,9 +29,9 @@ class DemoControllerSpec extends GebSpec {
 			html.contains('State: Missouri')
 	}
 
-	def "normal gsp sanity"() {
+	void "normal gsp sanity"() {
 		when:
-			go "demo/normalGSP"
+			go "/demo/normalGSP"
 
 		then:
 			def html = driver.pageSource
@@ -35,18 +39,18 @@ class DemoControllerSpec extends GebSpec {
 			html.contains('State: Missouri')
 	}
 
-	def "subdir"() {
+	void "subdir"() {
 		when:
-			go "demo/subdir"
+			go "/demo/subdir"
 
 		then:
 			def html = driver.pageSource
 			html.contains('subdir info')
 	}
 
-	def "subdir2"() {
+	void "subdir2"() {
 		when:
-			go "demo/testTaglib"
+			go "/demo/testTaglib"
 
 		then:
 			def html = driver.pageSource

@@ -74,7 +74,8 @@ class FreemarkerGrailsPlugin extends Plugin  {
     def authorEmail = "jeff.brown@springsource.com"
 
     Closure doWithSpring() {{->
-        def freeconfig = getConfig().grails.plugin.freemarker
+        def freeconfig = getConfig()
+        freeconfig << getConfig().grails.plugin.freemarker
         Properties freeconfigProp = new Properties()
         if (freeconfig.hasProperty('configSettings') && freeconfig.configSettings){
             freeconfigProp = freeconfig.configSettings.toProperties()

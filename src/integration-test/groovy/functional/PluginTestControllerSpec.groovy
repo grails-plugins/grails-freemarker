@@ -1,19 +1,20 @@
 package functional
 
-import geb.Browser
-import geb.Configuration
-import geb.ConfigurationLoader
+
 import geb.spock.GebSpec
 import grails.test.mixin.integration.Integration
+import grails.transaction.Rollback
+
 // TODO: probably should be moved to free-plugin
-@Integration(applicationClass=grails.plugin.freemarker.Application)
+@Integration
+@Rollback
 class PluginTestControllerSpec extends GebSpec {
 	def setup(){
 
 	}
-	def "sanity check"() {
+	void "sanity check"() {
 		when:
-			go "pluginTest/goBaby"
+			go "/pluginTest/goBaby"
 
 		then:
 			println driver.pageSource
@@ -21,9 +22,9 @@ class PluginTestControllerSpec extends GebSpec {
 			true
 	}
 
-	def "bluesky"() {
+	void "bluesky"() {
 		when:
-			go "pluginTest/bluesky"
+			go "/pluginTest/bluesky"
 
 		then:
 			def html = driver.pageSource
@@ -31,9 +32,9 @@ class PluginTestControllerSpec extends GebSpec {
 			true
 	}
 
-	def "override in app"() {
+	void "override in app"() {
 		when:
-			go "pluginTest/override"
+			go "/pluginTest/override"
 
 		then:
 			def html = driver.pageSource
@@ -41,9 +42,9 @@ class PluginTestControllerSpec extends GebSpec {
 			true
 	}
 
-	def "service in plugin"() {
+	void "service in plugin"() {
 		when:
-			go "pluginTest/service"
+			go "/pluginTest/service"
 
 		then:
 			def html = driver.pageSource
