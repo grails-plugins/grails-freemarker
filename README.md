@@ -296,7 +296,7 @@ or
 
 ## Known issues
 
-For Grails 3 has issues with parsing of some grails taglibs, for example `g:form`
+For Grails 3 has issues with parsing of some grails taglibs, for example `@g.form`
 
 # History
 *3.0.0

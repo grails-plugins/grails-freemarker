@@ -2,7 +2,6 @@
 <html>
 <head>
 <meta name="layout" content="main"/>
-<link rel="stylesheet" href="${g.resource({'dir': 'css', 'file': 'test.css'})}" type="text/css">
 </head>
 <body>
 
@@ -14,9 +13,9 @@ ${wtf!}
 	<div id='numFormat'><@g.formatNumber number=9999.9 type="currency"  /></div> <br/>
 	<div id='messageCode'><@g.message code="a.b.c" args=["goober"] default="dabba doo"/></div> <br/>
 	
-	<@g.form controller="test" id="ViewResolver">
+	<#--<@g.form controller="test" id="ViewResolver">
 	  <@g.actionSubmit value="Submit" action="success"/>
-	</@g.form>
+	</@g.form>-->
 	
 	<div id='repeat'>
 	<@g.repeat times=3>

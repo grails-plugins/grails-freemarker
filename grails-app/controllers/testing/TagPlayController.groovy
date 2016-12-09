@@ -1,6 +1,7 @@
 package testing
 
 import grails.util.Holders
+import static grails.async.Promises.*
 
 class TagPlayController {
 
@@ -32,7 +33,7 @@ class TagPlayController {
 	def async = {
 		log.debug "calling freemarkerViewService.render"
 		def wout
-		runAsync{
+		task{
 			try{
 				log.debug "calling freemarkerViewService.render"
 				wout = freeMarkerViewService.render('/tagPlay/index.ftl', [name: 'Abe', state: 'Illinois'])

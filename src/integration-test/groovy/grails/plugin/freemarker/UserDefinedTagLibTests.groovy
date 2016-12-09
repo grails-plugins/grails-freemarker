@@ -17,6 +17,7 @@ package grails.plugin.freemarker
 
 import freemarker.template.Configuration
 import freemarker.template.Template
+import grails.plugin.viewtools.GrailsWebEnvironment
 import grails.test.mixin.integration.Integration
 import spock.lang.Specification
 
@@ -29,6 +30,10 @@ class UserDefinedTagLibTests extends Specification {
 
     def freeMarkerConfigurer
     private StringWriter sWriter = new StringWriter()
+
+    def setup() {
+        GrailsWebEnvironment.bindRequestIfNull()
+    }
 
     void testEmoticon() {
         when:

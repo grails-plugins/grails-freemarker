@@ -74,8 +74,7 @@ class FreemarkerGrailsPlugin extends Plugin  {
     def authorEmail = "jeff.brown@springsource.com"
 
     Closure doWithSpring() {{->
-        def freeconfig = getConfig()
-        freeconfig << getConfig().grails.plugin.freemarker
+        def freeconfig = getFreeConfig()
         Properties freeconfigProp = new Properties()
         if (freeconfig.hasProperty('configSettings') && freeconfig.configSettings){
             freeconfigProp = freeconfig.configSettings.toProperties()
@@ -167,7 +166,7 @@ class FreemarkerGrailsPlugin extends Plugin  {
 
     @Override
     void onChange(Map<String,Object> event) {
-        def freeconfig = getConfig().grails.plugin.freemarker as Map
+        def freeconfig = getFreeConfig() as Map
 //        if (application.isControllerClass(event.source) ) {
 //            modRenderMethod(application, event.source)
 //        }
@@ -198,6 +197,12 @@ class FreemarkerGrailsPlugin extends Plugin  {
                 }
             }
         }
+    }
+
+    def getFreeConfig() {
+        def freeconfig = getConfig()
+        freeconfig << getConfig().grails.plugin.freemarker
+        freeconfig
     }
 //
 //    def modRenderMethod(application, controller) {
