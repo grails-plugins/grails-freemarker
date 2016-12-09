@@ -31,7 +31,7 @@ comptible releases end with grails2. for example
 
 **Grails 3 install**
 
-``` compile "org.grails.plugins:freemarker:2.0.2" ```
+``` compile "org.grails.plugins:freemarker:3.0.0" ```
 
 
 ### Summary
