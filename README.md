@@ -2,13 +2,14 @@
 <!-- this is using the Sublime MarkdownTOC plugin to auto update it -->
 <!-- MarkdownTOC autolink="true" bracket="round" depth="0" style="unordered" indent="  " autoanchor="false" -->
 
-- [Summary](#summary)
+- [Grails 2 vs 3 versions](#grails-2-vs-3-versions)
+  - [Summary](#summary)
   - [Quick Simple Example](#quick-simple-example)
-  - [Grails Taglib Example](#grails-taglib-example)
+  - [Grails Taglib Example \(a very verbose one\)](#grails-taglib-example-a-very-verbose-one)
 - [Usage](#usage)
   - [Syntax tips \(GSP vs. FTL\)](#syntax-tips-gsp-vs-ftl)
     - [Maps vs. Hashes](#maps-vs-hashes)
-    - [Tags vs. Tags](#tags-vs-tags)
+    - [GSP Tags vs. FTL Tags](#gsp-tags-vs-ftl-tags)
     - [Tags as method calls vs. Method calls](#tags-as-method-calls-vs-method-calls)
   - [Services](#services)
 - [Miscellaneous](#miscellaneous)
@@ -18,8 +19,22 @@
 - [History](#history)
 
 <!-- /MarkdownTOC -->
+## Grails 2 vs 3 versions
 
-# Summary
+As of now, the master branch is currently 2.0.x and is for Grails2 and freemarker 2.3.x (currently 2.3.25-incubating as it becomes a full apache project). Grails 3 version is on the *grails3* branch
+
+**Grails 2 install**
+
+comptible releases end with grails2. for example
+
+``` compile ":freemarker:2.0.2-grails2" ```
+
+**Grails 3 install**
+
+``` compile "org.grails.plugins:freemarker:2.0.2" ```
+
+
+### Summary
 
 The Grails FreeMarker plugin provides support for rendering FreeMarker templates as views. 
 
@@ -32,7 +47,7 @@ all, the plugin connects FreeMarker to Grails TagLibs system as directly as poss
 Sitemesh does not work in version 2 of this. 
 
 
-## Quick Simple Example
+### Quick Simple Example
 
 ```groovy
 class DemoController {
@@ -64,7 +79,7 @@ For more information, please consult <a href="http://freemarker.sourceforge.net/
 > **Warning:**
 > Be aware that while there are many simiilarities, FreeMarker syntax can differs from GSP syntax (they are very different beasts).
 
-## Grails Taglib Example (a very verbose one)
+### Grails Taglib Example (a very verbose one)
 
 Create your Grails application
 
@@ -125,7 +140,7 @@ Use your browser to navigate to [http://localhost:8080/test-freemaker-prj/myUser
 
 Done!
 
-# Usage
+## Usage
 
 The plugin will try to expose all the TagLib artefacts, registered at grailsApplication.tagLibsClasses, as
 user-defined directives and functions (for implementation details, please refer to
@@ -136,13 +151,13 @@ of the source taglibs, in any FreeMarker template created further.
 >Warning:
 >Be aware that some templates can mistakenly/inadvertently "shadow" shared variables definitions.
 
-## Syntax tips (GSP vs. FTL)
+### Syntax tips (GSP vs. FTL)
 
 The following items contain useful information about some of the differences between Grails Server Pages (.gsp) and
 FreeMarker Templates (.ftl). Please note this is not intended to be a complete list, it's just a starting point for
 begginers.
 
-### Maps vs. Hashes
+#### Maps vs. Hashes
 
 **GSP**
 ```groovy
@@ -157,7 +172,7 @@ ${g.createLink(action:'list')}
 ${g.createLink({'action':'list'})}
 ```
 
-### GSP Tags vs. FTL Tags
+#### GSP Tags vs. FTL Tags
 
 .**gsp**  
 ```html
@@ -179,7 +194,7 @@ foo, <\@foo bar=1 /> is good, but <\@foo bar="1" /> is wrong as it passes in the
 string literal, just like in Groovy). For the same reason, <\@foo bar=x+1 /> is good, but <\@foo bar="${x+1}" />
 does something else.
 
-### Tags as method calls vs. Method calls
+#### Tags as method calls vs. Method calls
 
 .gsp  
 ```html
@@ -195,7 +210,7 @@ quotes*
 >The plugin will define functions using the same namespace of the corresponding directives.
 All functions will receive two parameters, at most: a hash and an evaluated string. 
 
-## Services
+### Services
 
 There are 2 services that you can inject to help render templates. The FreemarkerViewService and FreemarkerTemplateService
 
@@ -212,9 +227,9 @@ Methods
 The methods are safe to use in a thread or quartz job. It checks to see that a Request is bound to the thread and if not is goes through the process of binding one so that the taglibs work properly for items like g.message and g.resource
 
 
-# Miscellaneous
+## Miscellaneous
 
-## Configuration
+### Configuration
 
 Here is an example config with explanations
 
@@ -273,14 +288,14 @@ grails {
 }
 ```
 
-## Logging
+### Logging
 
 You can enable plugin activity logging using the namespace 'grails.plugin.freemarker'.
 
 For more information about Grails logging, please consult:
 [Grails Logging](http://grails.org/doc/latest/guide/3.%20Configuration.html#3.1.2%20Logging)
 
-## Reserved Words
+### Reserved Words
 
 FreeMarker reserved words present in Grails Core TagLibs that can cause errors to FreeMarker's parser, will be
 preceded by '_' (underscore).
@@ -298,10 +313,12 @@ or
 
 For Grails 3 has issues with parsing of some grails taglibs, for example `@g.form`
 
+## History
+
 # History
 *3.0.0
 	* updated for work with grails 3
-* 2.0.1  
+* 2.0.1
 	* major refactoring to work with 2.5
 	* prepping for grails 3 compatability
 * 1.0.0  
