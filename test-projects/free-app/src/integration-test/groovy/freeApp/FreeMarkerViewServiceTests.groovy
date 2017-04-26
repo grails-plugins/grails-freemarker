@@ -1,6 +1,6 @@
-package freeApp
-
+import grails.plugin.freemarker.FreeMarkerViewService
 import grails.test.mixin.integration.Integration
+import org.apache.tools.ant.taskdefs.optional.extension.Specification
 import spock.lang.Specification
 @Integration
 class FreeMarkerViewServiceTests extends Specification {

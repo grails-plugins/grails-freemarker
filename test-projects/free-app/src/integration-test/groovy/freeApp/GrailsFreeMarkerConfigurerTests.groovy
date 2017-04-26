@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 the original author or authors.
+ * Copyright 2011 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,25 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package freeApp
+import grails.test.mixin.integration.Integration
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig
 
 import freemarker.template.Configuration
 import freemarker.template.Template
-import grails.plugin.viewtools.GrailsWebEnvironment
-import grails.test.mixin.integration.Integration
-import org.grails.buffer.GrailsPrintWriter
 import spock.lang.Specification
-
 
 /**
  * @author Daniel Henrique Alves Lima
  */
 @Integration
-class TagLibAwareConfigurerTests extends Specification {
+class GrailsFreeMarkerConfigurerTests extends Specification {
 
     def freeMarkerConfigurer
-    def grailsApplication
-    private GrailsPrintWriter sWriter = new GrailsPrintWriter (new StringWriter())
+    private StringWriter sWriter = new StringWriter()
     private Exception threadException
     private ThreadGroup myThreadGroup = new ThreadGroup('x') {
         void uncaughtException(Thread t,Throwable e) {
@@ -40,79 +36,71 @@ class TagLibAwareConfigurerTests extends Specification {
         }
     }
 
-    def setup() {
-        GrailsWebEnvironment.bindRequestIfNull()
-    }
-
     void testConfigReference() {
         when:
-        assert  freeMarkerConfigurer != null
+        freeMarkerConfigurer != null
         then:
-        freeMarkerConfigurer instanceof AbstractTagLibAwareConfigurer
-    }
-
-    void testAvailableTagLibs() {
-        when:
-        Configuration config = freeMarkerConfigurer.configuration
-        Set names = config.getSharedVariableNames()
-        then:
-        names.contains('g')
-         names.contains('plugin')
-         names.contains('sitemesh')
+        freeMarkerConfigurer instanceof FreeMarkerConfig
+        freeMarkerConfigurer.configuration == freeMarkerConfigurer.configuration
     }
 
     void testParseRegularTemplate() {
         when:
         String result = parseFtlTemplate('[#ftl/]${s}', [s: 'ok'])
-        then:
-        'ok' == result
+        then: 'ok' == result
+
         when:
         result = parseFtlTemplate('<#ftl/>${s}', [s: 'fail'])
         then:
         'fail' == result
     }
 
-    void testParseFmTagsTemplate() {
-        /*FIXME: @g.form doesnt work, uncomment when fixed*/
-        /*when:
-        String result = parseFtlTemplate('[#ftl/][@g.form /]')
-        then:
-        result.contains('<form')
-        result.contains('</form>')*/
-        when:
-        String result2 = parseFtlTemplate('[#ftl/]<a href="${g.message({\'code\': \'abc\', \'default\': \'xyz\'})}">')
-        then:
-        '<a href="xyz">' == result2
-    }
-
-    void testParseFmTagsTemplateWithoutRequestContext() {
-        String result
+    void testParseRegularTemplateWithoutRequestContext() {
         runInParallel {
             when:
-            result = parseFtlTemplate('[#ftl/][@g.textField name="abc"/]')
+            String result = parseFtlTemplate('[#ftl/]<input type="text" name="${xyz}"/>', [xyz: 'abc'])
             then:
             result.contains('<input type="text"')
             result.contains('name="abc"')
-
-            try {
-                when:
-                result = parseFtlTemplate('[#ftl/][@g.message code="abc" default="xyz" /]')
-                then:
-                fail('This tag cannot run without a thread-bound request')
-            }
-            catch (e) {
-                then:
-                e.message.contains('No thread-bound request found:')
-            }
         }
     }
 
-    private parseFtlTemplate = { String templateSourceCode, Map binding = [:] ->
-        if (sWriter.out.buffer.length() > 0) {sWriter.out.buffer.delete 0, sWriter.out.buffer.length()}
+    void testParseRegularView() {
+        when:
+        String result = parseFtlView('/demo/fmtemplate.ftl', [name: 'fmView'])
+        then:
+        result.contains('fmView')
+
+        //result = parseFtlView('/demo/bluesky.ftl', [testvar: 'weirdValue'])
+        //assertTrue result.contains('weirdValue')
+    }
+
+    // void testParseRegularViewWithoutRequestContext() {
+    //     runInParallel {
+    //         String result = parseFtlView('/demo/fmtemplate.ftl', [name: 'fmView123'])
+    //         assertTrue result.contains('fmView123')
+    //     }
+    // }
+
+    private parseFtlView = {String viewPath, Map binding = [:] ->
+        if (sWriter.buffer.length() > 0) {
+            sWriter.buffer.delete 0, sWriter.buffer.length()
+        }
+        Configuration cfg = freeMarkerConfigurer.configuration
+        Template template = cfg.getTemplate(viewPath)
+        assert template
+        template.process(binding, sWriter)
+        return sWriter.toString()
+    }
+
+    private parseFtlTemplate = {String templateSourceCode, Map binding = [:] ->
+        if (sWriter.buffer.length() > 0) {
+            sWriter.buffer.delete 0, sWriter.buffer.length()
+        }
         Configuration cfg = freeMarkerConfigurer.configuration
         Template template = new Template('template', new StringReader(templateSourceCode), cfg)
         template.process (binding, sWriter)
-        return sWriter.out.toString()
+        return sWriter.toString()
     }
 
     private runInParallel = {Closure c ->
