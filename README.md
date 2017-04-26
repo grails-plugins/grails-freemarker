@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/alexeyzvegintcev/grails-freemarker.svg?branch=grails3)](https://travis-ci.org/alexeyzvegintcev/grails-freemarker)
+
 ## Table of Contents
 <!-- this is using the Sublime MarkdownTOC plugin to auto update it -->
 <!-- MarkdownTOC autolink="true" bracket="round" depth="0" style="unordered" indent="  " autoanchor="false" -->
