@@ -6,7 +6,7 @@ cd freemarker-plugin && ./gradlew check
 
 if [[ $TRAVIS_BRANCH == 'grails3' && $TRAVIS_PULL_REQUEST == 'false' ]]; then
 	echo "### publishing plugin to bintray"
-	./gradlew bintrayUpload
+	./gradlew assemble bintrayUpload
 
 else
   echo "TRAVIS_BRANCH: $TRAVIS_BRANCH"
