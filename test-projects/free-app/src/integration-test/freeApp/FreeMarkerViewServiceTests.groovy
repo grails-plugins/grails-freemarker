@@ -1,4 +1,4 @@
-package grails.plugin.freemarker
+package freeApp
 
 import grails.test.mixin.integration.Integration
 import spock.lang.Specification

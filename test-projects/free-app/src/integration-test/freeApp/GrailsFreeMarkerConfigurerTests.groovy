@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package grails.plugin.freemarker
+package freeApp
 
 import grails.test.mixin.integration.Integration
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig
