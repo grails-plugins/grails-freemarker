@@ -2,7 +2,7 @@
 
 echo "### Running tests"
 
-cd test-projects/free-app && ./gradlew assemble check
+cd test-projects/free-app && ./gradlew check
 
 if [[ $TRAVIS_BRANCH == 'grails3' && $TRAVIS_PULL_REQUEST == 'false' ]]; then
 	echo "### publishing plugin to bintray"
