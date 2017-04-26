@@ -81,7 +81,7 @@ grails{
         }
     }
 }
-grailsPublish {
+/*grailsPublish {
     githubSlug = 'grails-plugins/grails-freemarker'
     vcsUrl = 'https://github.com/grails-plugins/grails-freemarker'
     license {
@@ -90,6 +90,20 @@ grailsPublish {
     title = "FreeMarker Views Plugin"
     desc = 'The Grails FreeMarker plugin provides support for rendering FreeMarker templates as views.'
     developers = ["jeff.brown@springsource.com": 'Jeff Brown','joshdev@9ci.com': 'Joshua Burnett', 'lima': 'Daniel Henrique Alves Lima']
+}*/
+
+grailsPublish {
+    desc = 'The Grails FreeMarker plugin provides support for rendering FreeMarker templates as views.'
+    developers = ["jeff.brown@springsource.com": 'Jeff Brown','joshdev@9ci.com': 'Joshua Burnett', 'lima': 'Daniel Henrique Alves Lima']
+    vcsUrl = 'https://github.com/9ci/grails-dao'
+    license {
+        name = 'Apache-2.0'
+    }
+    title = 'FreeMarker Views Plugin'
+    userOrg = '9ci' //the Org to publish this under in
+    repo = 'grails-plugins' //the repository you setup in bintray
+    //user = 'user' <- pulled from either BINTRAY_USER sys prop or project.bintrayUser which can be in ~/.gradle/gradle.properties
+    //key = 'key' <- pulled from either BINTRAY_KEY sys prop or project.bintrayKey which can be in ~/.gradle/gradle.properties
 }
 
 

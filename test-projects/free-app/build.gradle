@@ -57,7 +57,7 @@ dependencies {
 
 grails{
     plugins{
-            compile project('../../../grails-freemarker')
+            compile project(':grails-freemarker')
     }
 }
 

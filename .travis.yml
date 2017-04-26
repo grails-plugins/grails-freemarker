@@ -1,0 +1,15 @@
+language: groovy
+
+jdk:
+  - oraclejdk8
+sudo: false
+
+cache:
+  directories:
+  - $HOME/.m2
+
+
+before_script:
+ - rm -rf .gradle
+
+script: "./travis-build.sh"
