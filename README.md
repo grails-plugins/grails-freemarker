@@ -31,7 +31,7 @@ comptible releases end with grails2. for example
 
 **Grails 3 install**
 
-``` compile "org.grails.plugins:freemarker:2.0.2" ```
+``` compile "org.grails.plugins:freemarker:3.0.0" ```
 
 
 ### Summary
@@ -309,6 +309,9 @@ preceded by '_' (underscore).
 or  
 ```[@g.renderErrors bean=myUserInstance _as="list" /]```
 
+## Known issues
+
+For Grails 3 has issues with parsing of some grails taglibs, for example `@g.form`
 
 
 ## History
