@@ -78,7 +78,7 @@ dependencies {
 grails{
     plugins{
         if (rootProject.name == "freemarker" && !rootProject.getGradle().getStartParameter().toString().contains("bintrayUpload")) {
-            compile project(':free-plugin')
+            compile(project(':free-plugin')){export = false}
         }
     }
 }
