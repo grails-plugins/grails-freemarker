@@ -1,3 +1,5 @@
+package testing
+
 import grails.plugin.freemarker.FreeMarkerTemplateService
 import grails.test.mixin.integration.Integration
 import spock.lang.Specification

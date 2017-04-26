@@ -1,3 +1,5 @@
+package testing
+
 import grails.plugin.freemarker.FreeMarkerViewService
 import grails.test.mixin.integration.Integration
 import org.apache.tools.ant.taskdefs.optional.extension.Specification

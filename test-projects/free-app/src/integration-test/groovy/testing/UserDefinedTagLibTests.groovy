@@ -1,3 +1,4 @@
+package testing
 /*
  * Copyright 2010 the original author or authors.
  *
@@ -13,8 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-
 import freemarker.template.Configuration
 import freemarker.template.Template
 import grails.plugin.viewtools.GrailsWebEnvironment

@@ -1,3 +1,4 @@
+package testing
 /*
  * Copyright 2010 the original author or authors.
  *
