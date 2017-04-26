@@ -1,4 +1,4 @@
-package free2
+package testing
 
 class PlayController {
 	

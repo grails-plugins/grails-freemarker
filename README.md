@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/alexeyzvegintcev/grails-freemarker.svg?branch=grails3)](https://travis-ci.org/alexeyzvegintcev/grails-freemarker)
+
 ## Table of Contents
 <!-- this is using the Sublime MarkdownTOC plugin to auto update it -->
 <!-- MarkdownTOC autolink="true" bracket="round" depth="0" style="unordered" indent="  " autoanchor="false" -->
@@ -31,7 +33,7 @@ comptible releases end with grails2. for example
 
 **Grails 3 install**
 
-``` compile "org.grails.plugins:freemarker:2.0.2" ```
+``` compile "org.grails.plugins:freemarker:3.0.0" ```
 
 
 ### Summary
@@ -309,11 +311,16 @@ preceded by '_' (underscore).
 or  
 ```[@g.renderErrors bean=myUserInstance _as="list" /]```
 
+## Known issues
 
+For Grails 3 has issues with parsing of some grails taglibs, for example `@g.form`
 
 ## History
 
-* 2.0.1  
+# History
+*3.0.0
+	* updated for work with grails 3
+* 2.0.1
 	* major refactoring to work with 2.5
 	* prepping for grails 3 compatability
 * 1.0.0  
