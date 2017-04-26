@@ -55,7 +55,7 @@ class FreeMarkerViewServiceTests extends Specification {
     void testRender_file_in_test_dir() {
         when:
         def writer = new StringWriter()
-        freeMarkerViewService.render("file:test-projects/views/foo.ftl" ,[:],  writer)
+        freeMarkerViewService.render("file:../test-projects/views/foo.ftl" ,[:],  writer)
         println writer.toString()
         then:
         writer.toString().contains("sitting here in the test")

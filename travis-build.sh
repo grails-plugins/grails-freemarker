@@ -2,6 +2,8 @@
 
 echo "### Running tests"
 
+cd freemarker-plugin && ./gradlew check
+
 if [[ $TRAVIS_BRANCH == 'grails3' && $TRAVIS_PULL_REQUEST == 'false' ]]; then
 	echo "### publishing plugin to bintray"
 	gradle bintrayUpload

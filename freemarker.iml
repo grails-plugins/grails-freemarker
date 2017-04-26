@@ -39,7 +39,6 @@
       <sourceFolder url="file://$MODULE_DIR$/src/integration-test/groovy" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/groovy" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/groovy" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/test/functional" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/target/classes" />
       <excludeFolder url="file://$MODULE_DIR$/target/test-classes" />
       <excludeFolder url="file://$MODULE_DIR$/target/work/plugin-build-classes" />
@@ -186,7 +185,6 @@
           <root url="jar://$MAVEN_REPOSITORY$/org/rauschig/jarchivelib/0.7.1/jarchivelib-0.7.1.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-lang3/3.4/commons-lang3-3.4.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/com/typesafe/config/1.2.1/config-1.2.1.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/io/github/bonigarcia/webdrivermanager/1.4.8/webdrivermanager-1.4.8.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/com/codeborne/phantomjsdriver/1.3.0/phantomjsdriver-1.3.0.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/net/java/dev/jna/jna-platform/4.1.0/jna-platform-4.1.0.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/net/java/dev/jna/jna/4.1.0/jna-4.1.0.jar!/" />
@@ -246,7 +244,18 @@
           <root url="jar://$USER_HOME$/.sdkman/candidates/grails/2.5.5/lib/org.apache.ivy/ivy/jars/ivy-2.3.0.jar!/" />
           <root url="jar://$USER_HOME$/.sdkman/candidates/grails/2.5.5/lib/org.apache.ant/ant-trax/jars/ant-trax-1.7.1.jar!/" />
           <root url="jar://$USER_HOME$/.sdkman/candidates/grails/2.5.5/lib/net.java.dev.jna/jna/jars/jna-4.0.0.jar!/" />
-          <root url="file://$MODULE_DIR$/lib" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/jsoup/jsoup/1.9.2/jsoup-1.9.2.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/io/github/bonigarcia/webdrivermanager/1.4.9/webdrivermanager-1.4.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.2/commons-logging-1.2.jar!/" />
+          <root url="jar://$USER_HOME$/.sdkman/candidates/grails/2.5.5/lib/org.codehaus.jsr166-mirror/jsr166y/jars/jsr166y-1.7.0.jar!/" />
+          <root url="jar://$USER_HOME$/.sdkman/candidates/grails/2.5.5/lib/org.codehaus.gpars/gpars/jars/gpars-1.2.1.jar!/" />
+          <root url="jar://$USER_HOME$/.sdkman/candidates/grails/2.5.5/lib/org.hamcrest/hamcrest-core/jars/hamcrest-core-1.3.jar!/" />
+          <root url="jar://$USER_HOME$/.sdkman/candidates/grails/2.5.5/lib/junit/junit/jars/junit-4.12.jar!/" />
+          <root url="jar://$USER_HOME$/.sdkman/candidates/grails/2.5.5/lib/org.apache.ant/ant-launcher/jars/ant-launcher-1.9.4.jar!/" />
+          <root url="jar://$USER_HOME$/.sdkman/candidates/grails/2.5.5/lib/org.apache.ant/ant/jars/ant-1.9.4.jar!/" />
+          <root url="jar://$USER_HOME$/.sdkman/candidates/grails/2.5.5/lib/org.fusesource.jansi/jansi/jars/jansi-1.11.jar!/" />
+          <root url="jar://$USER_HOME$/.sdkman/candidates/grails/2.5.5/lib/jline/jline/jars/jline-2.12.jar!/" />
+          <root url="jar://$USER_HOME$/.sdkman/candidates/grails/2.5.5/lib/org.apache.ant/ant-junit/jars/ant-junit-1.9.4.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
@@ -295,7 +304,6 @@
           <root url="jar://$USER_HOME$/.sdkman/candidates/grails/2.5.5/dist/grails-docs-2.5.5-sources.jar!/" />
           <root url="jar://$USER_HOME$/.sdkman/candidates/grails/2.5.5/dist/grails-scripts-2.5.5-sources.jar!/" />
         </SOURCES>
-        <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="freePlugin-inplacePlugin" exported="" />
