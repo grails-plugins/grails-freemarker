@@ -1,4 +1,4 @@
-package free2
+package freeApp
 
 class PlayController {
 	

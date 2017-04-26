@@ -2,7 +2,7 @@
 grails:
     profile: web
     codegen:
-        defaultPackage: free2
+        defaultPackage: freeApp
     spring:
         transactionManagement:
             proxies: false

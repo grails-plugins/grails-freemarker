@@ -6,11 +6,12 @@ buildscript {
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
         classpath "com.bertramlabs.plugins:asset-pipeline-gradle:2.8.2"
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
     }
 }
 
 version "1.0.0"
-group "free2"
+group "freeApp"
 
 apply plugin:"eclipse"
 apply plugin:"idea"
@@ -52,12 +53,46 @@ dependencies {
     provided "org.codehaus.groovy:groovy-ant"
     runtime "com.bertramlabs.plugins:asset-pipeline-grails:2.8.2"
     testCompile "org.grails:grails-plugin-testing"
-    testCompile "org.grails.plugins:geb"
+    // No longer needed. now part of selenium-support in 2.53, see https://github.com/SeleniumHQ/htmlunit-driver
+    //testRuntime "org.seleniumhq.selenium:selenium-htmlunit-driver:2.47.1"
+    //testRuntime "net.sourceforge.htmlunit:htmlunit:2.18"
+
+    /****** GEB *******/
+    def webdriverVersion = "2.53.1"
+
+    testCompile("org.grails.plugins:geb",
+            "org.seleniumhq.selenium:selenium-support:${webdriverVersion}",
+            "org.seleniumhq.selenium:selenium-chrome-driver:${webdriverVersion}",
+            "org.seleniumhq.selenium:selenium-firefox-driver:${webdriverVersion}",
+            "org.seleniumhq.selenium:selenium-ie-driver:${webdriverVersion}")
+
+    // see https://github.com/codeborne/ghostdriver
+    testCompile("com.codeborne:phantomjsdriver:1.3.0") {
+        // phantomjs driver pulls in a different selenium version amongs other stuff it seemed
+        transitive = false
+    }
+    // see https://github.com/bonigarcia/webdrivermanager
+    testCompile "io.github.bonigarcia:webdrivermanager:1.4.9"
+    /** GEB end */
 }
 
 grails{
     plugins{
+        if(rootProject.name == 'freeApp') {
             compile project(':freemarker')
+            compile project(':free-plugin')
+        }
     }
 }
 
+
+/****** GEB *******
+ Pass system properties through to the integrationTest task so we can pass in the 'geb.env' property to run tests
+ in different browsers. Adapted from http://mrhaki.blogspot.com/2015/09/grails-goodness-passing-system.html
+ */
+integrationTest {
+    systemProperties System.properties
+}
+assets {
+	packagePlugin = true
+}

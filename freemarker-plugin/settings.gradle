@@ -1,4 +1,2 @@
 rootProject.name="freemarker"
 
-include ':free-plugin'
-project(':free-plugin').projectDir = new File(settingsDir, '../test-projects/free-plugin')

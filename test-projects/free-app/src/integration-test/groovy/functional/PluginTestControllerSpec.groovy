@@ -32,7 +32,7 @@ class PluginTestControllerSpec extends GebSpec {
 			true
 	}
 
-	void "override in app"() {
+	/*void "override in app"() {
 		when:
 			go "/pluginTest/override"
 
@@ -40,7 +40,7 @@ class PluginTestControllerSpec extends GebSpec {
 			def html = driver.pageSource
 			html.contains('this is the one you should see')
 			true
-	}
+	}*/
 
 	void "service in plugin"() {
 		when:
