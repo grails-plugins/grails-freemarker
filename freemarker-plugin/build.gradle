@@ -10,7 +10,7 @@ buildscript {
     }
 }
 
-version "3.0.0.SNAPSHOT"
+version "3.0.1.SNAPSHOT"
 group "grails.plugin.freemarker"
 
 apply plugin:"eclipse"
@@ -89,4 +89,3 @@ grailsPublish {
 assets {
     packagePlugin = true
 }
-
