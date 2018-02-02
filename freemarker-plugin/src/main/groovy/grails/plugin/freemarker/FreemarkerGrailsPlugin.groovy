@@ -38,7 +38,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer
  * @author Joshua Burnett
  */
 class FreemarkerGrailsPlugin extends Plugin  {
-    def version        = "3.0.0"
+    def version        = "3.0.1"
     def grailsVersion  = "3.2.0 > *"
     def pluginExcludes = [
             "grails-app/views/**/*",
@@ -171,7 +171,7 @@ class FreemarkerGrailsPlugin extends Plugin  {
 //            modRenderMethod(application, event.source)
 //        }
 
-        if (freeconfig.tags.enabled == true && grailsApplication.isArtefactOfType(TagLibArtefactHandler.TYPE, event.source)) {
+        if (freeconfig?.tags?.enabled == true && grailsApplication.isArtefactOfType(TagLibArtefactHandler.TYPE, event.source)) {
             GrailsClass taglibClass = grailsApplication.addArtefact(TagLibArtefactHandler.TYPE, event.source)
             if (taglibClass) {
                 // replace tag library bean
