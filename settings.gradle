@@ -1,0 +1,10 @@
+rootProject.name = 'freemarker-root'
+
+include 'plugin'
+findProject(':plugin').name = 'freemarker'
+
+include 'examples/free-app'
+findProject(':examples/free-app').name = 'free-app'
+
+include 'examples/free-plugin'
+findProject(':examples/free-plugin').name = 'free-plugin'
