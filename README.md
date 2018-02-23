@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/alexeyzvegintcev/grails-freemarker.svg?branch=grails3)](https://travis-ci.org/alexeyzvegintcev/grails-freemarker)
+[![Build Status](https://travis-ci.org/yakworks/grails-freemarker.svg?branch=master)](https://travis-ci.org/yakworks/grails-freemarker)
 
 ## Table of Contents
 <!-- this is using the Sublime MarkdownTOC plugin to auto update it -->
