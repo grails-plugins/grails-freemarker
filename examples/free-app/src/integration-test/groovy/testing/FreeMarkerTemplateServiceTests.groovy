@@ -1,7 +1,7 @@
 package testing
 
 import grails.plugin.freemarker.FreeMarkerTemplateService
-import grails.test.mixin.integration.Integration
+import grails.testing.mixin.integration.Integration
 import spock.lang.Specification
 
 /**
@@ -23,7 +23,7 @@ class FreeMarkerTemplateServiceTests extends Specification {
 
     void testGetViewPlugin() {
         when:
-        def view = freeMarkerTemplateService.getTemplate("pluginTest/itWorks${suffix}","free-plugin")
+        def view = freeMarkerTemplateService.getTemplate("pluginTest/itWorks${suffix}", "free-plugin")
         then:
         view //.getTemplate(Locale.US)
     }
@@ -31,7 +31,7 @@ class FreeMarkerTemplateServiceTests extends Specification {
     void testRenderName() {
         when:
         def writer = new StringWriter()
-        freeMarkerTemplateService.render("demo/index${suffix}" , [name:"basejump", state:"IL"], writer)
+        freeMarkerTemplateService.render("demo/index${suffix}", [name: "basejump", state: "IL"], writer)
         println writer.toString()
         then:
         writer.toString().contains("Name: basejump")
@@ -40,7 +40,7 @@ class FreeMarkerTemplateServiceTests extends Specification {
     void testRenderNamePlugin() {
         when:
         def writer = new StringWriter()
-        freeMarkerTemplateService.render("gobaby${suffix}" , [testvar:"basejump"], writer, "free-plugin")
+        freeMarkerTemplateService.render("gobaby${suffix}", [testvar: "basejump"], writer, "free-plugin")
         println writer.toString()
         then:
         writer.toString().contains("<p>basejump</p>")

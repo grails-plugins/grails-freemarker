@@ -15,6 +15,7 @@ package testing
  * limitations under the License.
  */
 import grails.test.mixin.integration.Integration
+import grails.testing.mixin.integration.Integration
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig
 
 import freemarker.template.Configuration

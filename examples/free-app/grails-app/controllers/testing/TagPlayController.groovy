@@ -1,8 +1,10 @@
 package testing
 
-import grails.util.Holders
-import static grails.async.Promises.*
+import groovy.util.logging.Slf4j
 
+import static grails.async.Promises.task
+
+@Slf4j
 class TagPlayController {
 
 	def freeMarkerViewService

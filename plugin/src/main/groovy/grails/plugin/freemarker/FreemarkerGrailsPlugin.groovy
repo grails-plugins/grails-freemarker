@@ -1,7 +1,5 @@
 package grails.plugin.freemarker
 
-import freemarker.template.Configuration
-import grails.core.DefaultGrailsApplication
 import grails.core.GrailsClass
 
 /* Copyright 2009 Jeff Brown
@@ -18,28 +16,20 @@ import grails.core.GrailsClass
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import grails.plugin.freemarker.AbstractTagLibAwareConfigurer
-import grails.plugin.freemarker.GrailsFreeMarkerViewResolver
-import grails.plugin.freemarker.GrailsTemplateLoader
-import grails.plugin.freemarker.TagLibAwareConfigurer
-import grails.plugin.freemarker.TagLibPostProcessor
-import grails.plugin.viewtools.ViewResourceLocator
 import grails.plugins.Plugin
 import grails.util.Environment
-import grails.util.Holders
 import org.grails.core.artefact.TagLibArtefactHandler
 import org.springframework.context.ApplicationContext
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer
-
 
 /**
  * @author Jeff Brown
  * @author Daniel Henrique Alves Lima
  * @author Joshua Burnett
  */
-class FreemarkerGrailsPlugin extends Plugin  {
-    def version        = "3.0.1"
-    def grailsVersion  = "3.2.0 > *"
+class FreemarkerGrailsPlugin extends Plugin {
+    def version = "3.0.1"
+    def grailsVersion = "3.2.0 > *"
     def pluginExcludes = [
             "grails-app/views/**/*",
             "grails-app/controllers/**/*",
@@ -53,104 +43,104 @@ class FreemarkerGrailsPlugin extends Plugin  {
             "web-app/**/*"
     ]
 
-    def title           = "FreeMarker Views Plugin"
-    def description     = 'The Grails FreeMarker plugin provides support for rendering FreeMarker templates as views.'
-    def documentation   = "https://github.com/grails-plugins/grails-freemarker"
-    def license         = "APACHE"
-    def developers      = [
+    def title = "FreeMarker Views Plugin"
+    def description = 'The Grails FreeMarker plugin provides support for rendering FreeMarker templates as views.'
+    def documentation = "https://github.com/grails-plugins/grails-freemarker"
+    def license = "APACHE"
+    def developers = [
             [name: 'Jeff Brown', email: "jeff.brown@springsource.com"],
             [name: 'Joshua Burnett', email: 'joshdev@9ci.com'],
             [name: 'Daniel Henrique Alves Lima', email: 'xxx']
     ]
 
-    def scm             = [ url: "https://github.com/grails-plugins/grails-freemarker" ]
-    def issueManagement = [ system: "GITHUB", url: "http://github.com/grails-plugins/grails-freemarker" ]
+    def scm = [url: "https://github.com/grails-plugins/grails-freemarker"]
+    def issueManagement = [system: "GITHUB", url: "http://github.com/grails-plugins/grails-freemarker"]
 
     def observe = ["controllers", 'groovyPages']
-    def loadAfter = ['controllers', 'groovyPages','pluginConfig']
-
+    def loadAfter = ['controllers', 'groovyPages', 'pluginConfig']
 
     def author = "Jeff Brown"
     def authorEmail = "jeff.brown@springsource.com"
 
-    Closure doWithSpring() {{->
-        def freeconfig = getFreeConfig()
-        Properties freeconfigProp = new Properties()
-        if (freeconfig.hasProperty('configSettings') && freeconfig.configSettings){
-            freeconfigProp = freeconfig.configSettings.toProperties()
-        }
-        String ftlSuffix = '.ftl'
+    Closure doWithSpring() {
+        { ->
+            def freeconfig = getFreeConfig()
+            Properties freeconfigProp = new Properties()
+            if (freeconfig.hasProperty('configSettings') && freeconfig.configSettings) {
+                freeconfigProp = freeconfig.configSettings.toProperties()
+            }
+            String ftlSuffix = '.ftl'
 
-        freeMarkerViewResourceLocator(grails.plugin.viewtools.ViewResourceLocator) { bean ->
-            searchBinaryPlugins = true //whether to look in binary plugins, does not work in grails2
-            
-            //initial searchLocations
-            searchPaths = freeconfig.viewResourceLocator.searchLocations
+            freeMarkerViewResourceLocator(grails.plugin.viewtools.ViewResourceLocator) { bean ->
+                searchBinaryPlugins = true //whether to look in binary plugins, does not work in grails2
 
-            //resourceLoaders to use right after searchLocations above are scanned
-            //searchLoaders = [ref('tenantViewResourceLoader')]
+                //initial searchLocations
+                searchPaths = freeconfig.viewResourceLocator.searchLocations
 
-            // in dev mode there will be a groovyPageResourceLoader with base dir set to the running project
-            if(Environment.isDevelopmentEnvironmentAvailable()) {
-                grailsViewPaths = ["/grails-app/views"]
-                webInfPrefix = ""
+                //resourceLoaders to use right after searchLocations above are scanned
+                //searchLoaders = [ref('tenantViewResourceLoader')]
+
+                // in dev mode there will be a groovyPageResourceLoader with base dir set to the running project
+                if (Environment.isDevelopmentEnvironmentAvailable()) {
+                    grailsViewPaths = ["/grails-app/views"]
+                    webInfPrefix = ""
+                }
+
             }
 
-        }
-
-        freeMarkerGrailsTemplateLoader(GrailsTemplateLoader) { bean ->
-            bean.autowire = "byName"
-            grailsApplication = grailsApplication
-            viewResourceLocator = ref('freeMarkerViewResourceLocator')
-        }
-
-        def resolveLoaders = {List loaders ->
-            return loaders.collect{ (it instanceof CharSequence) ? ref(it.toString()) : it }
-        }
-
-        Class configClass = freeconfig.tags.enabled == true ? TagLibAwareConfigurer : FreeMarkerConfigurer
-
-        /* factory to return FreeMarkerConfig
-         * @see org.springframework.web.servlet.view.freemarker.FreeMarkerConfig */
-        freeMarkerConfigurer(configClass) {
-            freemarkerSettings = freeconfigProp
-            if (freeconfig.templateLoaders) {
-                // default config has the 'freeMarkerGrailsTemplateLoader'
-                postTemplateLoaders = resolveLoaders(freeconfig.templateLoaders)
+            freeMarkerGrailsTemplateLoader(GrailsTemplateLoader) { bean ->
+                bean.autowire = "byName"
+                viewResourceLocator = ref('freeMarkerViewResourceLocator')
             }
-        }
 
-        //the key bean that kicks it all off using Spring/Grails ViewResolver concepts
-        freeMarkerViewResolver(GrailsFreeMarkerViewResolver) {
-            //viewLocator = ref("viewLocator")
-            viewResourceLocator = ref("freeMarkerViewResourceLocator")
-            freeMarkerConfigurer = ref('freeMarkerConfigurer')
-            prefix = ''
-            suffix = ftlSuffix
-            requireViewSuffix = freeconfig.requireViewSuffix
-            //hideException = freeconfig.viewResolver.hideException
-            order = 10
-        }
+            def resolveLoaders = { List loaders ->
+                return loaders.collect { (it instanceof CharSequence) ? ref(it.toString()) : it }
+            }
 
-        if (freeconfig.tags.enabled == true) {
-            // Now go through tag libraries and configure them in spring too. With AOP proxies and so on
-            for (taglib in grailsApplication.tagLibClasses) {
-                "${taglib.fullName}_fm"(taglib.clazz) { bean ->
-                    bean.autowire = true
-                    bean.lazyInit = true
-                    // Taglib scoping support could be easily added here. Scope could be based on a static field in the taglib class.
-                    //bean.scope = 'request'
+            Class configClass = freeconfig.tags.enabled == true ? TagLibAwareConfigurer : FreeMarkerConfigurer
+
+            /* factory to return FreeMarkerConfig
+             * @see org.springframework.web.servlet.view.freemarker.FreeMarkerConfig */
+            freeMarkerConfigurer(configClass) {
+                freemarkerSettings = freeconfigProp
+                if (freeconfig.templateLoaders) {
+                    // default config has the 'freeMarkerGrailsTemplateLoader'
+                    postTemplateLoaders = resolveLoaders(freeconfig.templateLoaders)
                 }
             }
 
-            "${TagLibPostProcessor.name}"(TagLibPostProcessor) {bean ->
-                bean.autowire = "byName"
+            //the key bean that kicks it all off using Spring/Grails ViewResolver concepts
+            freeMarkerViewResolver(GrailsFreeMarkerViewResolver) {
+                //viewLocator = ref("viewLocator")
+                viewResourceLocator = ref("freeMarkerViewResourceLocator")
+                freeMarkerConfigurer = ref('freeMarkerConfigurer')
+                prefix = ''
+                suffix = ftlSuffix
+                requireViewSuffix = freeconfig.requireViewSuffix
+                //hideException = freeconfig.viewResolver.hideException
+                order = 10
+            }
+
+            if (freeconfig.tags.enabled == true) {
+                // Now go through tag libraries and configure them in spring too. With AOP proxies and so on
+                for (taglib in grailsApplication.tagLibClasses) {
+                    "${taglib.fullName}_fm"(taglib.clazz) { bean ->
+                        bean.autowire = true
+                        bean.lazyInit = true
+                        // Taglib scoping support could be easily added here. Scope could be based on a static field in the taglib class.
+                        //bean.scope = 'request'
+                    }
+                }
+
+                "${TagLibPostProcessor.name}"(TagLibPostProcessor) { bean ->
+                    bean.autowire = "byName"
+                }
             }
         }
-    }}
+    }
 
     @Override
-    void doWithDynamicMethods(){
+    void doWithDynamicMethods() {
         def ctx = getApplicationContext()
 //        for (controller in application.controllerClasses) {
 //            modRenderMethod(application, controller)
@@ -165,7 +155,7 @@ class FreemarkerGrailsPlugin extends Plugin  {
     }
 
     @Override
-    void onChange(Map<String,Object> event) {
+    void onChange(Map<String, Object> event) {
         def freeconfig = getFreeConfig() as Map
 //        if (application.isControllerClass(event.source) ) {
 //            modRenderMethod(application, event.source)
@@ -182,7 +172,7 @@ class FreemarkerGrailsPlugin extends Plugin  {
                         //bean.scope = 'request'
                     }
 
-                    "${TagLibPostProcessor.name}"(TagLibPostProcessor) {bean ->
+                    "${TagLibPostProcessor.name}"(TagLibPostProcessor) { bean ->
                         bean.autowire = "byName"
                     }
                 }
@@ -190,7 +180,7 @@ class FreemarkerGrailsPlugin extends Plugin  {
                 org.grails.plugins.web.taglib.FormTagLib
                 //event.manager?.getGrailsPlugin('groovyPages')?.doWithDynamicMethods(event.ctx)
 
-                def ApplicationContext springContext = grailsApplication.mainContext
+                ApplicationContext springContext = grailsApplication.mainContext
                 for (configurerBeanName in springContext.getBeanNamesForType(AbstractTagLibAwareConfigurer)) {
                     def configurer = springContext.getBean(configurerBeanName)
                     configurer.reconfigure()

@@ -15,14 +15,18 @@
 */
 package grails.plugin.freemarker
 
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
 import org.springframework.context.ApplicationContext
 
 /**
  * @author Daniel Henrique Alves Lima
  */
+@CompileStatic
 class TagLibAwareConfigurer extends AbstractTagLibAwareConfigurer {
 
     @Override
+    @CompileDynamic
     protected GroovyObject getTagLibInstance(ApplicationContext springContext, String className) {
         return springContext."${className}_fm"
     }

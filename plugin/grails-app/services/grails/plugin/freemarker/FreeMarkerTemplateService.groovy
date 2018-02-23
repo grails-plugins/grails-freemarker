@@ -41,14 +41,14 @@ class FreeMarkerTemplateService {
         return freeMarkerConfigurer.configuration.getTemplate(templateName)
     }
 
-    Writer render(String viewName , Map model, Writer writer, String pluginName = null){
-        render( getTemplate(viewName, pluginName) , model, writer)
+    Writer render(String viewName, Map model, Writer writer, String pluginName = null) {
+        render(getTemplate(viewName, pluginName), model, writer)
     }
 
     /**
      * skips the dependency on the response and request. Renders straight to a passed in writer. Expects a model as well
      */
-    Writer render(Template template , Map model, Writer writer){
+    Writer render(Template template, Map model, Writer writer) {
         // Consolidate static and dynamic model attributes.
         template.process(model, writer)
         return writer
@@ -64,8 +64,8 @@ class FreeMarkerTemplateService {
      * @param writer (optional) a writer if you have one. a org.apache.commons.io.output.StringBuilderWriter will be created by default.
      * @return the resulting processed content as a writer (a StringBuilderWriter). Use writer.toString to get the string content
      */
-    Writer processString(String templateContent , Map model, Writer writer = new StringBuilderWriter()){
-        Template templateInst = new Template("One-off-template-from-string",new StringReader(templateContent),freeMarkerConfigurer.configuration)
+    Writer processString(String templateContent, Map model, Writer writer = new StringBuilderWriter()) {
+        Template templateInst = new Template("One-off-template-from-string", new StringReader(templateContent), freeMarkerConfigurer.configuration)
         templateInst.process(model, writer)
         return writer
     }
@@ -81,8 +81,8 @@ class FreeMarkerTemplateService {
      * @param writer (optional) a writer if you have one. a org.apache.commons.io.output.StringBuilderWriter will be created by default.
      * @return the resulting processed content as a writer (a StringBuilderWriter). Use writer.toString to get the string content
      */
-    Writer processFileName(String templateFileName , Map model, Writer writer = new StringBuilderWriter()){
-        Template templateInst = new Template("One-off-template-from-fileName",new FileReader(templateFileName),freeMarkerConfigurer.configuration)
+    Writer processFileName(String templateFileName, Map model, Writer writer = new StringBuilderWriter()) {
+        Template templateInst = new Template("One-off-template-from-fileName", new FileReader(templateFileName), freeMarkerConfigurer.configuration)
         templateInst.process(model, writer)
         return writer
     }

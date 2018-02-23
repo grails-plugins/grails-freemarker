@@ -15,27 +15,25 @@
  */
 package grails.plugin.freemarker;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-
+import freemarker.template.Configuration;
+import freemarker.template.TemplateModel;
+import freemarker.template.TemplateModelException;
 import grails.core.GrailsApplication;
 import grails.core.GrailsClass;
 import grails.core.GrailsTagLibClass;
 import grails.core.support.GrailsApplicationAware;
+import groovy.lang.Closure;
+import groovy.lang.GroovyObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.grails.core.artefact.TagLibArtefactHandler;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
-import freemarker.template.Configuration;
-import freemarker.template.TemplateModel;
-import freemarker.template.TemplateModelException;
-import groovy.lang.Closure;
-import groovy.lang.GroovyObject;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Daniel Henrique Alves Lima

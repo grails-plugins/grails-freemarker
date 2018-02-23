@@ -1,58 +1,31 @@
+
+version "0.1"
+
 buildscript {
     repositories {
-        mavenLocal()
-        maven { url "https://repo.grails.org/grails/core" }
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
+
     dependencies {
-        classpath "org.grails:grails-gradle-plugin:$grailsVersion"
-        classpath "com.bertramlabs.plugins:asset-pipeline-gradle:2.8.2"
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+        classpath "com.bertramlabs.plugins:asset-pipeline-gradle:2.14.5"
     }
 }
 
-version "1.0.0"
-group "freeApp"
-
-apply plugin:"eclipse"
-apply plugin:"idea"
-apply plugin:"org.grails.grails-plugin"
-apply plugin:"org.grails.grails-plugin-publish"
-apply plugin:"org.grails.grails-gsp"
-apply plugin:"asset-pipeline"
+apply plugin: "com.bertramlabs.asset-pipeline"
 
 repositories {
-    mavenLocal()
-    maven { url "https://repo.grails.org/grails/core" }
-}
-
-dependencyManagement {
-    imports {
-        mavenBom "org.grails:grails-bom:$grailsVersion"
-    }
-    applyMavenExclusions false
+    maven { url "http://repo.9ci.com/artifactory/grails-plugins" }
 }
 
 dependencies {
-    compile "org.springframework.boot:spring-boot-starter-logging"
-    compile "org.springframework.boot:spring-boot-autoconfigure"
-    compile "org.grails:grails-core"
-    compile "org.springframework.boot:spring-boot-starter-actuator"
-    compile "org.springframework.boot:spring-boot-starter-tomcat"
-    compile "org.grails:grails-dependencies"
-    compile "org.grails:grails-web-boot"
-    compile "org.grails.plugins:cache"
-    compile "org.grails.plugins:scaffolding"
-    console "org.grails:grails-console"
-    compile "org.grails.plugins:hibernate4"
-    compile "org.hibernate:hibernate-core:4.3.10.Final"
-    compile "org.hibernate:hibernate-ehcache:4.3.10.Final"
-    compile "org.grails.plugins:view-tools:0.5"
-    profile "org.grails.profiles:web-plugin"
-    provided "org.grails:grails-plugin-services"
-    provided "org.grails:grails-plugin-domain-class"
+    compile "org.grails.plugins:hibernate5"
+    compile "org.hibernate:hibernate-core:5.1.1.Final"
+    compile "org.hibernate:hibernate-ehcache:5.1.1.Final"
+    runtime 'com.bertramlabs.plugins:asset-pipeline-grails:2.14.5'
     provided "org.codehaus.groovy:groovy-ant"
-    runtime "com.bertramlabs.plugins:asset-pipeline-grails:2.8.2"
-    testCompile "org.grails:grails-plugin-testing"
+
     // No longer needed. now part of selenium-support in 2.53, see https://github.com/SeleniumHQ/htmlunit-driver
     //testRuntime "org.seleniumhq.selenium:selenium-htmlunit-driver:2.47.1"
     //testRuntime "net.sourceforge.htmlunit:htmlunit:2.18"
@@ -60,39 +33,55 @@ dependencies {
     /****** GEB *******/
     def webdriverVersion = "2.53.1"
 
+    testCompile "org.grails.plugins:geb"
+
     testCompile("org.grails.plugins:geb",
-            "org.seleniumhq.selenium:selenium-support:${webdriverVersion}",
-            "org.seleniumhq.selenium:selenium-chrome-driver:${webdriverVersion}",
-            "org.seleniumhq.selenium:selenium-firefox-driver:${webdriverVersion}",
-            "org.seleniumhq.selenium:selenium-ie-driver:${webdriverVersion}")
+        "org.seleniumhq.selenium:selenium-support:${webdriverVersion}",
+        "org.seleniumhq.selenium:selenium-chrome-driver:${webdriverVersion}",
+        "org.seleniumhq.selenium:selenium-firefox-driver:${webdriverVersion}",
+        "org.seleniumhq.selenium:selenium-ie-driver:${webdriverVersion}")
 
     // see https://github.com/codeborne/ghostdriver
     testCompile("com.codeborne:phantomjsdriver:1.3.0") {
-        // phantomjs driver pulls in a different selenium version amongs other stuff it seemed
-        transitive = false
+            // phantomjs driver pulls in a different selenium version amongs other stuff it seemed
+            transitive = false
     }
     // see https://github.com/bonigarcia/webdrivermanager
     testCompile "io.github.bonigarcia:webdrivermanager:1.4.9"
     /** GEB end */
+
 }
-
-grails{
-    plugins{
-        if(rootProject.name == 'freeApp') {
-            compile project(':freemarker')
-            compile project(':free-plugin')
-        }
-    }
-}
-
-
 /****** GEB *******
- Pass system properties through to the integrationTest task so we can pass in the 'geb.env' property to run tests
- in different browsers. Adapted from http://mrhaki.blogspot.com/2015/09/grails-goodness-passing-system.html
- */
+Pass system properties through to the integrationTest task so we can pass in the 'geb.env' property to run tests
+in different browsers. Adapted from http://mrhaki.blogspot.com/2015/09/grails-goodness-passing-system.html
+*/
 integrationTest {
-    systemProperties System.properties
+    systemProperties['geb.build.reportsDir'] = reportsDir
+    systemProperties['geb.env'] = System.getProperty('geb.env')
+
+    //# this is a hack to get the gradle subproject to run functional tests
+    //systemProperties['server.tomcat.basedir'] = 'src/main/webapp'
+
+    //systemProperties System.properties
+
+    //XXX - Need to set it here otherwise due to some problem it is set to /plugin which causes issues with tests
+    //systemProperties['base.dir'] = project.projectDir.absolutePath
+
+    //workingDir = projectDir
+    //webAppDirName = "foo"
+    //basedir = new File('test-projects/fooey')
 }
-assets {
-	packagePlugin = true
+
+bootRun {
+    jvmArgs('-Dspring.output.ansi.enabled=always')
+    addResources = true
+}
+
+grails {
+    exploded = true
+    plugins {
+        println "Inside grails: $rootProject.name"
+        compile project(':free-plugin')
+        compile project(':freemarker')
+    }
 }

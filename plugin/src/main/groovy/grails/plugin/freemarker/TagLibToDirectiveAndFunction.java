@@ -15,35 +15,22 @@
  */
 package grails.plugin.freemarker;
 
+import freemarker.core.Environment;
+import freemarker.template.*;
+import freemarker.template.utility.DeepUnwrap;
+import groovy.lang.Closure;
+import groovy.lang.GroovyObject;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.grails.buffer.GrailsPrintWriter;
+import org.grails.taglib.GroovyPageAttributes;
+import org.grails.web.sitemesh.GrailsRoutablePrintWriter;
+
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import freemarker.core.Environment;
-import freemarker.template.ObjectWrapper;
-import freemarker.template.TemplateDirectiveBody;
-import freemarker.template.TemplateDirectiveModel;
-import freemarker.template.TemplateException;
-import freemarker.template.TemplateHashModelEx;
-import freemarker.template.TemplateMethodModelEx;
-import freemarker.template.TemplateModel;
-import freemarker.template.TemplateModelException;
-import freemarker.template.TemplateModelIterator;
-import freemarker.template.utility.DeepUnwrap;
-import groovy.lang.Closure;
-import groovy.lang.GroovyObject;
-import org.grails.buffer.GrailsPrintWriter;
-import org.grails.taglib.GroovyPageAttributes;
-import org.grails.web.sitemesh.GrailsRoutablePrintWriter;
+import java.util.*;
 
 /**
  * @author Daniel Henrique Alves Lima

@@ -1,18 +1,15 @@
 package grails.plugin.freemarker
 
+import freemarker.template.SimpleHash
 import freemarker.template.Template
 import grails.core.GrailsApplication
 import grails.plugin.viewtools.GrailsWebEnvironment
-import grails.plugin.viewtools.ViewResourceLocator
-import groovy.transform.CompileStatic
 import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 import org.grails.web.servlet.mvc.GrailsWebRequest
-import org.springframework.web.context.request.RequestContextHolder
-import org.springframework.web.context.request.ServletRequestAttributes
 import org.springframework.web.servlet.LocaleResolver
 import org.springframework.web.servlet.View
-
-import freemarker.template.SimpleHash
 import org.springframework.web.servlet.view.freemarker.FreeMarkerView
 
 /**
@@ -21,6 +18,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerView
  * @author Joshua Burnett
  */
 @CompileStatic
+@Slf4j
 class FreeMarkerViewService {
 
     static transactional = false
@@ -81,11 +79,9 @@ class FreeMarkerViewService {
         view.getTemplate(getLocale())
     }
 
-
     /**
      * returns the local by using the localResolver and the webrequest from RequestContextHolder.getRequestAttributes()
      */
-
     Locale getLocale() {
         def locale
         def request = GrailsWebRequest.lookup()?.currentRequest

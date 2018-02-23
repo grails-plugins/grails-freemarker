@@ -1,91 +1,48 @@
-buildscript {
-    repositories {
-        mavenLocal()
-        maven { url "https://repo.grails.org/grails/core" }
-    }
-    dependencies {
-        classpath "org.grails:grails-gradle-plugin:$grailsVersion"
-        classpath "com.bertramlabs.plugins:asset-pipeline-gradle:2.8.2"
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
-    }
-}
 
-version "3.0.2"
-group "grails.plugin.freemarker"
-
-apply plugin:"eclipse"
-apply plugin:"idea"
-apply plugin:"org.grails.grails-plugin"
-apply plugin:"org.grails.grails-plugin-publish"
-apply plugin:"org.grails.grails-gsp"
-apply plugin:"asset-pipeline"
+apply plugin: 'codenarc'
 
 repositories {
-    mavenLocal()
-    maven { url "https://repo.grails.org/grails/core" }
-}
 
-dependencyManagement {
-    imports {
-        mavenBom "org.grails:grails-bom:$grailsVersion"
-    }
-    applyMavenExclusions false
+    maven { url "http://repo.9ci.com/artifactory/grails-plugins" }
 }
 
 dependencies {
-    compile "org.springframework.boot:spring-boot-starter-logging"
-    compile "org.springframework.boot:spring-boot-autoconfigure"
-    compile "org.grails:grails-core"
-    compile "org.springframework.boot:spring-boot-starter-actuator"
-    compile "org.springframework.boot:spring-boot-starter-tomcat"
-    compile "org.grails:grails-dependencies"
-    compile "org.grails:grails-web-boot"
-    compile "org.grails.plugins:cache"
-    compile "org.grails.plugins:scaffolding"
-    console "org.grails:grails-console"
-    compile "org.freemarker:freemarker:2.3.25-incubating"
-    compile 'commons-io:commons-io:2.5'
-    compile "org.grails.plugins:view-tools:0.5"
-    profile "org.grails.profiles:web-plugin"
-    provided "org.grails:grails-plugin-services"
-    provided "org.grails:grails-plugin-domain-class"
+    compile "org.grails.plugins:hibernate5"
+    compile "org.hibernate:hibernate-core:5.1.1.Final"
+    compile "org.hibernate:hibernate-ehcache:5.1.1.Final"
     provided "org.codehaus.groovy:groovy-ant"
-    runtime "com.bertramlabs.plugins:asset-pipeline-grails:2.8.2"
-    testCompile "org.grails:grails-plugin-testing"
+    compile "commons-io:commons-io:2.5"
 
+    compile "org.springframework:spring-test"
+
+    codenarc 'org.codenarc:CodeNarc:0.27.0'
+    codenarc "io.9ci.yakworks:codenarc-extra:1.0.2"
+
+    compile "org.freemarker:freemarker:2.3.25-incubating"
+    compile "org.grails.plugins:view-tools:1.0-SNAPSHOT"
 }
 
+bootRepackage.enabled = false
 
-/*grailsPublish {
-    githubSlug = 'grails-plugins/grails-freemarker'
-    vcsUrl = 'https://github.com/grails-plugins/grails-freemarker'
-    license {
-        name = 'Apache-2.0'
-    }
-    title = "FreeMarker Views Plugin"
-    desc = 'The Grails FreeMarker plugin provides support for rendering FreeMarker templates as views.'
-    developers = ["jeff.brown@springsource.com": 'Jeff Brown','joshdev@9ci.com': 'Joshua Burnett', 'lima': 'Daniel Henrique Alves Lima']
-}*/
-
-grailsPublish {
-    desc = 'The Grails FreeMarker plugin provides support for rendering FreeMarker templates as views.'
-    developers = ["jeff.brown@springsource.com": 'Jeff Brown','joshdev@9ci.com': 'Joshua Burnett', 'lima': 'Daniel Henrique Alves Lima']
-    vcsUrl = 'https://github.com/grails-plugins/grails-freemarker'
-    license {
-        name = 'Apache-2.0'
-    }
-    websiteUrl = ''
-    githubSlug = 'grails-plugins/grails-freemarker'
-    title = 'FreeMarker Views Plugin'
-    userOrg = '9ci' //the Org to publish this under in
-    repo = 'grails-plugins' //the repository you setup in bintray
-    bintray {
-        //override plufin only if it is snapshot
-        override = rootProject.version.endsWith("SNAPSHOT")
-    }
+bootRun {
+    jvmArgs('-Dspring.output.ansi.enabled=always')
+    addResources = true
 }
 
+codenarc {
+    toolVersion = '0.27.0'
+    configFile = file("${commonBuild}/codenarc-rules.groovy")
+    reportFormat = 'html'
+    maxPriority1Violations = 0
+    maxPriority2Violations = 0
+    maxPriority3Violations = 0
+}
 
-assets {
-    packagePlugin = true
+groovydoc {
+    excludes = ['**/*GrailsPlugin.groovy','**/Application.groovy' ]
+    link('http://download.oracle.com/javase/8/docs/api/', 'java.', 'org.xml', 'javax.', 'org.xml.')
+    link("https://docs.spring.io/spring/docs/4.2.x/javadoc-api/", 'org.springframework')
+    link('http://groovy.codehaus.org/api/',  'groovy.', 'org.codehaus.groovy.')
+    link('https://docs.grails.org/3.2.x/api',  'grails.', 'org.grails.')
+    link('http://gorm.grails.org/latest/hibernate/api/',  'grails.gorm', 'org.grails.datastore', 'org.grails.orm')
 }

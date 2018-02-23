@@ -17,6 +17,7 @@ package grails.plugin.freemarker
 
 import grails.core.ArtefactHandler
 import grails.core.GrailsApplication
+import groovy.transform.CompileDynamic
 import org.grails.core.artefact.TagLibArtefactHandler
 import org.springframework.beans.BeansException
 import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter
@@ -24,18 +25,20 @@ import org.springframework.beans.factory.config.InstantiationAwareBeanPostProces
 /**
  * @author Daniel Henrique Alves Lima
  */
+@CompileDynamic
 class TagLibPostProcessor extends InstantiationAwareBeanPostProcessorAdapter {
 
     GrailsApplication grailsApplication
 
     @Override
+    @SuppressWarnings(['ExplicitLinkedListInstantiation'])
     boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException {
 
         ArtefactHandler tagLibHandler = grailsApplication.getArtefactHandler(TagLibArtefactHandler.TYPE)
         if (tagLibHandler.isArtefact(bean.class) && beanName.endsWith('_fm')) {
 
             ThreadLocal<Deque> outStack = new ThreadLocal<Deque>()
-            def _getX = {
+            def getX = {
                 Deque<Object> d = outStack.get()
                 if (d == null) {
                     d = new LinkedList<Object>()
@@ -47,16 +50,16 @@ class TagLibPostProcessor extends InstantiationAwareBeanPostProcessorAdapter {
 
             MetaClass mc = bean.metaClass
             mc.getOut = {->
-                Deque d = _getX()
+                Deque d = getX()
                 return (d.size() > 0)?d.last : null
             }
 
             mc.popOut = {->
-                return _getX().removeLast()
+                return getX().removeLast()
             }
 
             mc.pushOut = {out ->
-                _getX().addLast(out)
+                getX().addLast(out)
             }
         }
 

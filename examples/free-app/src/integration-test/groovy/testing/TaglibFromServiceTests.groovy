@@ -1,7 +1,7 @@
 package testing
 
 import grails.plugin.freemarker.FreeMarkerViewService
-import grails.test.mixin.integration.Integration
+import grails.testing.mixin.integration.Integration
 import spock.lang.Specification
 
 @Integration

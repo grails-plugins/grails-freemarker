@@ -15,8 +15,11 @@
 */
 package freemarker.tags.test
 
+import groovy.transform.CompileDynamic
+
 import java.text.SimpleDateFormat
 
+@CompileDynamic
 class SimpleTagLib {
 
     def emoticon = { attrs, body ->
@@ -29,7 +32,7 @@ class SimpleTagLib {
 
     def isAdmin = { attrs, body ->
         def user = attrs['user']
-        if (user != null && user.admin) {
+        if (user?.admin) {
             out << body()
         }
     }

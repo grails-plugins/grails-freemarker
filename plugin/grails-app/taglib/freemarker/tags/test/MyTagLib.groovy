@@ -1,5 +1,8 @@
 package freemarker.tags.test
 
+import groovy.transform.CompileDynamic
+
+@CompileDynamic
 class MyTagLib {
 
     static namespace = "my"

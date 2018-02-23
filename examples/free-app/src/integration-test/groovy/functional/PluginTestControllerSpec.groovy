@@ -1,8 +1,7 @@
 package functional
 
-
 import geb.spock.GebSpec
-import grails.test.mixin.integration.Integration
+import grails.testing.mixin.integration.Integration
 import grails.transaction.Rollback
 
 // TODO: probably should be moved to free-plugin

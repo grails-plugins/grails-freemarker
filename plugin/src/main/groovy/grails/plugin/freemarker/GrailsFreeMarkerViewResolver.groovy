@@ -26,6 +26,7 @@ import org.springframework.web.servlet.View
 import org.springframework.web.servlet.view.AbstractUrlBasedView
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig
 import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver
+
 /**
  * Uses Springs ViewResolver design concepts. The primary lookup uses {@link grails.plugin.resourcelocator.ViewResourceLocator}
  * The main DispatcherServlet spins through and calls the ViewResolvers ViewResolver.resolveViewName(String viewName, Locale locale)
@@ -61,19 +62,21 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver
  * @author Daniel Henrique Alves Lima
  * @author Joshua Burnett
  */
-@Log4j  //log
+@Log4j
+//log
 @CompileStatic
+@SuppressWarnings(["LoggerForDifferentClass"])
 public class GrailsFreeMarkerViewResolver extends FreeMarkerViewResolver {
 
-    private final Log exceptionLog = LogFactory.getLog("GrailsFreeMarkerViewResolver.EXCEPTION");
+    private static final Log EXCEPTION_LOG = LogFactory.getLog("GrailsFreeMarkerViewResolver.EXCEPTION")
     //private final Log log = LogFactory.getLog(getClass());
 
     //injected autowired
     //GrailsApplication grailsApplication
     FreeMarkerConfig freeMarkerConfigurer
     ViewResourceLocator viewResourceLocator
-    boolean hideException = true;
-    boolean requireViewSuffix = true; //set when bean is setup
+    boolean hideException = true
+    boolean requireViewSuffix = true //set when bean is setup
 
     //end inject
 
@@ -85,7 +88,7 @@ public class GrailsFreeMarkerViewResolver extends FreeMarkerViewResolver {
 
     @Override
     protected Class<?> requiredViewClass() {
-        return GrailsFreeMarkerView.class;
+        return GrailsFreeMarkerView.class
     }
 
     //Overriden for logging
@@ -93,7 +96,7 @@ public class GrailsFreeMarkerViewResolver extends FreeMarkerViewResolver {
     public View resolveViewName(String viewName, Locale locale) throws Exception {
         log.debug("resolveViewName with $viewName")
 
-        return super.resolveViewName(viewName,locale);
+        return super.resolveViewName(viewName, locale)
     }
 
     /**
@@ -105,57 +108,56 @@ public class GrailsFreeMarkerViewResolver extends FreeMarkerViewResolver {
      * @return
      */
     @Override
+    @SuppressWarnings(['CatchException', 'ThrowRuntimeException'])
     protected View loadView(String viewName, Locale locale) {
         if (requireViewSuffix && !viewName.endsWith(suffix)) {
             //fast exit
-            return null;
+            return null
         }
-        log.debug("loadview running for ${viewName}, locale  $locale");
+        log.debug("loadview running for ${viewName}, locale  $locale")
 
         if (viewName.endsWith(suffix)) {
             //remove the .ftl suffix if it was added so the normal process can add it later
-            viewName = viewName.substring(0,viewName.length() - suffix.length());
+            viewName = viewName.substring(0, viewName.length() - suffix.length())
         }
 
-        View view = null;
+        View view = null
         try {
-            GrailsFreeMarkerView gview = (GrailsFreeMarkerView) buildView(viewName);
-            gview.freeMarkerConfigurer = freeMarkerConfigurer;
-            View result = (View) getApplicationContext().getAutowireCapableBeanFactory().initializeBean(gview, viewName);
+            GrailsFreeMarkerView gview = (GrailsFreeMarkerView) buildView(viewName)
+            gview.freeMarkerConfigurer = freeMarkerConfigurer
+            View result = (View) getApplicationContext().getAutowireCapableBeanFactory().initializeBean(gview, viewName)
 
-            Resource resource = viewResourceLocator.getResource(gview.url);
+            Resource resource = viewResourceLocator.getResource(gview.url)
             if (resource?.exists()) {
-                if(resource instanceof ContextResource) {
+                if (resource instanceof ContextResource) {
                     gview.setUrl(resource.getURL().toString())
                 }
                 //this now call the freemarker getTemplate to make sure it can load/parse the template.
                 // its all cached so it only loads it once
-                view =  (gview.checkResource(locale) ? result : null);
+                view = (gview.checkResource(locale) ? result : null)
             }
 
         }
-        catch(Exception e) {
+        catch (Exception e) {
             // by default return null if an exception occurs so the rest of the view
             // resolver chain gets an opportunity to  generate a View
             if (hideException) {
-                exceptionLog.debug("loadView", e);
-            }
-            else {
-                exceptionLog.error("loadView", e);
-                throw new RuntimeException(e);
+                EXCEPTION_LOG.debug("loadView", e)
+            } else {
+                EXCEPTION_LOG.error("loadView", e)
+                throw new RuntimeException(e)
             }
         }
-        return view;
+        return view
     }
-
 
     //Override so we can set the bean name
     @Override
     protected AbstractUrlBasedView buildView(String viewName) throws Exception {
-        AbstractUrlBasedView view = super.buildView(viewName);
-        view.setBeanName(viewName);
-        log.debug("buildView ran with view: [$view] , url: [ ${view.url}]");
-        return view;
+        AbstractUrlBasedView view = super.buildView(viewName)
+        view.setBeanName(viewName)
+        log.debug("buildView ran with view: [$view] , url: [ ${view.url}]")
+        return view
     }
 
 }

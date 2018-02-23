@@ -1,4 +1,7 @@
 package testing
+
+import freemarker.template.Configuration
+
 /*
  * Copyright 2010 the original author or authors.
  *
@@ -14,10 +17,8 @@ package testing
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import freemarker.template.Configuration
 import freemarker.template.Template
-import grails.test.mixin.integration.Integration
+import grails.testing.mixin.integration.Integration
 import spock.lang.Specification
 
 /**

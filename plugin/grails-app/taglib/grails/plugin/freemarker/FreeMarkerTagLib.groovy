@@ -15,9 +15,14 @@
 */
 package grails.plugin.freemarker
 
+import groovy.transform.CompileDynamic
+import groovy.util.logging.Slf4j
+
 /**
  * @author Jeff Brown
  */
+@Slf4j
+@CompileDynamic
 class FreeMarkerTagLib {
 
     static namespace = 'fm'

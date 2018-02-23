@@ -1,6 +1,6 @@
 package testing
 
-import grails.test.mixin.integration.Integration
+import grails.testing.mixin.integration.Integration
 import spock.lang.Specification
 
 @Integration
