@@ -2,46 +2,15 @@
 
 set -e
 
-if [[ -n $TRAVIS_TAG ]] || [[ $TRAVIS_BRANCH == 'master' && $TRAVIS_REPO_SLUG == "yakworks/view-tools" && $TRAVIS_PULL_REQUEST == 'false' ]]; then
+if [[ -n $TRAVIS_TAG ]] || [[ $TRAVIS_BRANCH == 'master' && $TRAVIS_REPO_SLUG == "yakworks/grails-freemarker" && $TRAVIS_PULL_REQUEST == 'false' ]]; then
 
     if [[ -n $TRAVIS_TAG ]]
     then
         echo "### publishing release to BinTray"
-        ./gradlew view-tools:bintrayUpload --no-daemon
+        ./gradlew freemarker:bintrayUpload --no-daemon
     else
          echo "### publishing snapshot"
-        ./gradlew view-tools:publish --no-daemon
-    fi
-
-    if [[ $TRAVIS_BRANCH == 'master' ]] && [[ -n $(git diff --name-only $TRAVIS_COMMIT_RANGE | grep -E  "(mkdocs\.yml|docs/)") ]]
-    then
-        echo "### publishing docs"
-        git config --global user.name "9cibot"
-        git config --global user.email "9cibot@9ci.com"
-        git config --global credential.helper "store --file=~/.git-credentials"
-        echo "https://$GITHUB_TOKEN:@github.com" > ~/.git-credentials
-        git clone https://${GITHUB_TOKEN}@github.com/yakworks/view-tools.git -b gh-pages gh-pages --single-branch > /dev/null
-
-        python3 -m mkdocs build
-
-        cd gh-pages
-        cp -r ../site/. . #Copy Mkdocs
-
-        mkdir -p api #Copy Java API
-        cp -r ../plugin/build/docs/groovydoc/. ./api
-
-        git add .
-
-        #If there are any changes, do commit and push
-        git commit -a -m "Update docs for Travis build: https://travis-ci.org/$TRAVIS_REPO_SLUG/builds/$TRAVIS_BUILD_ID"
-        git push origin HEAD
-
-        cd ..
-        rm -rf gh-pages
-        rm -rf site
-        echo "### Done publishing docs"
-    else
-        echo "### No changes to docs"
+        ./gradlew freemarker:publish --no-daemon
     fi
 
 else
