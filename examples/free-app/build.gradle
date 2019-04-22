@@ -7,22 +7,24 @@ buildscript {
             url "https://plugins.gradle.org/m2/"
         }
     }
-
-    dependencies {
-        classpath "com.bertramlabs.plugins:asset-pipeline-gradle:2.14.5"
-    }
 }
 
 apply plugin: "com.bertramlabs.asset-pipeline"
+apply plugin:"org.grails.grails-web"
+apply plugin:"war"
+apply plugin:"org.grails.grails-gsp"
+
 
 repositories {
     maven { url "http://repo.9ci.com/artifactory/grails-plugins" }
+    maven { url "http://repo.9ci.com/oss-snapshots" }
 }
 
 dependencies {
-    compile "org.grails.plugins:hibernate5"
-    compile "org.hibernate:hibernate-core:5.1.1.Final"
-    compile "org.hibernate:hibernate-ehcache:5.1.1.Final"
+    profile "org.grails.profiles:web"
+    compile "org.springframework.boot:spring-boot-starter-actuator"
+    provided "org.springframework.boot:spring-boot-starter-tomcat"
+
     runtime 'com.bertramlabs.plugins:asset-pipeline-grails:2.14.5'
     provided "org.codehaus.groovy:groovy-ant"
 
@@ -31,7 +33,7 @@ dependencies {
     //testRuntime "net.sourceforge.htmlunit:htmlunit:2.18"
 
     /****** GEB *******/
-    def webdriverVersion = "2.53.1"
+    String webdriverVersion = "2.53.1"
 
     testCompile "org.grails.plugins:geb"
 

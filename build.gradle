@@ -1,119 +1,51 @@
 buildscript {
-	repositories {
-		mavenLocal()
-		maven { url "https://repo.grails.org/grails/core" }
-	}
-	dependencies {
-		classpath "org.grails:grails-gradle-plugin:$grailsVersion"
-		classpath "org.grails:grails-docs:$grailsVersion"
-		classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
-		classpath 'io.github.groovylang.groovydoc:groovydoc-gradle-plugin:1.0.1'
-		classpath "com.bertramlabs.plugins:asset-pipeline-gradle:2.8.2"
-	}
+  repositories {
+    mavenLocal()
+    maven { url "https://repo.grails.org/grails/core" }
+  }
+  dependencies {
+    classpath "org.grails:grails-gradle-plugin:$grailsVersion"
+        classpath "org.yakworks:gradle-plugins:0.1.45"
+        classpath "org.yakworks:gradle-plugins:0.1.45"
+        classpath "com.bertramlabs.plugins:asset-pipeline-gradle:2.8.2"
+  }
 }
 
-apply plugin: 'idea'
-apply plugin:'groovy'
-
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
+apply plugin: 'yakworks.shipkit'
 
 repositories {
     mavenLocal()
     maven { url "https://repo.grails.org/grails/core" }
+    maven { url "http://repo.9ci.com/oss-snapshots" }
 }
-
-//Root project and view-tools plugin uses same version.
-version project.projectVersion
-
-project(':freemarker') {
-	version = project.projectVersion
-}
-
-ext {
-    commonBuild = new File(project.rootDir, "gradle").absolutePath
-	grailsApps = ['free-app']
-	grailsPlugins = ['freemarker', 'free-plugin']
-}
-
 
 subprojects {
-
-	boolean isGrailsApp = grailsApps.contains(project.name)
-	boolean isGrailsPlugin = grailsPlugins.contains(project.name)
-	boolean isGrailsProject = isGrailsApp || isGrailsPlugin
-	boolean isBuildSnapshot = version.toString().endsWith("-SNAPSHOT")
-
-	println project.name + ":" + version.toString()
-
-	ext {
-		userOrg = "grails"
-		set "tomcat.version", "8.5.5"
-		isSnapshot = isBuildSnapshot
-	}
-
     apply plugin:'groovy'
 
-    repositories {
-        mavenLocal()
-        maven { url "https://repo.grails.org/grails/core" }
-    }
-
-    dependencies {
-        compile "org.springframework.boot:spring-boot-starter-logging"
-        compile "org.springframework.boot:spring-boot-autoconfigure"
-        compile "org.grails:grails-core"
-        compile "org.grails:grails-dependencies"
-        compile "org.grails:grails-web-boot"
-        compile "org.grails.plugins:cache"
-
-        runtime "com.h2database:h2"
-
-        testCompile "org.grails:grails-gorm-testing-support"
-        testCompile "org.grails:grails-plugin-testing"
-        testCompile "org.grails:grails-web-testing-support"
-    }
-
-	if (isGrailsPlugin) {
-        group "org.grails.plugins"
-
-        apply plugin:"org.grails.grails-plugin"
-        apply plugin:"org.grails.grails-gsp"
+    plugins.withId('java') {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
 
         dependencies {
-            compile "org.springframework.boot:spring-boot-starter-actuator"
-            provided "org.springframework.boot:spring-boot-starter-tomcat"
+            compile "org.springframework.boot:spring-boot-starter-logging"
+            compile "org.springframework.boot:spring-boot-autoconfigure"
+            compile "org.grails:grails-core"
+            compile "org.grails:grails-dependencies"
+            compile "org.grails:grails-web-boot"
+            compile "org.grails.plugins:cache"
 
-            profile "org.grails.profiles:web-plugin"
-            provided "org.grails:grails-plugin-services"
-            provided "org.grails:grails-plugin-domain-class"
+            runtime "com.h2database:h2"
 
-            console "org.grails:grails-console"
+            testCompile "org.grails:grails-gorm-testing-support"
+            testCompile "org.grails:grails-plugin-testing"
+            testCompile "org.grails:grails-web-testing-support"
         }
 
-        apply from: "${commonBuild}/common-publishing.gradle"
-
-	}
-
-	if (isGrailsApp) {
-		group "org.grails"
-
-        apply plugin:"org.grails.grails-web"
-        apply plugin:"war"
-        apply plugin:"org.grails.grails-gsp"
-
-        dependencies {
-            profile "org.grails.profiles:web"
-            compile "org.springframework.boot:spring-boot-starter-actuator"
-            provided "org.springframework.boot:spring-boot-starter-tomcat"
-
-            console "org.grails:grails-console"
+        test {
+            //This way Spock/Groovy power asserts will be  visiblein the build log
+            //Very useful - you don't have to look at the test results to debug a test failure
+            testLogging.exceptionFormat = 'full'
         }
-
-        bootRun {
-            jvmArgs('-Dspring.output.ansi.enabled=always')
-            addResources = true
-        }
-	}
+    }
 
 }

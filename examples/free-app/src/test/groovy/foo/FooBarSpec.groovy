@@ -9,7 +9,7 @@ import spock.lang.Specification
 class FooBarSpec extends Specification {
 
     void "test something"() {
-    	expect:
-    		1==1
+        expect:
+            1==1
     }
 }

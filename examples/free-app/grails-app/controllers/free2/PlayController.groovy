@@ -1,64 +1,64 @@
 package testing
 
 class PlayController {
-	
-	
+
+
 
     def index ={ }
 
 
-	def freemarker(){
-		render view:"freemarker.ftl"
-	}
+    def freemarker(){
+        render view:"freemarker.ftl"
+    }
 
-	def notFound(){
-		render view:"xxx.ftl"
-	}
+    def notFound(){
+        render view:"xxx.ftl"
+    }
 
-	def classpath(){
-		render view:"/classpath-test.ftl"
-	}
-	
-	//passes through to index, sitemesh should be set here too
-	def demo(){
-		render view: '/demo/index.ftl', model: [name: 'Jake', state: 'Missouri'], plugin:"freemarker"
-	}
+    def classpath(){
+        render view:"/classpath-test.ftl"
+    }
 
-	def fullScan(){
-		render view: '/pluginTest/override.ftl'
-	}
+    //passes through to index, sitemesh should be set here too
+    def demo(){
+        render view: '/demo/index.ftl', model: [name: 'Jake', state: 'Missouri'], plugin:"freemarker"
+    }
 
-	def tagPlay(){
-		render view: '/tagPlay/index.ftl'
-	}
+    def fullScan(){
+        render view: '/pluginTest/override.ftl'
+    }
 
-	def plugingsp(){
-		render(view:"/demo/simple", plugin:"freemarker")
-	}
-	
-	def pluginftl(){
-		render(view:"/demo/included", plugin:"freemarker")
-	}
+    def tagPlay(){
+        render view: '/tagPlay/index.ftl'
+    }
 
-	//passes through to index, sitemesh should be set here too
-	def demoGsp(){
-		render view: '/demo/simple', model: [name: 'Jake', state: 'Missouri'], plugin:"freemarker"
-	}
+    def plugingsp(){
+        render(view:"/demo/simple", plugin:"freemarker")
+    }
+
+    def pluginftl(){
+        render(view:"/demo/included", plugin:"freemarker")
+    }
+
+    //passes through to index, sitemesh should be set here too
+    def demoGsp(){
+        render view: '/demo/simple', model: [name: 'Jake', state: 'Missouri'], plugin:"freemarker"
+    }
 
 
 
-		//passes through to index, sitemesh should be set here too
-	def specificPluginDir(){
-		render view: '/plugins/freemarker/demo/index.ftl', model: [name: 'Jake', state: 'Missouri']
-	}
+        //passes through to index, sitemesh should be set here too
+    def specificPluginDir(){
+        render view: '/plugins/freemarker/demo/index.ftl', model: [name: 'Jake', state: 'Missouri']
+    }
 
-	def pluginPlayDir(){
+    def pluginPlayDir(){
         render view: 'bluesky.ftl', model: [testvar: 'fly away'], plugin:'free-plugin'
     }
 
     def pluginPlayDirGsp(){
         render view: 'bluesky.gsp', model: [testvar: 'fly away'], plugin:'free-plugin'
     }
-	
+
 
 }
