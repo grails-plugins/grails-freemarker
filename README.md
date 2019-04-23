@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/yakworks/grails-freemarker.svg?branch=master)](https://travis-ci.org/yakworks/grails-freemarker)
+![CircleCI](https://img.shields.io/circleci/project/github/yakworks/grails-freemarker.svg?longCache=true&style=for-the-badge)
 
 ## Table of Contents
 <!-- this is using the Sublime MarkdownTOC plugin to auto update it -->
