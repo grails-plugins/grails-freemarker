@@ -51,7 +51,7 @@ jobs:
 
       - run:
           name: ✔︎ -- Checks Linter and Tests [gradle check]
-          command: gradle check --no-daemon --max-workers 2
+          command: gradle check --no-daemon
       - store_artifacts:
           path: plugin/build/reports/tests/test/
           destination: test-reports/unit/
