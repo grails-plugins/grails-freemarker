@@ -1,4 +1,0 @@
-rootProject.name="free-app"
-
-include ':freemarker'
-project(':freemarker').projectDir = new File(settingsDir, '../freemarker-plugin')

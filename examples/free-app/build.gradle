@@ -1,24 +1,12 @@
 
 version "0.1"
 
-buildscript {
-    repositories {
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-    }
-}
-
 apply plugin: "com.bertramlabs.asset-pipeline"
-apply plugin:"org.grails.grails-web"
+apply plugin:"groovy"
 apply plugin:"war"
+apply plugin:"org.grails.grails-web"
 apply plugin:"org.grails.grails-gsp"
 
-
-repositories {
-    maven { url "http://repo.9ci.com/artifactory/grails-plugins" }
-    maven { url "http://repo.9ci.com/oss-snapshots" }
-}
 
 dependencies {
     profile "org.grails.profiles:web"
