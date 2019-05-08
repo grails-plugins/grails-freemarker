@@ -1,9 +1,9 @@
 
 
-repositories {
-    maven { url "http://repo.9ci.com/artifactory/grails-plugins" }
-    maven { url "http://repo.9ci.com/oss-snapshots" }
-}
+// repositories {
+//     maven { url "http://repo.9ci.com/artifactory/grails-plugins" }
+//     maven { url "http://repo.9ci.com/oss-snapshots" }
+// }
 
 apply plugin: 'yakworks.grails-plugin'
 apply plugin:"org.grails.grails-gsp"
@@ -25,7 +25,7 @@ dependencies {
     compile "org.springframework:spring-test"
 
     compile "org.freemarker:freemarker:2.3.25-incubating"
-    compile "org.grails.plugins:view-tools:1.2-SNAPSHOT"
+    compile "org.grails.plugins:view-tools:1.2.0"
 }
 
 bootRepackage.enabled = false
@@ -33,13 +33,4 @@ bootRepackage.enabled = false
 bootRun {
     jvmArgs('-Dspring.output.ansi.enabled=always')
     addResources = true
-}
-
-groovydoc {
-    excludes = ['**/*GrailsPlugin.groovy','**/Application.groovy' ]
-    link('http://download.oracle.com/javase/8/docs/api/', 'java.', 'org.xml', 'javax.', 'org.xml.')
-    link("https://docs.spring.io/spring/docs/4.2.x/javadoc-api/", 'org.springframework')
-    link('http://groovy.codehaus.org/api/',  'groovy.', 'org.codehaus.groovy.')
-    link('https://docs.grails.org/3.2.x/api',  'grails.', 'org.grails.')
-    link('http://gorm.grails.org/latest/hibernate/api/',  'grails.gorm', 'org.grails.datastore', 'org.grails.orm')
 }

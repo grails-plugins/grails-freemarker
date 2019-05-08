@@ -1,16 +1,22 @@
+/*
+* Copyright 2019 Yak.Works - Licensed under the Apache License, Version 2.0 (the "License")
+* You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+*/
 package grails.plugin.freemarker
+
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
+
+import org.grails.web.servlet.mvc.GrailsWebRequest
+import org.springframework.web.servlet.LocaleResolver
+import org.springframework.web.servlet.View
+import org.springframework.web.servlet.view.freemarker.FreeMarkerView
 
 import freemarker.template.SimpleHash
 import freemarker.template.Template
 import grails.core.GrailsApplication
 import grails.plugin.viewtools.GrailsWebEnvironment
-import groovy.transform.CompileDynamic
-import groovy.transform.CompileStatic
-import groovy.util.logging.Slf4j
-import org.grails.web.servlet.mvc.GrailsWebRequest
-import org.springframework.web.servlet.LocaleResolver
-import org.springframework.web.servlet.View
-import org.springframework.web.servlet.view.freemarker.FreeMarkerView
 
 /**
  * Retrieves and processes views for freemarker tempalates.
