@@ -30,7 +30,7 @@ Both using freemarker 2.3.x (currently 2.3.25-incubating as it becomes a full ap
 
 comptible releases end with grails2. for example
 
-``` compile ":freemarker:2.0.2-grails2" ```
+``` compile ":freemarker:3.0.3" ```
 
 **Grails 3 install**
 
