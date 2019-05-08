@@ -13,17 +13,13 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-actuator"
     provided "org.springframework.boot:spring-boot-starter-tomcat"
     provided "org.grails:grails-plugin-services"
-    provided "org.grails:grails-plugin-domain-class"
+    //provided "org.grails:grails-plugin-domain-class"
 
     provided "org.codehaus.groovy:groovy-ant"
-    compile "commons-io:commons-io:2.5"
-
-    compile "org.grails.plugins:hibernate5"
-    compile "org.hibernate:hibernate-core:$versionHibernate"
-    compile "org.hibernate:hibernate-ehcache:$versionHibernate"
 
     compile "org.springframework:spring-test"
 
+    compile "commons-io:commons-io:2.5"
     compile "org.freemarker:freemarker:2.3.25-incubating"
     compile "org.grails.plugins:view-tools:1.2.0"
 }

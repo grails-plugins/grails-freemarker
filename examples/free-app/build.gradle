@@ -12,6 +12,10 @@ dependencies {
     profile "org.grails.profiles:web"
     compile "org.springframework.boot:spring-boot-starter-actuator"
     provided "org.springframework.boot:spring-boot-starter-tomcat"
+    provided "org.grails:grails-plugin-domain-class"
+    compile "org.grails.plugins:hibernate5"
+    compile "org.hibernate:hibernate-core:$versionHibernate"
+    compile "org.hibernate:hibernate-ehcache:$versionHibernate"
 
     runtime 'com.bertramlabs.plugins:asset-pipeline-grails:2.14.5'
     provided "org.codehaus.groovy:groovy-ant"
