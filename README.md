@@ -30,7 +30,7 @@ Both using freemarker 2.3.x (currently 2.3.25-incubating as it becomes a full ap
 **Grails 3 install**
 
 ```
-compile "org.grails.plugins:freemarker:3.0.3"
+compile "org.grails.plugins:freemarker:3.1.0"
 ``` 
 
 ### Summary
