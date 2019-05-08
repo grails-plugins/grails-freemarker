@@ -26,16 +26,12 @@
 As of now, Grails 3 version is on the *master* branch. Legacy 2.0.x for Grails2 is on the 2.5.x branch. 
 Both using freemarker 2.3.x (currently 2.3.25-incubating as it becomes a full apache project). 
 
-**Grails 2 install**
-
-comptible releases end with grails2. for example
-
-``` compile ":freemarker:3.0.3" ```
 
 **Grails 3 install**
 
-``` compile "org.grails.plugins:freemarker:3.0.2" ```
-
+```
+compile "org.grails.plugins:freemarker:3.0.3"
+``` 
 
 ### Summary
 
