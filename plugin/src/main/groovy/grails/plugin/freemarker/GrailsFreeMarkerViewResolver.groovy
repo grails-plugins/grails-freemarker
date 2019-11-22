@@ -4,9 +4,10 @@
 */
 package grails.plugin.freemarker
 
+import freemarker.template.Configuration
 import groovy.transform.CompileStatic
 import groovy.util.logging.Log4j
-
+import no.api.freemarker.java8.Java8ObjectWrapper
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.springframework.core.io.ContextResource
@@ -115,6 +116,7 @@ public class GrailsFreeMarkerViewResolver extends FreeMarkerViewResolver {
         View view = null
         try {
             GrailsFreeMarkerView gview = (GrailsFreeMarkerView) buildView(viewName)
+            freeMarkerConfigurer.getConfiguration().setObjectWrapper(new Java8ObjectWrapper(Configuration.getVersion()))
             gview.freeMarkerConfigurer = freeMarkerConfigurer
             View result = (View) getApplicationContext().getAutowireCapableBeanFactory().initializeBean(gview, viewName)
 
