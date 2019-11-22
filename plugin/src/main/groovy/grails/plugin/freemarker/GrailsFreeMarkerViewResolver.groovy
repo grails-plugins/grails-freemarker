@@ -4,10 +4,9 @@
 */
 package grails.plugin.freemarker
 
-import freemarker.template.Configuration
 import groovy.transform.CompileStatic
 import groovy.util.logging.Log4j
-import no.api.freemarker.java8.Java8ObjectWrapper
+
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.springframework.core.io.ContextResource
@@ -17,7 +16,9 @@ import org.springframework.web.servlet.view.AbstractUrlBasedView
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig
 import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver
 
+import freemarker.template.Configuration
 import grails.plugin.viewtools.ViewResourceLocator
+import no.api.freemarker.java8.Java8ObjectWrapper
 
 /**
  * Uses Springs ViewResolver design concepts. The primary lookup uses {@link grails.plugin.resourcelocator.ViewResourceLocator}
