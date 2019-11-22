@@ -3,40 +3,178 @@
 # suggested that you use the "grails integrate-with --git" command
 # to generate your .gitignore file.
 
-# web application files
-/web-app/plugins
-/web-app/WEB-INF/classes
-
-# default HSQL database files for production mode
-/prodDb.*
-*Db.properties
-*Db.script
-/*DB.*
-
-# logs
-stacktrace.log
-/logs
-/*.log
-
-# plugin release files
-/*.war
-/*.zip
-/*.zip.sha1
-/plugin.xml
-
-# older plugin install locations
-/plugins
-/web-app/plugins
-
-# "temporary" build files
-**/target
-/out
+# Grails 2 using Grails 3 project stucture
 **/test/unit/
 **/test/integration/
 **/test/functional/
 !src/test
 
-*grailsPlugins.iml
-*inplacePlugin.iml
-.idea/workspace.xml
-.idea/tasks.xml
+#Grails 3
+.gradle
+.asscache
+build
+
+# web application files
+/web-app/WEB-INF/classes
+
+# default HSQL database files for production mode
+/prodDb.*
+
+# general HSQL database files
+*Db.properties
+*Db.script
+
+# logs
+stacktrace.log
+logs
+/test/reports
+
+# project release file
+/*.war
+/*.zip
+/*.zip.sha1
+/plugin.xml
+*.jar
+*.war
+*.ear
+
+# older Grails plugin install locations
+/plugins
+/web-app/plugins
+
+# "temporary" build files
+**/target
+**/out
+
+### Java template
+*.class
+*.asscache
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# from https://github.com/github/gitignore/blob/master/Global/JetBrains.gitignore
+#### IDEA
+.idea/artifacts
+.idea/modules.xml
+.idea/vcs.xml
+.idea/modules
+.idea/**/mongoSettings.xmlout/
+.idea/.name
+.idea/encodings.xml
+.idea/**/workspace.xml
+.idea/inspectionProfiles/Project_Default.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf
+# Generated files
+.idea/**/contentModel.xml
+# Sensitive or high-churn files
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+.idea/**/dbnavigator.xml
+# Gradle
+.idea/**/gradle.xml
+.idea/**/libraries
+# Gradle and Maven with auto-import
+# When using Gradle or Maven with auto-import, you should exclude module files,
+# since they will be recreated, and may cause churn.  Uncomment if using
+# auto-import.
+# .idea/modules.xml
+# .idea/*.iml
+# .idea/modules
+# CMake
+cmake-build-*/
+# Mongo Explorer plugin
+.idea/**/mongoSettings.xml
+# File-based project format
+*.iws
+# IntelliJ
+out/
+# mpeltonen/sbt-idea plugin
+.idea_modules/
+# JIRA plugin
+atlassian-ide-plugin.xml
+# Cursive Clojure plugin
+.idea/replstate.xml
+# Crashlytics plugin (for Android Studio and IntelliJ)
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
+fabric.properties
+# Editor-based Rest Client
+.idea/httpRequests
+# Android studio 3.1+ serialized cache file
+.idea/caches/build_file_checksums.ser
+
+### Eclipse template
+*.pydevproject
+.metadata
+.gradle
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+
+# Eclipse Core
+.project
+
+# External tool builders
+.externalToolBuilders/
+
+# Locally stored "Eclipse launch configurations"
+*.launch
+
+ # JDT-specific (Eclipse Java Development Tools)
+.classpath
+
+ # Java annotation processor (APT)
+ .factorypath
+
+ # Ignore Gradle GUI config
+ gradle-app.setting
+
+ # Avoid ignoring Gradle wrapper jar file (.jar files are usually  ignored)
+!gradle-wrapper.jar
+### SublimeText template
+# cache files for sublime text
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+
+# workspace files are user-specific
+*.sublime-workspace
+
+# project files should be checked into the repository, unless a  significant
+# proportion of contributors will probably not be using SublimeText
+# *.sublime-project
+
+# sftp configuration file
+sftp-config.json
+### Linux template
+*~
+
+# KDE directory preferences
+.directory
+
+# Linux trash folder which might appear on any partition or disk
+.Trash-*
+### Vim template
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
+
+
+/web-app/
+/site/*
