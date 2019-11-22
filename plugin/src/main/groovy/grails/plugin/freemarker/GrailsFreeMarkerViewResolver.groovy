@@ -16,7 +16,9 @@ import org.springframework.web.servlet.view.AbstractUrlBasedView
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig
 import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver
 
+import freemarker.template.Configuration
 import grails.plugin.viewtools.ViewResourceLocator
+import no.api.freemarker.java8.Java8ObjectWrapper
 
 /**
  * Uses Springs ViewResolver design concepts. The primary lookup uses {@link grails.plugin.resourcelocator.ViewResourceLocator}
@@ -115,6 +117,7 @@ public class GrailsFreeMarkerViewResolver extends FreeMarkerViewResolver {
         View view = null
         try {
             GrailsFreeMarkerView gview = (GrailsFreeMarkerView) buildView(viewName)
+            freeMarkerConfigurer.getConfiguration().setObjectWrapper(new Java8ObjectWrapper(Configuration.getVersion()))
             gview.freeMarkerConfigurer = freeMarkerConfigurer
             View result = (View) getApplicationContext().getAutowireCapableBeanFactory().initializeBean(gview, viewName)
 
